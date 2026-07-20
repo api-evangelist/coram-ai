@@ -1,0 +1,15 @@
+generated: '2026-07-18'
+method: derived
+source: openapi/coram-ai-openapi-original.json
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+schemes:
+- name: X-Auth-Token
+  type: apiKey
+  in: header
+  parameter: X-Auth-Token
+  sources:
+  - openapi/coram-ai-openapi-original.json
