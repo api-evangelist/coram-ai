@@ -1,0 +1,292 @@
+openapi: 3.0.0
+info:
+  title: Coram alerts camera-groups API
+  description: "# Introduction\n\nThe Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows.\n\n# Supported Actions\n\nManage and interact with your Coram platform resources:\n\n| Resource | Description |\n| -------- | ----------- |\n| **Camera Groups** | Organize and configure camera collections |\n| **Cameras** | Access camera settings, streams, and metadata |\n| **Locations** | Manage physical site configurations |\n| **NVRs** | Control and monitor network video recorders |\n| **Access Control** | List access control doors and trigger remote unlocks |\n\n# Required Headers\n\nEvery API request must include the following headers:\n\n| Header | Required | Description |\n| ------ | -------- | ----------- |\n| `X-Auth-Token` | Yes | Your API key (from the API key List Page) |\n\n**Example:**\n```\ncurl -X GET \"https://api.coram.ai/developer-api/v1/cameras\" \\\n  -H \"X-Auth-Token: xxxxxxxxxxxxxxx\"\n```\n\n# Response Format\n\nAll API responses follow a consistent structure based on the operation result.\n\n## Success Response\n\n**List Operations** (e.g., `GET /v1/cameras`)\n\nReturns a `results` array with pagination support:\n\n```json\n{\n  \"results\": [\n    { \"id\": \"cam_001\", \"name\": \"Front Door\", ... },\n    { \"id\": \"cam_002\", \"name\": \"Lobby\", ... }\n  ],\n  \"has_more\": true\n}\n```\n\nWhen `has_more` is `true`, additional results are available. Use pagination parameters to fetch more.\n\n**Bulk/Batch Operations** (e.g., `POST /v1/cameras`, `PATCH /v1/cameras`)\n\nReturns a top-level `status` field indicating whether the API request was processed, and a `results` array where each item reflects the outcome of an individual operation:\n\n```json\n{\n  \"status\": \"success\",\n  \"results\": [\n    { \"status\": \"success\", \"data\": { \"id\": \"cam_001\", \"mac_address\": \"...\" } },\n    { \"status\": \"error\", \"error\": { \"code\": \"VALIDATION_ERROR\", \"message\": \"...\" } }\n  ]\n}\n```\n\n| Field | Description |\n| ----- | ----------- |\n| `status` (top-level) | `\"success\"` if the request was processed |\n| `results[].status` | `\"success\"` or `\"error\"` for each operation |\n| `results[].data` | Present when `status` is `\"success\"` |\n| `results[].error` | Present when `status` is `\"error\"` |\n\n## Error Response\n\nWhen an error occurs, the response includes `status` set to `\"error\"` along with detailed error information:\n\n```json\n{\n  \"status\": \"error\",\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"Invalid MAC address format\",\n    \"field\": \"mac_address\"\n  }\n}\n```\n\n**Error Fields:**\n\n| Field | Type | Description |\n| ----- | ---- | ----------- |\n| `code` | string | Machine-readable error code |\n| `message` | string | Human-readable error description |\n| `field` | string | The field that caused the error (if applicable) |\n\n\n# HTTP Status Codes\n\nThe API uses standard HTTP status codes to indicate the success or failure of requests:\n\n## Success Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `200 OK` | Request succeeded |\n| `201 Created` | Resource successfully created |\n| `204 No Content` | Request succeeded with no response body |\n\n## Client Error Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `400 Bad Request` | Invalid request syntax or parameters |\n| `401 Unauthorized` | Missing or invalid API key |\n| `403 Forbidden` | Valid API key but insufficient permissions |\n| `404 Not Found` | Requested resource does not exist |\n| `422 Unprocessable Entity` | Validation error in request body |\n| `429 Too Many Requests` | Rate limit exceeded |\n\n## Server Error Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `500 Internal Server Error` | Unexpected server error (rare) |\n| `502 Bad Gateway` | Upstream service unavailable |\n| `503 Service Unavailable` | Service temporarily unavailable |\n\n\n# Error Handling Best Practices\n\n1. **Always check the `status` field** — Verify if the response indicates `\"success\"` or `\"error\"`\n\n2. **Handle specific error codes** — Use the `error.code` field to handle different error types programmatically\n\n3. **Implement retry logic** — For `429` and `5xx` errors, implement exponential backoff\n\n4. **Log error details** — Capture `error.code`, `error.message`, and `error.field` for debugging\n\n**Example error handling:**\n```python\nresponse = api.create_camera(data)\n\nif response[\"status\"] == \"error\":\n    error = response[\"error\"]\n    if error[\"code\"] == \"VALIDATION_ERROR\":\n        print(f\"Invalid {error['field']}: {error['message']}\")\n    elif error[\"code\"] == \"DUPLICATE_RESOURCE\":\n        print(\"Camera already exists\")\n    else:\n        print(f\"Error: {error['message']}\")\n```\n\n---\n\n# Getting Started\n\n1. **Generate an API key** from your Coram app settings\n2. **Explore the endpoints** in the navigation to begin integrating\n\nNeed help? Contact [support@coram.ai](mailto:support@coram.ai)\n"
+  version: 1.0.0
+servers:
+- url: https://developer.coram.ai
+  description: Production
+security:
+- X-Auth-Token: []
+tags:
+- name: camera-groups
+  description: Organize cameras into logical collections for easier management. Camera groups allow you to categorize cameras by location, purpose, or any custom criteria. Use these endpoints to create, update, list, and delete camera groups.
+paths:
+  /v1/camera-groups:
+    get:
+      tags:
+      - camera-groups
+      summary: List camera groups
+      description: 'List camera groups.
+
+
+        Retrieve a paginated list of camera groups.
+
+        Groups are used to organize cameras for easier management and access control.'
+      operationId: list_camera_groups
+      parameters:
+      - required: false
+        schema:
+          type: integer
+          minimum: 1.0
+          title: Page
+          default: 1
+        name: page
+        in: query
+      - required: false
+        schema:
+          type: integer
+          maximum: 100.0
+          minimum: 1.0
+          title: Limit
+          default: 100
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CameraGroupList'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-public-api-version: v1
+      x-public-api: true
+      security:
+      - X-Auth-Token: []
+    post:
+      tags:
+      - camera-groups
+      summary: Create camera group
+      description: 'Create a new camera group.
+
+
+        Create a new camera group with the specified name. Camera groups are used
+
+        to organize cameras for easier management and access control.'
+      operationId: create_camera_group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCameraGroupPayload'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCameraGroupResponse'
+        '409':
+          description: Camera group name already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Camera group creation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - X-Auth-Token: []
+      x-public-api-version: v1
+      x-public-api: true
+      parameters: []
+components:
+  schemas:
+    CreateCameraGroupPayload:
+      properties:
+        name:
+          type: string
+          maxLength: 30
+          minLength: 1
+          title: Name
+          description: Display name for the new camera group (max 30 characters)
+      type: object
+      required:
+      - name
+      title: CreateCameraGroupPayload
+      description: Request payload for creating a camera group.
+      x-public-api-group: camera-groups
+    CameraGroupList:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/CameraGroup'
+          type: array
+          title: Results
+          description: List of camera groups
+        has_more:
+          type: boolean
+          title: Has More
+          description: True if additional pages are available
+      type: object
+      required:
+      - results
+      - has_more
+      title: CameraGroupList
+      description: Paginated list of camera groups.
+      x-public-api-group: camera-groups
+    ErrorResponse:
+      properties:
+        status:
+          type: string
+          enum:
+          - error
+          title: Status
+          default: error
+        error:
+          allOf:
+          - $ref: '#/components/schemas/ErrorDetails'
+          title: Error
+          description: Error details
+      type: object
+      required:
+      - error
+      title: ErrorResponse
+      description: Error response model.
+    ErrorDetails:
+      properties:
+        code:
+          allOf:
+          - $ref: '#/components/schemas/ErrorCode'
+          description: Error code
+        message:
+          type: string
+          title: Message
+          description: Error message
+        field:
+          type: string
+          title: Field
+          description: Error field
+        docs:
+          type: string
+          title: Docs
+          description: Error docs
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorDetails
+      description: Error message
+    CreateCameraGroupResponse:
+      properties:
+        data:
+          allOf:
+          - $ref: '#/components/schemas/CameraGroup'
+          title: Data
+          description: The newly created camera group data
+      type: object
+      required:
+      - data
+      title: CreateCameraGroupResponse
+      description: Response after successfully creating a camera group.
+      x-public-api-group: camera-groups
+    CameraGroup:
+      properties:
+        id:
+          type: integer
+          title: Id
+          description: Unique camera group identifier
+        name:
+          type: string
+          title: Name
+          description: Camera group display name
+      type: object
+      required:
+      - id
+      - name
+      title: CameraGroup
+      description: A logical grouping of cameras for organization and access control.
+      x-public-api-group: camera-groups
+    ErrorCode:
+      type: string
+      enum:
+      - VALIDATION_ERROR
+      - BATCH_SIZE_EXCEEDED
+      - NO_CAMERAS_PROVIDED
+      - PARTIAL_OPERATIONS_NOT_SUPPORTED
+      - CAMERA_ALREADY_EXISTS
+      - CAMERA_NOT_FOUND
+      - NO_LICENSES_AVAILABLE
+      - INVALID_MAC_ADDRESS
+      - INVALID_IP_ADDRESS
+      - DUPLICATE_MAC_ADDRESSES
+      - NVR_CAPACITY_EXCEEDED
+      - NVR_NOT_FOUND
+      - INVALID_NVR_NAME
+      - LOCATION_NOT_FOUND
+      - NVR_REGISTRATION_FAILED
+      - NVR_ALREADY_REGISTERED
+      - PING_REQUEST_TIMEOUT
+      - PING_REQUEST_FAILED
+      - SPEEDTEST_REQUEST_TIMEOUT
+      - SPEEDTEST_REQUEST_FAILED
+      - NO_NVRS_PROVIDED
+      - DUPLICATE_NVR_NAMES
+      - LOCATION_ACCESS_DENIED
+      - LOCATION_NAME_ALREADY_EXISTS
+      - LOCATION_CREATION_FAILED
+      - NO_LOCATIONS_PROVIDED
+      - DUPLICATE_LOCATION_NAMES
+      - ALERT_EVENT_NOT_FOUND
+      - ALERT_NO_VIDEO_AVAILABLE
+      - ALERT_CAMERA_NOT_FOUND
+      - ALERT_CLIP_GENERATION_FAILED
+      - ALERT_NOT_FIREARM
+      - FIREARM_ALERT_NOT_FOUND
+      - INVALID_RECIPIENT_EMAILS
+      - PREMIUM_ALERT_CAMERA_LIMIT_EXCEEDED
+      - CAMERA_ALREADY_IN_USE
+      - ACCESS_EVENT_NOT_FOUND
+      - ACCESS_EVENT_NO_VIDEO_AVAILABLE
+      - ACCESS_EVENT_CLIP_GENERATION_FAILED
+      - CAMERA_GROUP_NOT_FOUND
+      - CAMERA_GROUP_NAME_ALREADY_EXISTS
+      - CAMERA_GROUP_CREATION_FAILED
+      - NO_GROUPS_PROVIDED
+      - DUPLICATE_GROUP_NAMES
+      - INVALID_GROUP_ID
+      - DUPLICATE_GROUP_IDS
+      title: ErrorCode
+      description: Centralized error codes for Developer API endpoints.
+  securitySchemes:
+    X-Auth-Token:
+      type: apiKey
+      in: header
+      name: X-Auth-Token
+x-tagGroups:
+- name: Surveillance
+  tags:
+  - cameras
+  - camera-groups
+  - locations
+  - nvrs
+  - alerts
+- name: Access Control
+  tags:
+  - doors
+  - events
+- name: Emergency Management System
+  tags:
+  - reunification

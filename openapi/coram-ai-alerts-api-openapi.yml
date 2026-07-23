@@ -1,0 +1,881 @@
+openapi: 3.0.0
+info:
+  title: Coram alerts API
+  description: "# Introduction\n\nThe Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows.\n\n# Supported Actions\n\nManage and interact with your Coram platform resources:\n\n| Resource | Description |\n| -------- | ----------- |\n| **Camera Groups** | Organize and configure camera collections |\n| **Cameras** | Access camera settings, streams, and metadata |\n| **Locations** | Manage physical site configurations |\n| **NVRs** | Control and monitor network video recorders |\n| **Access Control** | List access control doors and trigger remote unlocks |\n\n# Required Headers\n\nEvery API request must include the following headers:\n\n| Header | Required | Description |\n| ------ | -------- | ----------- |\n| `X-Auth-Token` | Yes | Your API key (from the API key List Page) |\n\n**Example:**\n```\ncurl -X GET \"https://api.coram.ai/developer-api/v1/cameras\" \\\n  -H \"X-Auth-Token: xxxxxxxxxxxxxxx\"\n```\n\n# Response Format\n\nAll API responses follow a consistent structure based on the operation result.\n\n## Success Response\n\n**List Operations** (e.g., `GET /v1/cameras`)\n\nReturns a `results` array with pagination support:\n\n```json\n{\n  \"results\": [\n    { \"id\": \"cam_001\", \"name\": \"Front Door\", ... },\n    { \"id\": \"cam_002\", \"name\": \"Lobby\", ... }\n  ],\n  \"has_more\": true\n}\n```\n\nWhen `has_more` is `true`, additional results are available. Use pagination parameters to fetch more.\n\n**Bulk/Batch Operations** (e.g., `POST /v1/cameras`, `PATCH /v1/cameras`)\n\nReturns a top-level `status` field indicating whether the API request was processed, and a `results` array where each item reflects the outcome of an individual operation:\n\n```json\n{\n  \"status\": \"success\",\n  \"results\": [\n    { \"status\": \"success\", \"data\": { \"id\": \"cam_001\", \"mac_address\": \"...\" } },\n    { \"status\": \"error\", \"error\": { \"code\": \"VALIDATION_ERROR\", \"message\": \"...\" } }\n  ]\n}\n```\n\n| Field | Description |\n| ----- | ----------- |\n| `status` (top-level) | `\"success\"` if the request was processed |\n| `results[].status` | `\"success\"` or `\"error\"` for each operation |\n| `results[].data` | Present when `status` is `\"success\"` |\n| `results[].error` | Present when `status` is `\"error\"` |\n\n## Error Response\n\nWhen an error occurs, the response includes `status` set to `\"error\"` along with detailed error information:\n\n```json\n{\n  \"status\": \"error\",\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"Invalid MAC address format\",\n    \"field\": \"mac_address\"\n  }\n}\n```\n\n**Error Fields:**\n\n| Field | Type | Description |\n| ----- | ---- | ----------- |\n| `code` | string | Machine-readable error code |\n| `message` | string | Human-readable error description |\n| `field` | string | The field that caused the error (if applicable) |\n\n\n# HTTP Status Codes\n\nThe API uses standard HTTP status codes to indicate the success or failure of requests:\n\n## Success Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `200 OK` | Request succeeded |\n| `201 Created` | Resource successfully created |\n| `204 No Content` | Request succeeded with no response body |\n\n## Client Error Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `400 Bad Request` | Invalid request syntax or parameters |\n| `401 Unauthorized` | Missing or invalid API key |\n| `403 Forbidden` | Valid API key but insufficient permissions |\n| `404 Not Found` | Requested resource does not exist |\n| `422 Unprocessable Entity` | Validation error in request body |\n| `429 Too Many Requests` | Rate limit exceeded |\n\n## Server Error Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `500 Internal Server Error` | Unexpected server error (rare) |\n| `502 Bad Gateway` | Upstream service unavailable |\n| `503 Service Unavailable` | Service temporarily unavailable |\n\n\n# Error Handling Best Practices\n\n1. **Always check the `status` field** — Verify if the response indicates `\"success\"` or `\"error\"`\n\n2. **Handle specific error codes** — Use the `error.code` field to handle different error types programmatically\n\n3. **Implement retry logic** — For `429` and `5xx` errors, implement exponential backoff\n\n4. **Log error details** — Capture `error.code`, `error.message`, and `error.field` for debugging\n\n**Example error handling:**\n```python\nresponse = api.create_camera(data)\n\nif response[\"status\"] == \"error\":\n    error = response[\"error\"]\n    if error[\"code\"] == \"VALIDATION_ERROR\":\n        print(f\"Invalid {error['field']}: {error['message']}\")\n    elif error[\"code\"] == \"DUPLICATE_RESOURCE\":\n        print(\"Camera already exists\")\n    else:\n        print(f\"Error: {error['message']}\")\n```\n\n---\n\n# Getting Started\n\n1. **Generate an API key** from your Coram app settings\n2. **Explore the endpoints** in the navigation to begin integrating\n\nNeed help? Contact [support@coram.ai](mailto:support@coram.ai)\n"
+  version: 1.0.0
+servers:
+- url: https://developer.coram.ai
+  description: Production
+security:
+- X-Auth-Token: []
+tags:
+- name: alerts
+  description: ''
+paths:
+  /v1/alerts/{alert_event_id}/clip:
+    get:
+      tags:
+      - alerts
+      summary: Get alert video clip
+      description: Returns a public download URL for the MP4 video clip associated with an alert event. The URL does not require authentication and expires after 24 hours. Use the alert_event_id from webhook payloads to retrieve the corresponding video clip.
+      operationId: get_alert_clip
+      parameters:
+      - required: true
+        schema:
+          type: integer
+          title: Alert Event Id
+        name: alert_event_id
+        in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertClipResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      x-public-api: true
+      security:
+      - X-Auth-Token: []
+  /v1/alerts/{alert_event_id}/feedback:
+    get:
+      tags:
+      - alerts
+      summary: Get firearm alert feedback
+      description: Returns the current feedback (0.0-1.0 rating, reason, comment) for a firearm alert event. Feedback is organization-wide (last write wins); the feedback fields are null when no feedback has been submitted yet. Returns 404 if the alert event does not exist and 400 if it is not a firearm alert.
+      operationId: get_firearm_alert_feedback
+      parameters:
+      - required: true
+        schema:
+          type: integer
+          title: Alert Event Id
+        name: alert_event_id
+        in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirearmAlertFeedbackResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      x-public-api: true
+      security:
+      - X-Auth-Token: []
+    put:
+      tags:
+      - alerts
+      summary: Submit firearm alert feedback
+      description: 'Submits feedback for a firearm alert event. rating is a 0.0-1.0 score (today 0.0 = incorrect / unhelpful, 1.0 = correct). Feedback is organization-wide and idempotent (last write wins): submitting again replaces the previous feedback. feedback_reason and feedback_comment are optional. Returns 404 if the alert event does not exist and 400 if it is not a firearm alert.'
+      operationId: submit_firearm_alert_feedback
+      parameters:
+      - required: true
+        schema:
+          type: integer
+          title: Alert Event Id
+        name: alert_event_id
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FirearmAlertFeedbackRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirearmAlertFeedbackResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      x-public-api: true
+      security:
+      - X-Auth-Token: []
+  /v1/alerts/{alert_event_id}/details:
+    get:
+      tags:
+      - alerts
+      summary: Get alert details (including AI description)
+      description: 'Returns metadata about an alert event, including the rich natural-language description generated by Coram''s vision language model. The description is produced asynchronously after the alert webhook fires, so consumers polling immediately may see `ai.status: pending` for a few seconds. Once `ai.status` is `ready`, the `ai.short_description` and `ai.long_description` fields are populated. If it is `failed`, no description will arrive.
+
+
+        When a video clip is being produced for the alert, a `clip` object is included: `clip.status` is `ready` (with a download `mp4_url` valid for 24 hours and an `expires_at`), `pending` (still uploading — poll again shortly), or `failed`. Alerts with no clip pipeline omit the `clip` field entirely.'
+      operationId: get_alert_details
+      parameters:
+      - required: true
+        schema:
+          type: integer
+          title: Alert Event Id
+        name: alert_event_id
+        in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertDetailsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      x-public-api: true
+      security:
+      - X-Auth-Token: []
+  /v1/alerts/firearm:
+    post:
+      tags:
+      - alerts
+      summary: Create firearm alert
+      description: 'Creates a firearm-detection alert configuration. Recipients are specified by email (matched case-insensitively) and resolved to platform users in your organization; each recipient''s notify_by_sms/notify_by_push only deliver when the user has a phone number / registered device. The schedule is interpreted in each camera''s local time. The alert is attributed to the API key (creator_name = the key''s identity). Note: a null name is omitted from the response rather than serialized as null.'
+      operationId: create_firearm_alert
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFirearmAlertRequest'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirearmAlertResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Firearm alert not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Camera assignment conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - X-Auth-Token: []
+      x-public-api-version: v1
+      x-public-api: true
+      parameters: []
+  /v1/alerts/firearm/{firearm_alert_id}:
+    delete:
+      tags:
+      - alerts
+      summary: Delete firearm alert
+      description: Deletes a firearm-detection alert configuration and any alerts it has produced. Returns 204 on success and 404 if the firearm alert does not exist in your organization.
+      operationId: delete_firearm_alert
+      parameters:
+      - required: true
+        schema:
+          type: integer
+          title: Firearm Alert Id
+        name: firearm_alert_id
+        in: path
+      responses:
+        '204':
+          description: Successful Response
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Firearm alert not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - X-Auth-Token: []
+      x-public-api-version: v1
+      x-public-api: true
+    patch:
+      tags:
+      - alerts
+      summary: Update firearm alert
+      description: 'Partially updates a firearm-detection alert configuration; only the provided fields are changed. Providing recipients replaces the full recipient list. The schedule is interpreted in each camera''s local time. Note: a null name is omitted from the response rather than serialized as null.'
+      operationId: update_firearm_alert
+      parameters:
+      - required: true
+        schema:
+          type: integer
+          title: Firearm Alert Id
+        name: firearm_alert_id
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFirearmAlertRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirearmAlertResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Firearm alert not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Camera assignment conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - X-Auth-Token: []
+      x-public-api-version: v1
+      x-public-api: true
+components:
+  schemas:
+    FirearmAlertResponse:
+      properties:
+        firearm_alert_id:
+          type: integer
+          title: Firearm Alert Id
+        name:
+          type: string
+          title: Name
+        camera_mac_addresses:
+          items:
+            type: string
+          type: array
+          title: Camera Mac Addresses
+        recipients:
+          items:
+            $ref: '#/components/schemas/FirearmAlertRecipient'
+          type: array
+          title: Recipients
+        schedule:
+          $ref: '#/components/schemas/FirearmAlertSchedule'
+        sensitivity:
+          $ref: '#/components/schemas/AlertSensitivityLevel'
+        handgun_positive_stances:
+          items:
+            $ref: '#/components/schemas/HandgunStanceType'
+          type: array
+        push_notification_level:
+          $ref: '#/components/schemas/PushNotificationLevel'
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - firearm_alert_id
+      - camera_mac_addresses
+      - recipients
+      - schedule
+      - sensitivity
+      - handgun_positive_stances
+      - push_notification_level
+      - created_at
+      title: FirearmAlertResponse
+    CreateFirearmAlertRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          title: Name
+        camera_mac_addresses:
+          items:
+            type: string
+          type: array
+          title: Camera Mac Addresses
+        recipients:
+          items:
+            $ref: '#/components/schemas/FirearmAlertRecipient'
+          type: array
+          title: Recipients
+        schedule:
+          $ref: '#/components/schemas/FirearmAlertSchedule'
+        sensitivity:
+          allOf:
+          - $ref: '#/components/schemas/AlertSensitivityLevel'
+          default: Medium
+        handgun_positive_stances:
+          items:
+            $ref: '#/components/schemas/HandgunStanceType'
+          type: array
+          default: []
+        push_notification_level:
+          allOf:
+          - $ref: '#/components/schemas/PushNotificationLevel'
+          default: active
+      type: object
+      required:
+      - camera_mac_addresses
+      - recipients
+      title: CreateFirearmAlertRequest
+    HandgunStanceType:
+      enum:
+      - INACTIVE_CARRY
+      - OBJECT_HOLSTERED
+      title: HandgunStanceType
+      description: An enumeration.
+    FirearmAlertFeedbackResponse:
+      properties:
+        alert_event_id:
+          type: integer
+          title: Alert Event Id
+          description: ID of the firearm alert event
+        rating:
+          type: number
+          title: Rating
+          description: Current feedback score from 0.0 to 1.0, or null if no feedback has been submitted yet.
+        feedback_reason:
+          allOf:
+          - $ref: '#/components/schemas/AlertFeedbackReason'
+          description: Structured reason for the feedback.
+        feedback_comment:
+          type: string
+          title: Feedback Comment
+          description: Free-text comment left with the feedback.
+        user_id:
+          type: integer
+          title: User Id
+          description: ID of the user whose API key last submitted feedback.
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: When the feedback was last submitted (UTC).
+      type: object
+      required:
+      - alert_event_id
+      title: FirearmAlertFeedbackResponse
+      description: Current feedback for a firearm alert (organization-wide, last write wins).
+    AlertClipResponse:
+      properties:
+        preview_url:
+          type: string
+          title: Preview Url
+          description: Web player page URL for viewing the clip in a browser. No authentication required. Valid until expires_at.
+        mp4_url:
+          type: string
+          title: Mp4 Url
+          description: Direct download URL for the MP4 video clip. No authentication required. Valid until expires_at.
+        expires_at:
+          type: string
+          format: date-time
+          title: Expires At
+          description: When the URLs expire (UTC)
+        clip_start_time:
+          type: string
+          format: date-time
+          title: Clip Start Time
+          description: Start time of the video clip (UTC)
+        clip_end_time:
+          type: string
+          format: date-time
+          title: Clip End Time
+          description: End time of the video clip (UTC)
+        alert_event_id:
+          type: integer
+          title: Alert Event Id
+          description: ID of the alert event
+        camera_mac_address:
+          type: string
+          title: Camera Mac Address
+          description: MAC address of the camera that captured the alert
+      type: object
+      required:
+      - preview_url
+      - mp4_url
+      - expires_at
+      - clip_start_time
+      - clip_end_time
+      - alert_event_id
+      - camera_mac_address
+      title: AlertClipResponse
+      description: Response for the alert clip download endpoint.
+    ErrorResponse:
+      properties:
+        status:
+          type: string
+          enum:
+          - error
+          title: Status
+          default: error
+        error:
+          allOf:
+          - $ref: '#/components/schemas/ErrorDetails'
+          title: Error
+          description: Error details
+      type: object
+      required:
+      - error
+      title: ErrorResponse
+      description: Error response model.
+    ErrorDetails:
+      properties:
+        code:
+          allOf:
+          - $ref: '#/components/schemas/ErrorCode'
+          description: Error code
+        message:
+          type: string
+          title: Message
+          description: Error message
+        field:
+          type: string
+          title: Field
+          description: Error field
+        docs:
+          type: string
+          title: Docs
+          description: Error docs
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorDetails
+      description: Error message
+    ClipStatus:
+      type: string
+      enum:
+      - ready
+      - pending
+      - failed
+      title: ClipStatus
+      description: 'Status of the video clip associated with an alert.
+
+
+        Mirrors `AIDescriptionStatus`: the clip is produced asynchronously (the
+
+        edge device uploads it after the alert fires), so consumers polling this
+
+        endpoint right after a webhook may see `pending` before it becomes `ready`.'
+    FirearmAlertRecipient:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+        notify_by_email:
+          type: boolean
+          title: Notify By Email
+          default: true
+        notify_by_sms:
+          type: boolean
+          title: Notify By Sms
+          description: Only delivered if the user has a phone number on file.
+          default: true
+        notify_by_push:
+          type: boolean
+          title: Notify By Push
+          description: Only delivered if the user has a registered mobile device.
+          default: true
+      type: object
+      required:
+      - email
+      title: FirearmAlertRecipient
+      description: A platform user (resolved by email) to notify, with per-channel toggles.
+    UpdateFirearmAlertRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          title: Name
+        camera_mac_addresses:
+          items:
+            type: string
+          type: array
+          title: Camera Mac Addresses
+        recipients:
+          items:
+            $ref: '#/components/schemas/FirearmAlertRecipient'
+          type: array
+          title: Recipients
+        schedule:
+          $ref: '#/components/schemas/FirearmAlertSchedule'
+        sensitivity:
+          $ref: '#/components/schemas/AlertSensitivityLevel'
+        handgun_positive_stances:
+          items:
+            $ref: '#/components/schemas/HandgunStanceType'
+          type: array
+        push_notification_level:
+          $ref: '#/components/schemas/PushNotificationLevel'
+      type: object
+      title: UpdateFirearmAlertRequest
+    AlertDetailsResponse:
+      properties:
+        alert_event_id:
+          type: integer
+          title: Alert Event Id
+          description: ID of the alert event
+        alert_time:
+          type: string
+          format: date-time
+          title: Alert Time
+          description: When the alert was triggered (UTC)
+        camera_mac_address:
+          type: string
+          title: Camera Mac Address
+          description: MAC address of the camera that captured the alert
+        ai:
+          allOf:
+          - $ref: '#/components/schemas/AlertAIDescriptionInfo'
+          title: Ai
+          description: AI-generated description of the alert
+        clip:
+          allOf:
+          - $ref: '#/components/schemas/AlertClipInfo'
+          title: Clip
+          description: Video clip associated with the alert, if one exists. Omitted entirely when no clip is being produced for this alert. When present, `clip.status` indicates whether the download `mp4_url` is `ready`, `pending`, or `failed`.
+      type: object
+      required:
+      - alert_event_id
+      - alert_time
+      - camera_mac_address
+      - ai
+      title: AlertDetailsResponse
+      description: 'Response for the alert details endpoint.
+
+
+        Returns metadata about an alert event, including the rich natural-language
+
+        description generated by Coram''s vision language model. The description is
+
+        produced asynchronously, so `ai.status` indicates whether it is ready yet,
+
+        still being generated, or definitively missing. The `camera_alert_details`
+
+        webhook delivers this exact payload shape as its `data`.'
+    DayOfWeek:
+      enum:
+      - monday
+      - tuesday
+      - wednesday
+      - thursday
+      - friday
+      - saturday
+      - sunday
+      title: DayOfWeek
+      description: An enumeration.
+    AlertSensitivityLevel:
+      type: string
+      enum:
+      - Low
+      - Medium
+      - High
+      title: AlertSensitivityLevel
+      description: An enumeration.
+    PushNotificationLevel:
+      type: string
+      enum:
+      - active
+      - critical
+      - passive
+      - time-sensitive
+      title: PushNotificationLevel
+      description: 'Defines the interruption level for mobile push notifications.
+
+
+        This level determines the notification priority and how it will interrupt the user:
+
+        - ACTIVE: Standard priority notifications
+
+        - CRITICAL: High priority notifications that can break through focus modes and DND.
+
+        - PASSIVE: Low priority notifications that don''t trigger sounds or banners
+
+        - TIME_SENSITIVE: Important time-sensitive notifications that can break through
+
+        some focus modes'
+    AlertAIDescriptionInfo:
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AIDescriptionStatus'
+          description: Whether the AI description is `ready` (at least one of `short_description` / `long_description` is present), `pending` (still being generated — poll again shortly; never sent by the webhook, which only fires once the description has settled), or `failed` (generation failed or was skipped; no description will arrive).
+        short_description:
+          type: string
+          title: Short Description
+          description: Short AI-generated summary of what the camera observed. Omitted when `status` is `pending` or `failed`. May also be omitted when `status` is `ready` if only the long description was generated — consumers should treat the field's absence as equivalent to null and check both descriptions before using either.
+        long_description:
+          type: string
+          title: Long Description
+          description: Long-form AI-generated description of what the camera observed. Omitted when `status` is `pending` or `failed`. May also be omitted when `status` is `ready` if only the short description was generated — consumers should treat the field's absence as equivalent to null and check both descriptions before using either.
+      type: object
+      required:
+      - status
+      title: AlertAIDescriptionInfo
+      description: 'AI-generated description of an alert, grouped the way `clip` is.
+
+
+        Shared by the alert details endpoint and the `camera_alert_details`
+
+        webhook so both carry the identical payload shape.'
+    AlertFeedbackReason:
+      type: string
+      enum:
+      - wrong_activity
+      - not_useful
+      - too_late
+      - other
+      title: AlertFeedbackReason
+      description: Structured feedback reasons for thumbs down.
+    AlertClipInfo:
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/ClipStatus'
+          description: Whether the clip is `ready` (`mp4_url` present and downloadable), `pending` (still being uploaded — poll again shortly), or `failed` (upload failed or was skipped).
+        mp4_url:
+          type: string
+          title: Mp4 Url
+          description: Direct download URL for the MP4 video clip. No authentication required. Present only when `status` is `ready`; valid until `expires_at`.
+        expires_at:
+          type: string
+          format: date-time
+          title: Expires At
+          description: When the `mp4_url` expires (UTC). Present only when `status` is `ready`.
+      type: object
+      required:
+      - status
+      title: AlertClipInfo
+      description: 'Video clip associated with an alert.
+
+
+        Present only when a clip exists for the alert (today: firearm alerts with
+
+        auto clip download enabled). The `mp4_url`/`expires_at` fields are populated
+
+        only once `status` is `ready`.'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    FirearmAlertSchedule:
+      properties:
+        start_time:
+          type: string
+          format: time
+          title: Start Time
+          default: 00:00:00
+        end_time:
+          type: string
+          format: time
+          title: End Time
+          default: '23:59:59'
+        days_of_week:
+          items:
+            $ref: '#/components/schemas/DayOfWeek'
+          type: array
+          default:
+          - monday
+          - tuesday
+          - wednesday
+          - thursday
+          - friday
+          - saturday
+          - sunday
+      type: object
+      title: FirearmAlertSchedule
+      description: When the alert is active, expressed in camera-local (naive) time.
+    FirearmAlertFeedbackRequest:
+      properties:
+        rating:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Rating
+          description: Feedback score from 0.0 to 1.0. Today only 0.0 (incorrect / unhelpful) and 1.0 (correct) are produced by clients; intermediate values are reserved for future granular feedback.
+        feedback_reason:
+          allOf:
+          - $ref: '#/components/schemas/AlertFeedbackReason'
+          description: Optional structured reason for the feedback, typically provided with a sub-1.0 rating.
+        feedback_comment:
+          type: string
+          maxLength: 1000
+          title: Feedback Comment
+          description: Optional free-text note (max 1000 characters), typically used with feedback_reason='other'.
+      type: object
+      required:
+      - rating
+      title: FirearmAlertFeedbackRequest
+      description: Request body for submitting feedback on a firearm alert.
+    AIDescriptionStatus:
+      type: string
+      enum:
+      - ready
+      - pending
+      - failed
+      title: AIDescriptionStatus
+      description: 'Status of the AI-generated alert description.
+
+
+        The description is produced asynchronously by a vision language model after
+
+        the alert is emitted, so consumers polling this endpoint right after a
+
+        webhook may see `pending` for a few seconds before it transitions to
+
+        `ready` or `failed`.'
+    ErrorCode:
+      type: string
+      enum:
+      - VALIDATION_ERROR
+      - BATCH_SIZE_EXCEEDED
+      - NO_CAMERAS_PROVIDED
+      - PARTIAL_OPERATIONS_NOT_SUPPORTED
+      - CAMERA_ALREADY_EXISTS
+      - CAMERA_NOT_FOUND
+      - NO_LICENSES_AVAILABLE
+      - INVALID_MAC_ADDRESS
+      - INVALID_IP_ADDRESS
+      - DUPLICATE_MAC_ADDRESSES
+      - NVR_CAPACITY_EXCEEDED
+      - NVR_NOT_FOUND
+      - INVALID_NVR_NAME
+      - LOCATION_NOT_FOUND
+      - NVR_REGISTRATION_FAILED
+      - NVR_ALREADY_REGISTERED
+      - PING_REQUEST_TIMEOUT
+      - PING_REQUEST_FAILED
+      - SPEEDTEST_REQUEST_TIMEOUT
+      - SPEEDTEST_REQUEST_FAILED
+      - NO_NVRS_PROVIDED
+      - DUPLICATE_NVR_NAMES
+      - LOCATION_ACCESS_DENIED
+      - LOCATION_NAME_ALREADY_EXISTS
+      - LOCATION_CREATION_FAILED
+      - NO_LOCATIONS_PROVIDED
+      - DUPLICATE_LOCATION_NAMES
+      - ALERT_EVENT_NOT_FOUND
+      - ALERT_NO_VIDEO_AVAILABLE
+      - ALERT_CAMERA_NOT_FOUND
+      - ALERT_CLIP_GENERATION_FAILED
+      - ALERT_NOT_FIREARM
+      - FIREARM_ALERT_NOT_FOUND
+      - INVALID_RECIPIENT_EMAILS
+      - PREMIUM_ALERT_CAMERA_LIMIT_EXCEEDED
+      - CAMERA_ALREADY_IN_USE
+      - ACCESS_EVENT_NOT_FOUND
+      - ACCESS_EVENT_NO_VIDEO_AVAILABLE
+      - ACCESS_EVENT_CLIP_GENERATION_FAILED
+      - CAMERA_GROUP_NOT_FOUND
+      - CAMERA_GROUP_NAME_ALREADY_EXISTS
+      - CAMERA_GROUP_CREATION_FAILED
+      - NO_GROUPS_PROVIDED
+      - DUPLICATE_GROUP_NAMES
+      - INVALID_GROUP_ID
+      - DUPLICATE_GROUP_IDS
+      title: ErrorCode
+      description: Centralized error codes for Developer API endpoints.
+  securitySchemes:
+    X-Auth-Token:
+      type: apiKey
+      in: header
+      name: X-Auth-Token
+x-tagGroups:
+- name: Surveillance
+  tags:
+  - cameras
+  - camera-groups
+  - locations
+  - nvrs
+  - alerts
+- name: Access Control
+  tags:
+  - doors
+  - events
+- name: Emergency Management System
+  tags:
+  - reunification

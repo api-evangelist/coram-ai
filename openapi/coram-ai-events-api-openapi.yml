@@ -1,0 +1,357 @@
+openapi: 3.0.0
+info:
+  title: Coram alerts events API
+  description: "# Introduction\n\nThe Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows.\n\n# Supported Actions\n\nManage and interact with your Coram platform resources:\n\n| Resource | Description |\n| -------- | ----------- |\n| **Camera Groups** | Organize and configure camera collections |\n| **Cameras** | Access camera settings, streams, and metadata |\n| **Locations** | Manage physical site configurations |\n| **NVRs** | Control and monitor network video recorders |\n| **Access Control** | List access control doors and trigger remote unlocks |\n\n# Required Headers\n\nEvery API request must include the following headers:\n\n| Header | Required | Description |\n| ------ | -------- | ----------- |\n| `X-Auth-Token` | Yes | Your API key (from the API key List Page) |\n\n**Example:**\n```\ncurl -X GET \"https://api.coram.ai/developer-api/v1/cameras\" \\\n  -H \"X-Auth-Token: xxxxxxxxxxxxxxx\"\n```\n\n# Response Format\n\nAll API responses follow a consistent structure based on the operation result.\n\n## Success Response\n\n**List Operations** (e.g., `GET /v1/cameras`)\n\nReturns a `results` array with pagination support:\n\n```json\n{\n  \"results\": [\n    { \"id\": \"cam_001\", \"name\": \"Front Door\", ... },\n    { \"id\": \"cam_002\", \"name\": \"Lobby\", ... }\n  ],\n  \"has_more\": true\n}\n```\n\nWhen `has_more` is `true`, additional results are available. Use pagination parameters to fetch more.\n\n**Bulk/Batch Operations** (e.g., `POST /v1/cameras`, `PATCH /v1/cameras`)\n\nReturns a top-level `status` field indicating whether the API request was processed, and a `results` array where each item reflects the outcome of an individual operation:\n\n```json\n{\n  \"status\": \"success\",\n  \"results\": [\n    { \"status\": \"success\", \"data\": { \"id\": \"cam_001\", \"mac_address\": \"...\" } },\n    { \"status\": \"error\", \"error\": { \"code\": \"VALIDATION_ERROR\", \"message\": \"...\" } }\n  ]\n}\n```\n\n| Field | Description |\n| ----- | ----------- |\n| `status` (top-level) | `\"success\"` if the request was processed |\n| `results[].status` | `\"success\"` or `\"error\"` for each operation |\n| `results[].data` | Present when `status` is `\"success\"` |\n| `results[].error` | Present when `status` is `\"error\"` |\n\n## Error Response\n\nWhen an error occurs, the response includes `status` set to `\"error\"` along with detailed error information:\n\n```json\n{\n  \"status\": \"error\",\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"Invalid MAC address format\",\n    \"field\": \"mac_address\"\n  }\n}\n```\n\n**Error Fields:**\n\n| Field | Type | Description |\n| ----- | ---- | ----------- |\n| `code` | string | Machine-readable error code |\n| `message` | string | Human-readable error description |\n| `field` | string | The field that caused the error (if applicable) |\n\n\n# HTTP Status Codes\n\nThe API uses standard HTTP status codes to indicate the success or failure of requests:\n\n## Success Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `200 OK` | Request succeeded |\n| `201 Created` | Resource successfully created |\n| `204 No Content` | Request succeeded with no response body |\n\n## Client Error Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `400 Bad Request` | Invalid request syntax or parameters |\n| `401 Unauthorized` | Missing or invalid API key |\n| `403 Forbidden` | Valid API key but insufficient permissions |\n| `404 Not Found` | Requested resource does not exist |\n| `422 Unprocessable Entity` | Validation error in request body |\n| `429 Too Many Requests` | Rate limit exceeded |\n\n## Server Error Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `500 Internal Server Error` | Unexpected server error (rare) |\n| `502 Bad Gateway` | Upstream service unavailable |\n| `503 Service Unavailable` | Service temporarily unavailable |\n\n\n# Error Handling Best Practices\n\n1. **Always check the `status` field** — Verify if the response indicates `\"success\"` or `\"error\"`\n\n2. **Handle specific error codes** — Use the `error.code` field to handle different error types programmatically\n\n3. **Implement retry logic** — For `429` and `5xx` errors, implement exponential backoff\n\n4. **Log error details** — Capture `error.code`, `error.message`, and `error.field` for debugging\n\n**Example error handling:**\n```python\nresponse = api.create_camera(data)\n\nif response[\"status\"] == \"error\":\n    error = response[\"error\"]\n    if error[\"code\"] == \"VALIDATION_ERROR\":\n        print(f\"Invalid {error['field']}: {error['message']}\")\n    elif error[\"code\"] == \"DUPLICATE_RESOURCE\":\n        print(\"Camera already exists\")\n    else:\n        print(f\"Error: {error['message']}\")\n```\n\n---\n\n# Getting Started\n\n1. **Generate an API key** from your Coram app settings\n2. **Explore the endpoints** in the navigation to begin integrating\n\nNeed help? Contact [support@coram.ai](mailto:support@coram.ai)\n"
+  version: 1.0.0
+servers:
+- url: https://developer.coram.ai
+  description: Production
+security:
+- X-Auth-Token: []
+tags:
+- name: events
+  description: Query access control device events (card scans, REX presses, forced-open / held-open alarms, battery alerts, …) and fetch the MP4 video clip recorded by the door's primary camera around an event's timestamp.
+paths:
+  /v1/access-control/events/{event_id}/clip:
+    get:
+      tags:
+      - events
+      summary: Get event clip URL
+      description: Returns a public download URL for the MP4 video clip captured by the event's door's primary camera around the event timestamp. The URL does not require authentication and expires after 24 hours. Use the event_id from the events list endpoint or a webhook payload to fetch the clip.
+      operationId: GetEventClip
+      parameters:
+      - required: true
+        schema:
+          type: integer
+          title: Event Id
+        name: event_id
+        in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventClipResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      x-public-api-version: v1
+      x-public-api: true
+      security:
+      - X-Auth-Token: []
+  /v1/access-control/events:
+    get:
+      operationId: list_access_control_events
+      summary: List access control events
+      description: 'Returns events emitted by access control devices: card scans
+
+        (`card_reader_event`), grant/deny decisions (`access_control_event`),
+
+        REX presses (`rex_event`), door-held-open alarms (`door_held_open_event`),
+
+        battery alerts, and so on. Use the filters to narrow down by door,
+
+        cardholder, event type, or time window. Pagination uses the same
+
+        `page` + `limit` + `has_more` shape as every other developer-API list
+
+        endpoint.
+
+
+        The per-event `details` object carries event-type-specific data
+
+        (card_id, access_decision_reason, etc.). Treat it defensively: new
+
+        keys may appear in future event types.
+
+        '
+      tags:
+      - events
+      security:
+      - X-Auth-Token: []
+      parameters:
+      - in: query
+        name: start_time
+        required: false
+        schema:
+          type: string
+          format: date-time
+        description: RFC3339 inclusive lower bound on `timestamp`.
+      - in: query
+        name: end_time
+        required: false
+        schema:
+          type: string
+          format: date-time
+        description: RFC3339 inclusive upper bound on `timestamp`.
+      - in: query
+        name: door_ids
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+            format: int64
+        style: form
+        explode: true
+        description: Repeat to filter to events emitted at specific doors.
+      - in: query
+        name: cardholder_ids
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+            format: int64
+        style: form
+        explode: true
+        description: Repeat to filter to events for specific cardholders.
+      - in: query
+        name: event_types
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - card_reader_event
+            - access_control_event
+            - remote_access_control_event
+            - door_relay_event
+            - door_forced_open_event
+            - door_held_open_event
+            - rex_event
+            - door_position_event
+            - fire_alarm_event
+            - battery_status_event
+            - device_lid_status_event
+            - relay_testing_button_event
+            - door_control_state_event
+        style: form
+        explode: true
+        description: Repeat to filter to a subset of event types.
+      - in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+        description: 1-indexed page number.
+      - in: query
+        name: limit
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 100
+        description: Maximum events per page (capped at 100).
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventList'
+        '400':
+          description: Invalid filter values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '401':
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '403':
+          description: API key lacks the required scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+      x-public-api: true
+      x-public-api-version: v1
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    EventDoor:
+      type: object
+      required:
+      - id
+      - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        location_id:
+          type: integer
+          format: int64
+          nullable: true
+      x-public-api-group: events
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Event:
+      type: object
+      required:
+      - id
+      - timestamp
+      - event_type
+      - details
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Stable identifier for the event.
+        timestamp:
+          type: string
+          format: date-time
+          description: RFC3339 timestamp (UTC) at which the device emitted the event.
+        event_type:
+          type: string
+          description: 'Event type as emitted by the controller. See the `event_types`
+
+            query param on the list endpoint for the current enumeration.
+
+            '
+        door:
+          $ref: '#/components/schemas/EventDoor'
+        details:
+          type: object
+          additionalProperties: true
+          description: 'Event-type-specific payload (card_id, access_decision_reason,
+
+            dpi_state, etc.). The set of keys depends on `event_type` and
+
+            may expand over time — clients should ignore unknown keys.
+
+            '
+      x-public-api-group: events
+    EventList:
+      type: object
+      required:
+      - results
+      - has_more
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        has_more:
+          type: boolean
+          description: True if a further page beyond `page` exists.
+      x-public-api-group: events
+    AuthErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: 'Human-readable error description. Matches the shape FastAPI uses
+
+            for `HTTPException` responses, so existing code that parses the
+
+            Python developer-api''s auth errors works unchanged.
+
+            '
+    EventClipResponse:
+      properties:
+        preview_url:
+          type: string
+          title: Preview Url
+          description: Web player page URL for viewing the clip in a browser. No authentication required. Valid until expires_at.
+        mp4_url:
+          type: string
+          title: Mp4 Url
+          description: Direct download URL for the MP4 video clip. No authentication required. Valid until expires_at.
+        expires_at:
+          type: string
+          format: date-time
+          title: Expires At
+          description: When the URLs expire (UTC)
+        clip_start_time:
+          type: string
+          format: date-time
+          title: Clip Start Time
+          description: Start time of the video clip (UTC)
+        clip_end_time:
+          type: string
+          format: date-time
+          title: Clip End Time
+          description: End time of the video clip (UTC)
+        event_id:
+          type: integer
+          title: Event Id
+          description: ID of the access control event
+        camera_mac_address:
+          type: string
+          title: Camera Mac Address
+          description: MAC address of the camera that recorded the clip (door's primary camera)
+      type: object
+      required:
+      - preview_url
+      - mp4_url
+      - expires_at
+      - clip_start_time
+      - clip_end_time
+      - event_id
+      - camera_mac_address
+      title: EventClipResponse
+      description: Response for the access control event clip download endpoint.
+      x-public-api-group: events
+  securitySchemes:
+    X-Auth-Token:
+      type: apiKey
+      in: header
+      name: X-Auth-Token
+x-tagGroups:
+- name: Surveillance
+  tags:
+  - cameras
+  - camera-groups
+  - locations
+  - nvrs
+  - alerts
+- name: Access Control
+  tags:
+  - doors
+  - events
+- name: Emergency Management System
+  tags:
+  - reunification
