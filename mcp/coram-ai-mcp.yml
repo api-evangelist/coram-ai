@@ -1,0 +1,89 @@
+generated: '2026-07-18'
+method: derived
+status: candidate
+source: openapi/coram-ai-openapi-original.json
+note: 'No official hosted MCP server found for Coram as of 2026-07-18. Candidate tool list derived one-per-operation
+  from the Coram Developer API OpenAPI, for forging an MCP server (auth: X-Auth-Token API key).'
+server:
+  name: coram-ai
+  transport: http
+  auth: apiKey header X-Auth-Token
+tools:
+- name: get_alert_clip
+  description: Get alert video clip
+  source_operation: openapi/coram-ai-openapi-original.json#get_alert_clip
+- name: get_firearm_alert_feedback
+  description: Get firearm alert feedback
+  source_operation: openapi/coram-ai-openapi-original.json#get_firearm_alert_feedback
+- name: submit_firearm_alert_feedback
+  description: Submit firearm alert feedback
+  source_operation: openapi/coram-ai-openapi-original.json#submit_firearm_alert_feedback
+- name: get_alert_details
+  description: Get alert details (including AI description)
+  source_operation: openapi/coram-ai-openapi-original.json#get_alert_details
+- name: create_firearm_alert
+  description: Create firearm alert
+  source_operation: openapi/coram-ai-openapi-original.json#create_firearm_alert
+- name: delete_firearm_alert
+  description: Delete firearm alert
+  source_operation: openapi/coram-ai-openapi-original.json#delete_firearm_alert
+- name: update_firearm_alert
+  description: Update firearm alert
+  source_operation: openapi/coram-ai-openapi-original.json#update_firearm_alert
+- name: list_cameras
+  description: List cameras
+  source_operation: openapi/coram-ai-openapi-original.json#list_cameras
+- name: register_cameras
+  description: Register cameras
+  source_operation: openapi/coram-ai-openapi-original.json#register_cameras
+- name: delete_cameras
+  description: Delete cameras
+  source_operation: openapi/coram-ai-openapi-original.json#delete_cameras
+- name: update_cameras
+  description: Update cameras
+  source_operation: openapi/coram-ai-openapi-original.json#update_cameras
+- name: move_cameras
+  description: Move cameras
+  source_operation: openapi/coram-ai-openapi-original.json#move_cameras
+- name: list_camera_groups
+  description: List camera groups
+  source_operation: openapi/coram-ai-openapi-original.json#list_camera_groups
+- name: create_camera_group
+  description: Create camera group
+  source_operation: openapi/coram-ai-openapi-original.json#create_camera_group
+- name: list_nvrs
+  description: List NVRs
+  source_operation: openapi/coram-ai-openapi-original.json#list_nvrs
+- name: register_nvrs
+  description: Register NVRs
+  source_operation: openapi/coram-ai-openapi-original.json#register_nvrs
+- name: ping_nvr
+  description: Ping NVR
+  source_operation: openapi/coram-ai-openapi-original.json#ping_nvr
+- name: speedtest_nvr
+  description: Speed test NVR
+  source_operation: openapi/coram-ai-openapi-original.json#speedtest_nvr
+- name: list_locations
+  description: List locations
+  source_operation: openapi/coram-ai-openapi-original.json#list_locations
+- name: create_locations
+  description: Create locations
+  source_operation: openapi/coram-ai-openapi-original.json#create_locations
+- name: GetEventClip
+  description: Get event clip URL
+  source_operation: openapi/coram-ai-openapi-original.json#GetEventClip
+- name: list_access_control_doors
+  description: List access control doors
+  source_operation: openapi/coram-ai-openapi-original.json#list_access_control_doors
+- name: list_access_control_events
+  description: List access control events
+  source_operation: openapi/coram-ai-openapi-original.json#list_access_control_events
+- name: unlock_access_control_door
+  description: Unlock an access control door
+  source_operation: openapi/coram-ai-openapi-original.json#unlock_access_control_door
+- name: create_reunification_import
+  description: Import reunification roster data
+  source_operation: openapi/coram-ai-openapi-original.json#create_reunification_import
+- name: get_reunification_import_status
+  description: Get the current reunification import status
+  source_operation: openapi/coram-ai-openapi-original.json#get_reunification_import_status

@@ -1,0 +1,32 @@
+generated: '2026-07-18'
+method: derived
+source: openapi/coram-ai-openapi-original.json
+# Which cross-cutting / industry standards the Coram Developer API conforms to.
+# Derived from the OpenAPI + API reference; NDAA claim from coram.ai hardware pages.
+standards:
+  - id: openapi-3.0
+    conforms: true
+    evidence: Published OpenAPI 3.0.0 document at https://developer.coram.ai/openapi.json
+  - id: api-key-auth
+    conforms: true
+    evidence: securitySchemes X-Auth-Token (apiKey, header) applied globally
+  - id: oauth2
+    conforms: false
+    evidence: No oauth2 security scheme; API-key auth only
+  - id: oidc
+    conforms: false
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: Errors use a custom status/error envelope with an ErrorCode enum, not application/problem+json
+  - id: pagination
+    conforms: true
+    evidence: List operations return results[] with a has_more flag
+  - id: idempotency-key
+    conforms: false
+    evidence: No Idempotency-Key header; PUT feedback is last-write-wins only
+  - id: rate-limiting
+    conforms: true
+    evidence: 429 Too Many Requests documented with exponential-backoff guidance
+  - id: ndaa-compliant-hardware
+    conforms: true
+    evidence: Coram markets NDAA-compliant IP cameras (coram.ai/security-cameras); hardware/procurement standard, not an API standard

@@ -1,0 +1,52 @@
+generated: '2026-07-18'
+method: searched
+source: https://developer.coram.ai/
+# Cross-cutting request/response semantics for the Coram Developer API, captured from
+# the API reference description and derived from the OpenAPI. Cross-links: errors/,
+# lifecycle/, authentication/.
+authentication:
+  style: api-key
+  header: X-Auth-Token
+  note: API key generated from Coram app settings (API Key List page). Sent on every request.
+  see: authentication/coram-ai-authentication.yml
+authorization:
+  model: scope-and-role
+  note: >-
+    Keys carry scopes (read:* / write:*) and a creator role (regular / admin). Write
+    operations (firearm alerts, door unlock, reunification import) require write:* and an
+    admin creator; reads require read:*. Door unlock additionally enforces the same
+    per-door permission the in-app unlock flow checks — a key whose creator cannot unlock
+    a door in the UI cannot unlock it via the API. 403 is returned when scope, role, or
+    feature-flag requirements are unmet.
+pagination:
+  style: cursor-flag
+  response_fields:
+    results: array of items
+    has_more: boolean — when true, more results are available
+  default_page_size: 100
+  note: List operations return a results[] array plus has_more. Fetch additional pages when has_more is true.
+response_envelope:
+  list: '{ "results": [ ... ], "has_more": true }'
+  batch: '{ "status": "success", "results": [ { "status": "success", "data": {...} }, { "status": "error", "error": {...} } ] }'
+  error: '{ "status": "error", "error": { "code": "...", "message": "...", "field": "..." } }'
+  note: Bulk/batch operations report an overall status plus a per-item status in results[].
+  see: errors/coram-ai-error-codes.yml
+idempotency:
+  key_header: none
+  note: >-
+    Coram does not offer an Idempotency-Key header for safe POST retries. PUT operations
+    are naturally idempotent — submit_firearm_alert_feedback (PUT
+    /v1/alerts/{id}/feedback) is last-write-wins: submitting again replaces prior
+    feedback. Reunification imports are single-flight per organization (409 if one is
+    already running — poll the existing one instead of retrying).
+versioning:
+  scheme: uri-path
+  current: v1
+  see: lifecycle/coram-ai-lifecycle.yml
+rate_limiting:
+  signal: '429 Too Many Requests'
+  guidance: Implement exponential backoff on 429 and 5xx. Reunification import respects the same Auth0 rate limits as the in-app flow.
+  headers: not documented
+errors:
+  registry: errors/coram-ai-error-codes.yml
+  format: coram-envelope (machine-readable ErrorCode enum; not RFC 9457 problem+json)

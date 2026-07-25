@@ -1,0 +1,28 @@
+{
+  "provider": "coram-ai",
+  "sources": [
+    "coram-ai-alerts-api-openapi.yml",
+    "coram-ai-camera-groups-api-openapi.yml",
+    "coram-ai-cameras-api-openapi.yml",
+    "coram-ai-doors-api-openapi.yml",
+    "coram-ai-events-api-openapi.yml",
+    "coram-ai-locations-api-openapi.yml",
+    "coram-ai-nvrs-api-openapi.yml",
+    "coram-ai-reunification-api-openapi.yml"
+  ],
+  "outputs": [
+    "coram-ai-alerts-api-openapi.yml",
+    "coram-ai-camera-groups-api-openapi.yml",
+    "coram-ai-cameras-api-openapi.yml",
+    "coram-ai-doors-api-openapi.yml",
+    "coram-ai-events-api-openapi.yml",
+    "coram-ai-locations-api-openapi.yml",
+    "coram-ai-nvrs-api-openapi.yml",
+    "coram-ai-reunification-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

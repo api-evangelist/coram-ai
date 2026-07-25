@@ -1,0 +1,27 @@
+generated: '2026-07-18'
+method: searched
+source: https://developer.coram.ai/
+versioning:
+  scheme: uri-path
+  current: v1
+  api_version: 1.0.0
+  docs: https://developer.coram.ai/
+deprecation:
+  policy_url: null
+  sunset_header: false
+  note: No published deprecation/sunset policy found as of 2026-07-18.
+sla:
+  url: null
+  uptime_target: null
+status_page: https://status.coram.ai
+status_page_provider: incident.io
+status_components:
+  - Login System
+  - Analytics Dashboard
+  - Video Streaming
+  - Alerting System
+  - Admin Settings
+  - Access Control
+  - EMS
+changelog: https://www.coram.ai/product-updates
+deprecated_operations: []

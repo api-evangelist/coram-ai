@@ -1,0 +1,16 @@
+generated: '2026-07-18'
+method: generated
+source: openapi/coram-ai-openapi-original.json
+skills:
+  - file: coram-ai-onboard-camera-infrastructure.md
+    name: Onboard Coram camera infrastructure
+    api: openapi/coram-ai-openapi-original.json
+    operations: [create_locations, register_nvrs, ping_nvr, speedtest_nvr, list_nvrs, register_cameras, list_cameras, create_camera_group, move_cameras]
+  - file: coram-ai-firearm-alert-lifecycle.md
+    name: Manage the firearm alert lifecycle
+    api: openapi/coram-ai-openapi-original.json
+    operations: [create_firearm_alert, update_firearm_alert, delete_firearm_alert, get_alert_details, get_alert_clip, get_firearm_alert_feedback, submit_firearm_alert_feedback]
+  - file: coram-ai-access-control-response.md
+    name: Respond to an access-control event
+    api: openapi/coram-ai-openapi-original.json
+    operations: [list_access_control_doors, list_access_control_events, GetEventClip, unlock_access_control_door]

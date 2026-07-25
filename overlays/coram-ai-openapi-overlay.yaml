@@ -1,0 +1,34 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Coram API
+  version: 1.0.0
+# Non-destructive OpenAPI Overlay 1.0.0 capturing API Evangelist enrichment metadata.
+# Applies over the harvested spec; never mutates openapi/coram-ai-openapi-original.json.
+extends: openapi/coram-ai-openapi-original.json
+actions:
+  - target: $.info
+    update:
+      x-apievangelist-enriched: '2026-07-18'
+      x-apievangelist-provider: coram-ai
+      x-apievangelist-category: physical-security
+      x-apievangelist-auth: apiKey (X-Auth-Token header)
+      x-apievangelist-base-url: https://api.coram.ai/developer-api
+  - target: $.info
+    update:
+      x-apievangelist-artifacts:
+        authentication: authentication/coram-ai-authentication.yml
+        conventions: conventions/coram-ai-conventions.yml
+        errors: errors/coram-ai-error-codes.yml
+        data-model: data-model/coram-ai-data-model.yml
+        lifecycle: lifecycle/coram-ai-lifecycle.yml
+        changelog: changelog/coram-ai-changelog.yml
+        agentic-access: agentic-access/coram-ai-agentic-access.yml
+        mcp: mcp/coram-ai-mcp.yml
+        skills: skills/_index.yml
+  - target: $.info
+    update:
+      x-apievangelist-agent-readiness:
+        idempotency: PUT last-write-wins only; no Idempotency-Key header
+        pagination: results[] + has_more flag, page size 100
+        error-semantics: machine-readable ErrorCode registry
+        rate-limit-signal: 429 + exponential backoff (no documented headers)

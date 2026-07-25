@@ -1,0 +1,27 @@
+generated: '2026-07-18'
+method: searched
+source: https://www.coram.ai/product-updates
+# Coram publishes a monthly product-updates page (platform-wide, not API-versioned).
+# The Developer API itself is version 1.0.0 (uri-path v1). Recent window only.
+scheme: monthly-product-updates
+current_version: '1.0.0'
+url: https://www.coram.ai/product-updates
+entries:
+  - date: '2026-06-30'
+    title: June 2026 Product Updates
+    highlights: New ways to respond to emergencies, manage access on the go, and welcome guests.
+  - date: '2026-05-30'
+    title: May 2026 Product Updates
+    highlights: Deep Investigation mode for Coram Assistant, plus a range of other changes.
+  - date: '2026-04-30'
+    title: April 2026 Product Updates
+    highlights: Video Vault for archive/download management; mobile app navigation redesign; fisheye dewarping.
+  - date: '2026-03-31'
+    title: March 2026 Product Updates
+    highlights: Coram Visitor Management (iPad-based check-in); tailgating alerts for Access Control.
+  - date: '2026-02-28'
+    title: February 2026 Product Updates
+    highlights: Smarter Journey searches; reverse playback on timeline; redesigned Walls; improved face recognition.
+  - date: '2026-01-31'
+    title: January 2026 Product Updates
+    highlights: Launch of Coram Assistant for faster investigation and response.

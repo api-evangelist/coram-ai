@@ -1,0 +1,84 @@
+generated: '2026-07-18'
+method: derived
+source: openapi/coram-ai-openapi-original.json
+# Entity-relationship graph derived from OpenAPI schemas ($ref links + id-reference
+# fields). Coram's physical-security domain: NVRs record cameras, cameras live at
+# locations and group into camera groups, doors gate access events, alerts fire on cameras.
+entities:
+  - name: Location
+    description: A physical site / facility where cameras and NVRs are deployed.
+    schema: Location
+    operations: [list_locations, create_locations]
+  - name: NVR
+    description: Network Video Recorder — hardware that records/stores video from connected cameras.
+    schema: NVR
+    operations: [list_nvrs, register_nvrs, ping_nvr, speedtest_nvr]
+  - name: Camera
+    description: An individual IP camera registered to an NVR and located at a site.
+    schema: Camera
+    operations: [list_cameras, register_cameras, update_cameras, delete_cameras, move_cameras]
+  - name: CameraGroup
+    description: A logical collection of cameras for management.
+    schema: CameraGroup
+    operations: [list_camera_groups, create_camera_group]
+  - name: Door
+    description: An access-control door with a primary camera; supports remote unlock.
+    schema: Door
+    operations: [list_access_control_doors, unlock_access_control_door]
+  - name: AccessControlEvent
+    description: A device event (card scan, REX, forced/held-open, battery) with an optional video clip.
+    schema: null
+    operations: [list_access_control_events, GetEventClip]
+  - name: FirearmAlert
+    description: A firearm-detection alert configuration with recipients and schedule.
+    schema: CreateFirearmAlertRequest
+    operations: [create_firearm_alert, update_firearm_alert, delete_firearm_alert]
+  - name: AlertEvent
+    description: An individual alert occurrence with AI description, video clip, and feedback.
+    schema: AlertDetailsResponse
+    operations: [get_alert_details, get_alert_clip, get_firearm_alert_feedback, submit_firearm_alert_feedback]
+  - name: ReunificationImport
+    description: A bulk school-roster import job (schools, students, guardians, staff, sections).
+    schema: null
+    operations: [create_reunification_import, get_reunification_import_status]
+relationships:
+  - from: Camera
+    to: NVR
+    type: belongs_to
+    via: CameraNVRInfo
+  - from: Camera
+    to: Location
+    type: belongs_to
+    via: CameraLocation
+  - from: Camera
+    to: CameraGroup
+    type: belongs_to
+    via: group assignment (move_cameras / update_cameras)
+  - from: NVR
+    to: Location
+    type: belongs_to
+    via: location
+  - from: CameraGroup
+    to: Camera
+    type: has_many
+    via: camera membership
+  - from: Location
+    to: NVR
+    type: has_many
+    via: site deployment
+  - from: Door
+    to: Camera
+    type: has_one
+    via: primary camera (records the event clip)
+  - from: AccessControlEvent
+    to: Door
+    type: belongs_to
+    via: door_id
+  - from: AlertEvent
+    to: Camera
+    type: belongs_to
+    via: alert camera
+  - from: FirearmAlert
+    to: Camera
+    type: has_many
+    via: monitored cameras
