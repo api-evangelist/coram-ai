@@ -1,0 +1,111 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Coram alerts events API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-Auth-Token",
+      "value": "{{X-Auth-Token}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "events",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get event clip URL",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://developer.coram.ai/v1/access-control/events/:event_id/clip",
+            "params": [
+              {
+                "name": "event_id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-Auth-Token",
+              "value": "{{X-Auth-Token}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Returns a public download URL for the MP4 video clip captured by the event's door's primary camera around the event timestamp. The URL does not require authentication and expires after 24 hours. Use the event_id from the events list endpoint or a webhook payload to fetch the clip."
+        },
+        {
+          "info": {
+            "name": "List access control events",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://developer.coram.ai/v1/access-control/events",
+            "params": [
+              {
+                "name": "start_time",
+                "value": "",
+                "type": "query",
+                "description": "RFC3339 inclusive lower bound on `timestamp`."
+              },
+              {
+                "name": "end_time",
+                "value": "",
+                "type": "query",
+                "description": "RFC3339 inclusive upper bound on `timestamp`."
+              },
+              {
+                "name": "door_ids",
+                "value": "",
+                "type": "query",
+                "description": "Repeat to filter to events emitted at specific doors."
+              },
+              {
+                "name": "cardholder_ids",
+                "value": "",
+                "type": "query",
+                "description": "Repeat to filter to events for specific cardholders."
+              },
+              {
+                "name": "event_types",
+                "value": "",
+                "type": "query",
+                "description": "Repeat to filter to a subset of event types."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "1-indexed page number."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum events per page (capped at 100)."
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-Auth-Token",
+              "value": "{{X-Auth-Token}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Returns events emitted by access control devices: card scans\n(`card_reader_event`), grant/deny decisions (`access_control_event`),\nREX presses (`rex_event`), door-held-open alarms (`door_held_open_event`),\nbattery alerts, and so on. Use the filters to narrow down by door,\ncardholder, event type, or time window. Pagination uses the same\n`page` + `limit` + `has_more` shape as every other developer-API list\nendpoint.\n\nThe per-event `details` object carries event-type-specific data\n(card_id, access_"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -87,3 +87,9 @@ tools:
 - name: get_reunification_import_status
   description: Get the current reunification import status
   source_operation: openapi/coram-ai-openapi-original.json#get_reunification_import_status
+deployment:
+  mode: none
+  verified: derived
+  tools: 26
+  checked: '2026-08-12'
+  source: catalog MCP census

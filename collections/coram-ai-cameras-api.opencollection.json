@@ -1,0 +1,169 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Coram alerts cameras API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-Auth-Token",
+      "value": "{{X-Auth-Token}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "cameras",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List cameras",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://developer.coram.ai/v1/cameras",
+            "params": [
+              {
+                "name": "nvrs",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "location_ids",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "exclude_disabled",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "mac_addresses",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "ips",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "group_ids",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-Auth-Token",
+              "value": "{{X-Auth-Token}}",
+              "placement": "header"
+            }
+          },
+          "docs": "List all cameras accessible to the user.\n\nRetrieve cameras accessible to the user with their current status and\nconfiguration details. Results can be filtered by NVR, location,\nMAC address, IP address, or camera group ID."
+        },
+        {
+          "info": {
+            "name": "Register cameras",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://developer.coram.ai/v1/cameras",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-Auth-Token",
+              "value": "{{X-Auth-Token}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Register multiple cameras in single location.\n\nRegister one or more cameras at a location by assigning them to available NVRs.\nCameras are automatically load-balanced across NVRs based on available capacity."
+        },
+        {
+          "info": {
+            "name": "Update cameras",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://developer.coram.ai/v1/cameras",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-Auth-Token",
+              "value": "{{X-Auth-Token}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Update one or more cameras.\n\nUpdate configuration, credentials, feature flags, and group assignments\nfor one or more cameras. Each camera is updated independently - if one\ncamera's update fails, others can still succeed. Within each camera's\nupdate, all changes are atomic.\n\n**Group Assignment:**\n- Provide `group_ids` to assign the camera to specific groups\n- An empty list `[]` resets the camera to the default group\n- Omit `group_ids` (null) to leave group assignments unchanged"
+        },
+        {
+          "info": {
+            "name": "Delete cameras",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://developer.coram.ai/v1/cameras",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-Auth-Token",
+              "value": "{{X-Auth-Token}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Delete one or more cameras.\n\nRemove one or more cameras from the system."
+        },
+        {
+          "info": {
+            "name": "Move cameras",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://developer.coram.ai/v1/cameras/move",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-Auth-Token",
+              "value": "{{X-Auth-Token}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Move one or more cameras to different NVRs.\n\nTransfer one or more cameras from one NVR to another."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

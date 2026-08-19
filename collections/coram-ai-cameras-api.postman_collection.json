@@ -1,0 +1,1040 @@
+{
+  "item": [
+    {
+      "id": "25bbca5a-312e-451e-8db5-22f49bc64246",
+      "name": "cameras",
+      "description": {
+        "content": "Manage individual cameras within your organization. Use these endpoints to register new cameras, update camera settings, retrieve camera information and status, move cameras between locations, and delete cameras from your system.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "02afc0f5-6f78-4b3b-8fce-6102c08df553",
+          "name": "List cameras",
+          "request": {
+            "name": "List cameras",
+            "description": {
+              "content": "List all cameras accessible to the user.\n\nRetrieve cameras accessible to the user with their current status and\nconfiguration details. Results can be filtered by NVR, location,\nMAC address, IP address, or camera group ID.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "cameras"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "nvrs",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "nvrs",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "location_ids",
+                  "value": "<integer>"
+                },
+                {
+                  "disabled": false,
+                  "key": "location_ids",
+                  "value": "<integer>"
+                },
+                {
+                  "disabled": false,
+                  "key": "exclude_disabled",
+                  "value": "false"
+                },
+                {
+                  "disabled": false,
+                  "key": "mac_addresses",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "mac_addresses",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "ips",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "ips",
+                  "value": "<string>"
+                },
+                {
+                  "disabled": false,
+                  "key": "group_ids",
+                  "value": "<integer>"
+                },
+                {
+                  "disabled": false,
+                  "key": "group_ids",
+                  "value": "<integer>"
+                },
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "100"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-Auth-Token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "a0502f1f-d51c-4c0f-ba78-b87d4655a660",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cameras"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "nvrs",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "nvrs",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "location_ids",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "location_ids",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "exclude_disabled",
+                      "value": "false"
+                    },
+                    {
+                      "key": "mac_addresses",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "mac_addresses",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "ips",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "ips",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "group_ids",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "group_ids",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"results\": [\n    {\n      \"id\": 7994,\n      \"mac_address\": \"string\",\n      \"name\": \"string\",\n      \"ip\": \"string\",\n      \"vendor\": \"string\",\n      \"is_enabled\": true,\n      \"status\": {\n        \"is_online\": true,\n        \"last_seen_time\": \"string\"\n      },\n      \"nvr\": {\n        \"name\": \"string\",\n        \"timezone\": \"string\"\n      },\n      \"rtsp_port\": 8835,\n      \"onvif_enabled\": true,\n      \"video_orientation_type\": \"string\",\n      \"feature_flags\": {\n        \"is_audio_enabled\": false,\n        \"is_license_plate_detection_enabled\": false,\n        \"is_force_fps_enabled\": true,\n        \"auto_tracking\": false\n      },\n      \"camera_groups\": [\n        {\n          \"id\": 3843,\n          \"name\": \"string\"\n        },\n        {\n          \"id\": 8448,\n          \"name\": \"string\"\n        }\n      ],\n      \"manufacturer\": \"string\",\n      \"model\": \"string\",\n      \"width\": 9195,\n      \"height\": 6910,\n      \"fps\": 8142,\n      \"codec\": \"string\",\n      \"location\": {\n        \"id\": 787,\n        \"name\": \"string\",\n        \"timezone\": \"string\"\n      }\n    },\n    {\n      \"id\": 2373,\n      \"mac_address\": \"string\",\n      \"name\": \"string\",\n      \"ip\": \"string\",\n      \"vendor\": \"string\",\n      \"is_enabled\": false,\n      \"status\": {\n        \"is_online\": true,\n        \"last_seen_time\": \"string\"\n      },\n      \"nvr\": {\n        \"name\": \"string\",\n        \"timezone\": \"string\"\n      },\n      \"rtsp_port\": 9723,\n      \"onvif_enabled\": false,\n      \"video_orientation_type\": \"string\",\n      \"feature_flags\": {\n        \"is_audio_enabled\": true,\n        \"is_license_plate_detection_enabled\": false,\n        \"is_force_fps_enabled\": false,\n        \"auto_tracking\": false\n      },\n      \"camera_groups\": [\n        {\n          \"id\": 283,\n          \"name\": \"string\"\n        },\n        {\n          \"id\": 9417,\n          \"name\": \"string\"\n        }\n      ],\n      \"manufacturer\": \"string\",\n      \"model\": \"string\",\n      \"width\": 1508,\n      \"height\": 530,\n      \"fps\": 8039,\n      \"codec\": \"string\",\n      \"location\": {\n        \"id\": 3782,\n        \"name\": \"string\",\n        \"timezone\": \"string\"\n      }\n    }\n  ],\n  \"has_more\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "058b34ad-4183-4452-9e12-206a6b5f3725",
+              "name": "Validation error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cameras"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "nvrs",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "nvrs",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "location_ids",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "location_ids",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "exclude_disabled",
+                      "value": "false"
+                    },
+                    {
+                      "key": "mac_addresses",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "mac_addresses",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "ips",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "ips",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "group_ids",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "group_ids",
+                      "value": "<integer>"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"CAMERA_ALREADY_IN_USE\",\n    \"message\": \"string\",\n    \"field\": \"string\",\n    \"docs\": \"string\"\n  },\n  \"status\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "651c12dd-a80d-48be-8f41-309e03dd8e86",
+          "name": "Register cameras",
+          "request": {
+            "name": "Register cameras",
+            "description": {
+              "content": "Register multiple cameras in single location.\n\nRegister one or more cameras at a location by assigning them to available NVRs.\nCameras are automatically load-balanced across NVRs based on available capacity.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "cameras"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-Auth-Token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cameras\": [\n    {\n      \"name\": \"<string>\",\n      \"ip\": \"<string>\",\n      \"nvrs\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"mac_address\": \"<string>\",\n      \"vendor\": \"<string>\",\n      \"rtsp_port\": 554,\n      \"rtsp_url_path\": \"/unknown\",\n      \"credentials\": {\n        \"username\": \"<string>\",\n        \"password\": \"<string>\"\n      }\n    },\n    {\n      \"name\": \"<string>\",\n      \"ip\": \"<string>\",\n      \"nvrs\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"mac_address\": \"<string>\",\n      \"vendor\": \"<string>\",\n      \"rtsp_port\": 554,\n      \"rtsp_url_path\": \"/unknown\",\n      \"credentials\": {\n        \"username\": \"<string>\",\n        \"password\": \"<string>\"\n      }\n    }\n  ],\n  \"location_id\": \"<integer>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "e10d51bf-fc4c-43ea-ae36-cc5f9703a3c4",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cameras"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cameras\": [\n    {\n      \"name\": \"<string>\",\n      \"ip\": \"<string>\",\n      \"nvrs\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"mac_address\": \"<string>\",\n      \"vendor\": \"<string>\",\n      \"rtsp_port\": 554,\n      \"rtsp_url_path\": \"/unknown\",\n      \"credentials\": {\n        \"username\": \"<string>\",\n        \"password\": \"<string>\"\n      }\n    },\n    {\n      \"name\": \"<string>\",\n      \"ip\": \"<string>\",\n      \"nvrs\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"mac_address\": \"<string>\",\n      \"vendor\": \"<string>\",\n      \"rtsp_port\": 554,\n      \"rtsp_url_path\": \"/unknown\",\n      \"credentials\": {\n        \"username\": \"<string>\",\n        \"password\": \"<string>\"\n      }\n    }\n  ],\n  \"location_id\": \"<integer>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"summary\": {\n    \"total\": 9820,\n    \"success_count\": 6659,\n    \"failure_count\": 7770\n  },\n  \"status\": \"success\",\n  \"results\": [\n    {\n      \"data\": {\n        \"mac_address\": \"string\",\n        \"nvr\": {\n          \"title\": \"Nvr\",\n          \"description\": \"NVR the camera was assigned to\",\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        }\n      },\n      \"status\": \"success\"\n    },\n    {\n      \"data\": {\n        \"mac_address\": \"string\",\n        \"nvr\": {\n          \"title\": \"Nvr\",\n          \"description\": \"NVR the camera was assigned to\",\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        }\n      },\n      \"status\": \"success\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0606412f-1fe3-4ace-9bff-c5a9d9803cfe",
+              "name": "Validation error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cameras"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cameras\": [\n    {\n      \"name\": \"<string>\",\n      \"ip\": \"<string>\",\n      \"nvrs\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"mac_address\": \"<string>\",\n      \"vendor\": \"<string>\",\n      \"rtsp_port\": 554,\n      \"rtsp_url_path\": \"/unknown\",\n      \"credentials\": {\n        \"username\": \"<string>\",\n        \"password\": \"<string>\"\n      }\n    },\n    {\n      \"name\": \"<string>\",\n      \"ip\": \"<string>\",\n      \"nvrs\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"mac_address\": \"<string>\",\n      \"vendor\": \"<string>\",\n      \"rtsp_port\": 554,\n      \"rtsp_url_path\": \"/unknown\",\n      \"credentials\": {\n        \"username\": \"<string>\",\n        \"password\": \"<string>\"\n      }\n    }\n  ],\n  \"location_id\": \"<integer>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"CAMERA_ALREADY_IN_USE\",\n    \"message\": \"string\",\n    \"field\": \"string\",\n    \"docs\": \"string\"\n  },\n  \"status\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "284a1001-1b4f-409c-b8a8-5e476ea15c46",
+          "name": "Delete cameras",
+          "request": {
+            "name": "Delete cameras",
+            "description": {
+              "content": "Delete one or more cameras.\n\nRemove one or more cameras from the system.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "cameras"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-Auth-Token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"mac_address\": \"<string>\"\n  },\n  {\n    \"mac_address\": \"<string>\"\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "1eed5da8-eabf-4858-937f-ad22fb913b03",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cameras"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"mac_address\": \"<string>\"\n  },\n  {\n    \"mac_address\": \"<string>\"\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"summary\": {\n    \"total\": 1839,\n    \"success_count\": 2798,\n    \"failure_count\": 776\n  },\n  \"status\": \"success\",\n  \"results\": [\n    {\n      \"data\": {\n        \"mac_address\": \"string\"\n      },\n      \"status\": \"success\"\n    },\n    {\n      \"data\": {\n        \"mac_address\": \"string\"\n      },\n      \"status\": \"success\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c74b4627-9875-4add-9c82-ff0ef729f14a",
+              "name": "Validation error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cameras"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"mac_address\": \"<string>\"\n  },\n  {\n    \"mac_address\": \"<string>\"\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"CAMERA_ALREADY_IN_USE\",\n    \"message\": \"string\",\n    \"field\": \"string\",\n    \"docs\": \"string\"\n  },\n  \"status\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ccb05679-538c-4190-b82b-60616fea35c6",
+          "name": "Update cameras",
+          "request": {
+            "name": "Update cameras",
+            "description": {
+              "content": "Update one or more cameras.\n\nUpdate configuration, credentials, feature flags, and group assignments\nfor one or more cameras. Each camera is updated independently - if one\ncamera's update fails, others can still succeed. Within each camera's\nupdate, all changes are atomic.\n\n**Group Assignment:**\n- Provide `group_ids` to assign the camera to specific groups\n- An empty list `[]` resets the camera to the default group\n- Omit `group_ids` (null) to leave group assignments unchanged",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "cameras"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-Auth-Token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"mac_address\": \"<string>\",\n    \"name\": \"<string>\",\n    \"credentials\": {\n      \"username\": \"<string>\",\n      \"password\": \"<string>\"\n    },\n    \"enforced_rtsp_url\": \"<string>\",\n    \"feature_flags\": {\n      \"is_audio_enabled\": \"<boolean>\",\n      \"is_license_plate_detection_enabled\": \"<boolean>\",\n      \"auto_tracking\": \"<boolean>\"\n    },\n    \"group_ids\": [\n      \"<integer>\",\n      \"<integer>\"\n    ]\n  },\n  {\n    \"mac_address\": \"<string>\",\n    \"name\": \"<string>\",\n    \"credentials\": {\n      \"username\": \"<string>\",\n      \"password\": \"<string>\"\n    },\n    \"enforced_rtsp_url\": \"<string>\",\n    \"feature_flags\": {\n      \"is_audio_enabled\": \"<boolean>\",\n      \"is_license_plate_detection_enabled\": \"<boolean>\",\n      \"auto_tracking\": \"<boolean>\"\n    },\n    \"group_ids\": [\n      \"<integer>\",\n      \"<integer>\"\n    ]\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "fde4a55e-76b8-48ae-a1a1-9c8a6646f87d",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cameras"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"mac_address\": \"<string>\",\n    \"name\": \"<string>\",\n    \"credentials\": {\n      \"username\": \"<string>\",\n      \"password\": \"<string>\"\n    },\n    \"enforced_rtsp_url\": \"<string>\",\n    \"feature_flags\": {\n      \"is_audio_enabled\": \"<boolean>\",\n      \"is_license_plate_detection_enabled\": \"<boolean>\",\n      \"auto_tracking\": \"<boolean>\"\n    },\n    \"group_ids\": [\n      \"<integer>\",\n      \"<integer>\"\n    ]\n  },\n  {\n    \"mac_address\": \"<string>\",\n    \"name\": \"<string>\",\n    \"credentials\": {\n      \"username\": \"<string>\",\n      \"password\": \"<string>\"\n    },\n    \"enforced_rtsp_url\": \"<string>\",\n    \"feature_flags\": {\n      \"is_audio_enabled\": \"<boolean>\",\n      \"is_license_plate_detection_enabled\": \"<boolean>\",\n      \"auto_tracking\": \"<boolean>\"\n    },\n    \"group_ids\": [\n      \"<integer>\",\n      \"<integer>\"\n    ]\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"summary\": {\n    \"total\": 5938,\n    \"success_count\": 5859,\n    \"failure_count\": 5868\n  },\n  \"status\": \"success\",\n  \"results\": [\n    {\n      \"data\": {\n        \"mac_address\": \"string\",\n        \"name\": \"string\",\n        \"credentials\": {\n          \"title\": \"Credentials\",\n          \"description\": \"Camera credentials\",\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"enforced_rtsp_url\": \"string\",\n        \"feature_flags\": {\n          \"title\": \"CameraFeatureFlag\",\n          \"description\": \"Camera feature flags\",\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"group_ids\": [\n          2722,\n          8809\n        ]\n      },\n      \"status\": \"success\"\n    },\n    {\n      \"data\": {\n        \"mac_address\": \"string\",\n        \"name\": \"string\",\n        \"credentials\": {\n          \"title\": \"Credentials\",\n          \"description\": \"Camera credentials\",\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"enforced_rtsp_url\": \"string\",\n        \"feature_flags\": {\n          \"title\": \"CameraFeatureFlag\",\n          \"description\": \"Camera feature flags\",\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"group_ids\": [\n          56,\n          471\n        ]\n      },\n      \"status\": \"success\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "68b75be0-ce30-44ec-9df7-97e782e84fee",
+              "name": "Validation error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cameras"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"mac_address\": \"<string>\",\n    \"name\": \"<string>\",\n    \"credentials\": {\n      \"username\": \"<string>\",\n      \"password\": \"<string>\"\n    },\n    \"enforced_rtsp_url\": \"<string>\",\n    \"feature_flags\": {\n      \"is_audio_enabled\": \"<boolean>\",\n      \"is_license_plate_detection_enabled\": \"<boolean>\",\n      \"auto_tracking\": \"<boolean>\"\n    },\n    \"group_ids\": [\n      \"<integer>\",\n      \"<integer>\"\n    ]\n  },\n  {\n    \"mac_address\": \"<string>\",\n    \"name\": \"<string>\",\n    \"credentials\": {\n      \"username\": \"<string>\",\n      \"password\": \"<string>\"\n    },\n    \"enforced_rtsp_url\": \"<string>\",\n    \"feature_flags\": {\n      \"is_audio_enabled\": \"<boolean>\",\n      \"is_license_plate_detection_enabled\": \"<boolean>\",\n      \"auto_tracking\": \"<boolean>\"\n    },\n    \"group_ids\": [\n      \"<integer>\",\n      \"<integer>\"\n    ]\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"CAMERA_ALREADY_IN_USE\",\n    \"message\": \"string\",\n    \"field\": \"string\",\n    \"docs\": \"string\"\n  },\n  \"status\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "46fe53ba-d0bd-436b-bb70-74dc0a7dffa9",
+          "name": "Move cameras",
+          "request": {
+            "name": "Move cameras",
+            "description": {
+              "content": "Move one or more cameras to different NVRs.\n\nTransfer one or more cameras from one NVR to another.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "cameras",
+                "move"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-Auth-Token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"mac_address\": \"<string>\",\n    \"target_nvr\": \"<string>\"\n  },\n  {\n    \"mac_address\": \"<string>\",\n    \"target_nvr\": \"<string>\"\n  }\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "1279c097-bfdb-4342-8864-9c9490612068",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cameras",
+                    "move"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"mac_address\": \"<string>\",\n    \"target_nvr\": \"<string>\"\n  },\n  {\n    \"mac_address\": \"<string>\",\n    \"target_nvr\": \"<string>\"\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"summary\": {\n    \"total\": 3659,\n    \"success_count\": 9780,\n    \"failure_count\": 3091\n  },\n  \"status\": \"success\",\n  \"results\": [\n    {\n      \"data\": {\n        \"mac_address\": \"string\",\n        \"target_nvr\": \"string\"\n      },\n      \"status\": \"success\"\n    },\n    {\n      \"data\": {\n        \"mac_address\": \"string\",\n        \"target_nvr\": \"string\"\n      },\n      \"status\": \"success\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ca6b7cc4-e0b0-4ca8-90d5-a49dea6a0140",
+              "name": "Validation error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "cameras",
+                    "move"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  {\n    \"mac_address\": \"<string>\",\n    \"target_nvr\": \"<string>\"\n  },\n  {\n    \"mac_address\": \"<string>\",\n    \"target_nvr\": \"<string>\"\n  }\n]",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"CAMERA_ALREADY_IN_USE\",\n    \"message\": \"string\",\n    \"field\": \"string\",\n    \"docs\": \"string\"\n  },\n  \"status\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://developer.coram.ai",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-Auth-Token"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "7168a1e9-682f-4dd9-907a-ffc5fae482c9",
+    "name": "Coram alerts cameras API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "# Introduction\n\nThe Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows.\n\n# Supported Actions\n\nManage and interact with your Coram platform resources:\n\n| Resource | Description |\n| -------- | ----------- |\n| **Camera Groups** | Organize and configure camera collections |\n| **Cameras** | Access camera settings, streams, and metadata |\n| **Locations** | Manage physical site configurations |\n| **NVRs** | Control and monitor network video recorders |\n| **Access Control** | List access control doors and trigger remote unlocks |\n\n# Required Headers\n\nEvery API request must include the following headers:\n\n| Header | Required | Description |\n| ------ | -------- | ----------- |\n| `X-Auth-Token` | Yes | Your API key (from the API key List Page) |\n\n**Example:**\n```\ncurl -X GET \"https://api.coram.ai/developer-api/v1/cameras\" \\\n  -H \"X-Auth-Token: xxxxxxxxxxxxxxx\"\n```\n\n# Response Format\n\nAll API responses follow a consistent structure based on the operation result.\n\n## Success Response\n\n**List Operations** (e.g., `GET /v1/cameras`)\n\nReturns a `results` array with pagination support:\n\n```json\n{\n  \"results\": [\n    { \"id\": \"cam_001\", \"name\": \"Front Door\", ... },\n    { \"id\": \"cam_002\", \"name\": \"Lobby\", ... }\n  ],\n  \"has_more\": true\n}\n```\n\nWhen `has_more` is `true`, additional results are available. Use pagination parameters to fetch more.\n\n**Bulk/Batch Operations** (e.g., `POST /v1/cameras`, `PATCH /v1/cameras`)\n\nReturns a top-level `status` field indicating whether the API request was processed, and a `results` array where each item reflects the outcome of an individual operation:\n\n```json\n{\n  \"status\": \"success\",\n  \"results\": [\n    { \"status\": \"success\", \"data\": { \"id\": \"cam_001\", \"mac_address\": \"...\" } },\n    { \"status\": \"error\", \"error\": { \"code\": \"VALIDATION_ERROR\", \"message\": \"...\" } }\n  ]\n}\n```\n\n| Field | Description |\n| ----- | ----------- |\n| `status` (top-level) | `\"success\"` if the request was processed |\n| `results[].status` | `\"success\"` or `\"error\"` for each operation |\n| `results[].data` | Present when `status` is `\"success\"` |\n| `results[].error` | Present when `status` is `\"error\"` |\n\n## Error Response\n\nWhen an error occurs, the response includes `status` set to `\"error\"` along with detailed error information:\n\n```json\n{\n  \"status\": \"error\",\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"Invalid MAC address format\",\n    \"field\": \"mac_address\"\n  }\n}\n```\n\n**Error Fields:**\n\n| Field | Type | Description |\n| ----- | ---- | ----------- |\n| `code` | string | Machine-readable error code |\n| `message` | string | Human-readable error description |\n| `field` | string | The field that caused the error (if applicable) |\n\n\n# HTTP Status Codes\n\nThe API uses standard HTTP status codes to indicate the success or failure of requests:\n\n## Success Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `200 OK` | Request succeeded |\n| `201 Created` | Resource successfully created |\n| `204 No Content` | Request succeeded with no response body |\n\n## Client Error Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `400 Bad Request` | Invalid request syntax or parameters |\n| `401 Unauthorized` | Missing or invalid API key |\n| `403 Forbidden` | Valid API key but insufficient permissions |\n| `404 Not Found` | Requested resource does not exist |\n| `422 Unprocessable Entity` | Validation error in request body |\n| `429 Too Many Requests` | Rate limit exceeded |\n\n## Server Error Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `500 Internal Server Error` | Unexpected server error (rare) |\n| `502 Bad Gateway` | Upstream service unavailable |\n| `503 Service Unavailable` | Service temporarily unavailable |\n\n\n# Error Handling Best Practices\n\n1. **Always check the `status` field** — Verify if the response indicates `\"success\"` or `\"error\"`\n\n2. **Handle specific error codes** — Use the `error.code` field to handle different error types programmatically\n\n3. **Implement retry logic** — For `429` and `5xx` errors, implement exponential backoff\n\n4. **Log error details** — Capture `error.code`, `error.message`, and `error.field` for debugging\n\n**Example error handling:**\n```python\nresponse = api.create_camera(data)\n\nif response[\"status\"] == \"error\":\n    error = response[\"error\"]\n    if error[\"code\"] == \"VALIDATION_ERROR\":\n        print(f\"Invalid {error['field']}: {error['message']}\")\n    elif error[\"code\"] == \"DUPLICATE_RESOURCE\":\n        print(\"Camera already exists\")\n    else:\n        print(f\"Error: {error['message']}\")\n```\n\n---\n\n# Getting Started\n\n1. **Generate an API key** from your Coram app settings\n2. **Explore the endpoints** in the navigation to begin integrating\n\nNeed help? Contact [support@coram.ai](mailto:support@coram.ai)\n",
+      "type": "text/plain"
+    }
+  }
+}

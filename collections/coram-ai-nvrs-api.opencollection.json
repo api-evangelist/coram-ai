@@ -1,0 +1,128 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Coram alerts nvrs API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-Auth-Token",
+      "value": "{{X-Auth-Token}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "nvrs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List NVRs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://developer.coram.ai/v1/nvrs",
+            "params": [
+              {
+                "name": "nvr",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "location_id",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-Auth-Token",
+              "value": "{{X-Auth-Token}}",
+              "placement": "header"
+            }
+          },
+          "docs": "List all NVRs accessible to the user.\n\nRetrieve NVRs accessible to the user with their current status and\nconfiguration details. Results can be filtered by NVR UUID or location."
+        },
+        {
+          "info": {
+            "name": "Register NVRs",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://developer.coram.ai/v1/nvrs",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-Auth-Token",
+              "value": "{{X-Auth-Token}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Register multiple NVRs in bulk.\n\nRegister one or more NVRs by assigning them to locations."
+        },
+        {
+          "info": {
+            "name": "Ping NVR",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://developer.coram.ai/v1/nvrs/ping",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-Auth-Token",
+              "value": "{{X-Auth-Token}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Run ping test on NVR.\n\nSend a ping request to the specified NVR to test network connectivity."
+        },
+        {
+          "info": {
+            "name": "Speed test NVR",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://developer.coram.ai/v1/nvrs/speedtest",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-Auth-Token",
+              "value": "{{X-Auth-Token}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Run speed test on NVR.\n\nInitiate a speed test on the specified NVR to measure network performance."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

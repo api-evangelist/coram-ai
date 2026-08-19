@@ -1,0 +1,82 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Coram alerts doors API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-Auth-Token",
+      "value": "{{X-Auth-Token}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "doors",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List access control doors",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://developer.coram.ai/v1/access-control/doors",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "1-indexed page number."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum doors per page (capped at 100)."
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-Auth-Token",
+              "value": "{{X-Auth-Token}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Returns the doors the API key creator can see, with their online\nstatus. Admins see every door in the tenant; lower roles see only\ndoors they have permission to unlock. Use `page` and `limit` to\npaginate; `has_more` on the response signals more pages remain.\n"
+        },
+        {
+          "info": {
+            "name": "Unlock an access control door",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://developer.coram.ai/v1/access-control/doors/:door_id/unlock",
+            "params": [
+              {
+                "name": "door_id",
+                "value": "",
+                "type": "path",
+                "description": "ID of the door to unlock"
+              }
+            ],
+            "auth": {
+              "type": "apikey",
+              "key": "X-Auth-Token",
+              "value": "{{X-Auth-Token}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Sends a momentary-unlock command to the door's controller board.\nRequires `write:*` scope and an `admin` creator role. The same\npermission checks the in-app unlock flow runs are applied; an API key\nwhose creator no longer has access to the door is rejected.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

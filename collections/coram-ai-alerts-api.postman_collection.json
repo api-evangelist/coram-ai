@@ -1,0 +1,1863 @@
+{
+  "item": [
+    {
+      "id": "63351a6e-1317-40e7-b37b-7c92218e7152",
+      "name": "alerts",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "b59e9495-8e13-4ad1-8bf2-f742646160de",
+          "name": "Get alert video clip",
+          "request": {
+            "name": "Get alert video clip",
+            "description": {
+              "content": "Returns a public download URL for the MP4 video clip associated with an alert event. The URL does not require authentication and expires after 24 hours. Use the alert_event_id from webhook payloads to retrieve the corresponding video clip.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "alerts",
+                ":alert_event_id",
+                "clip"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "alert_event_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-Auth-Token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "3405d28c-9067-4f66-aa6e-70f17f793916",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    ":alert_event_id",
+                    "clip"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "alert_event_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"preview_url\": \"string\",\n  \"mp4_url\": \"string\",\n  \"expires_at\": \"1952-03-10T18:10:39.055Z\",\n  \"clip_start_time\": \"1964-05-30T23:41:49.655Z\",\n  \"clip_end_time\": \"1958-01-20T12:47:00.724Z\",\n  \"alert_event_id\": 4740,\n  \"camera_mac_address\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3f2f4029-a26d-4d02-a37c-1a7d0567984d",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    ":alert_event_id",
+                    "clip"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "alert_event_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e97ede17-e61f-41f4-aa2d-e851bdf70755",
+          "name": "Get firearm alert feedback",
+          "request": {
+            "name": "Get firearm alert feedback",
+            "description": {
+              "content": "Returns the current feedback (0.0-1.0 rating, reason, comment) for a firearm alert event. Feedback is organization-wide (last write wins); the feedback fields are null when no feedback has been submitted yet. Returns 404 if the alert event does not exist and 400 if it is not a firearm alert.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "alerts",
+                ":alert_event_id",
+                "feedback"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "alert_event_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-Auth-Token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "f132d29c-9a03-4f3b-92f9-c1cf92b7aa0a",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    ":alert_event_id",
+                    "feedback"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "alert_event_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"alert_event_id\": 9519,\n  \"rating\": 8567.251823750485,\n  \"feedback_reason\": \"other\",\n  \"feedback_comment\": \"string\",\n  \"user_id\": 1649,\n  \"timestamp\": \"1956-10-23T02:40:41.032Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "366fa2f1-9e05-440f-a206-84ccb17bc786",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    ":alert_event_id",
+                    "feedback"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "alert_event_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3a6adbc4-1b3f-4b8c-90b3-0b3c84b7432e",
+          "name": "Submit firearm alert feedback",
+          "request": {
+            "name": "Submit firearm alert feedback",
+            "description": {
+              "content": "Submits feedback for a firearm alert event. rating is a 0.0-1.0 score (today 0.0 = incorrect / unhelpful, 1.0 = correct). Feedback is organization-wide and idempotent (last write wins): submitting again replaces the previous feedback. feedback_reason and feedback_comment are optional. Returns 404 if the alert event does not exist and 400 if it is not a firearm alert.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "alerts",
+                ":alert_event_id",
+                "feedback"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "alert_event_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PUT",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-Auth-Token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": \"<number>\",\n  \"feedback_reason\": \"<string>\",\n  \"feedback_comment\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "4ee9d37d-8cf4-49f2-8942-8bedfaa75d11",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    ":alert_event_id",
+                    "feedback"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "alert_event_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"rating\": \"<number>\",\n  \"feedback_reason\": \"<string>\",\n  \"feedback_comment\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"alert_event_id\": 1208,\n  \"rating\": 8954.62363841078,\n  \"feedback_reason\": \"<string>\",\n  \"feedback_comment\": \"string\",\n  \"user_id\": 1754,\n  \"timestamp\": \"1993-04-02T14:26:16.337Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3b246c0d-4288-426f-ae5f-9ace284b1274",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    ":alert_event_id",
+                    "feedback"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "alert_event_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"rating\": \"<number>\",\n  \"feedback_reason\": \"<string>\",\n  \"feedback_comment\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "87c6c0ef-4154-48dd-80fa-0ed0f1499d80",
+          "name": "Get alert details (including AI description)",
+          "request": {
+            "name": "Get alert details (including AI description)",
+            "description": {
+              "content": "Returns metadata about an alert event, including the rich natural-language description generated by Coram's vision language model. The description is produced asynchronously after the alert webhook fires, so consumers polling immediately may see `ai.status: pending` for a few seconds. Once `ai.status` is `ready`, the `ai.short_description` and `ai.long_description` fields are populated. If it is `failed`, no description will arrive.\n\nWhen a video clip is being produced for the alert, a `clip` object is included: `clip.status` is `ready` (with a download `mp4_url` valid for 24 hours and an `expires_at`), `pending` (still uploading — poll again shortly), or `failed`. Alerts with no clip pipeline omit the `clip` field entirely.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "alerts",
+                ":alert_event_id",
+                "details"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "alert_event_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-Auth-Token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "89c68481-aa15-4be1-8113-06cce258c066",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    ":alert_event_id",
+                    "details"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "alert_event_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"alert_event_id\": 7343,\n  \"alert_time\": \"1953-11-20T22:17:39.473Z\",\n  \"camera_mac_address\": \"string\",\n  \"ai\": {\n    \"status\": \"ready\",\n    \"short_description\": \"string\",\n    \"long_description\": \"string\"\n  },\n  \"clip\": {\n    \"status\": \"failed\",\n    \"mp4_url\": \"string\",\n    \"expires_at\": \"1949-06-19T04:46:07.913Z\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ed9cf451-0720-4f80-ad25-3afc3b0a6a52",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    ":alert_event_id",
+                    "details"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "alert_event_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b69201a7-21a8-4093-80f7-ca9a479795e1",
+          "name": "Create firearm alert",
+          "request": {
+            "name": "Create firearm alert",
+            "description": {
+              "content": "Creates a firearm-detection alert configuration. Recipients are specified by email (matched case-insensitively) and resolved to platform users in your organization; each recipient's notify_by_sms/notify_by_push only deliver when the user has a phone number / registered device. The schedule is interpreted in each camera's local time. The alert is attributed to the API key (creator_name = the key's identity). Note: a null name is omitted from the response rather than serialized as null.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "alerts",
+                "firearm"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-Auth-Token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"camera_mac_addresses\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"recipients\": [\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    },\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    }\n  ],\n  \"name\": \"<string>\",\n  \"schedule\": {\n    \"start_time\": \"00:00:00\",\n    \"end_time\": \"23:59:59\",\n    \"days_of_week\": [\n      \"monday\",\n      \"tuesday\",\n      \"wednesday\",\n      \"thursday\",\n      \"friday\",\n      \"saturday\",\n      \"sunday\"\n    ]\n  },\n  \"sensitivity\": \"Medium\",\n  \"push_notification_level\": \"active\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "7bdf8349-902c-4532-b0b0-1c31c2527b33",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    "firearm"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"camera_mac_addresses\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"recipients\": [\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    },\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    }\n  ],\n  \"name\": \"<string>\",\n  \"schedule\": {\n    \"start_time\": \"00:00:00\",\n    \"end_time\": \"23:59:59\",\n    \"days_of_week\": [\n      \"monday\",\n      \"tuesday\",\n      \"wednesday\",\n      \"thursday\",\n      \"friday\",\n      \"saturday\",\n      \"sunday\"\n    ]\n  },\n  \"sensitivity\": \"Medium\",\n  \"push_notification_level\": \"active\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"firearm_alert_id\": 7598,\n  \"camera_mac_addresses\": [\n    \"string\",\n    \"string\"\n  ],\n  \"recipients\": [\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    },\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    }\n  ],\n  \"schedule\": {\n    \"start_time\": \"00:00:00\",\n    \"end_time\": \"23:59:59\",\n    \"days_of_week\": [\n      \"monday\",\n      \"tuesday\",\n      \"wednesday\",\n      \"thursday\",\n      \"friday\",\n      \"saturday\",\n      \"sunday\"\n    ]\n  },\n  \"sensitivity\": \"<string>\",\n  \"handgun_positive_stances\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"push_notification_level\": \"<string>\",\n  \"created_at\": \"2007-10-25T07:42:20.445Z\",\n  \"name\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "96804daa-5fc7-4c94-8741-fb8e2911023e",
+              "name": "Invalid request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    "firearm"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"camera_mac_addresses\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"recipients\": [\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    },\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    }\n  ],\n  \"name\": \"<string>\",\n  \"schedule\": {\n    \"start_time\": \"00:00:00\",\n    \"end_time\": \"23:59:59\",\n    \"days_of_week\": [\n      \"monday\",\n      \"tuesday\",\n      \"wednesday\",\n      \"thursday\",\n      \"friday\",\n      \"saturday\",\n      \"sunday\"\n    ]\n  },\n  \"sensitivity\": \"Medium\",\n  \"push_notification_level\": \"active\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"NVR_NOT_FOUND\",\n    \"message\": \"string\",\n    \"field\": \"string\",\n    \"docs\": \"string\"\n  },\n  \"status\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5111ae6f-6278-406b-80d7-a04c8b69f3f0",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    "firearm"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"camera_mac_addresses\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"recipients\": [\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    },\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    }\n  ],\n  \"name\": \"<string>\",\n  \"schedule\": {\n    \"start_time\": \"00:00:00\",\n    \"end_time\": \"23:59:59\",\n    \"days_of_week\": [\n      \"monday\",\n      \"tuesday\",\n      \"wednesday\",\n      \"thursday\",\n      \"friday\",\n      \"saturday\",\n      \"sunday\"\n    ]\n  },\n  \"sensitivity\": \"Medium\",\n  \"push_notification_level\": \"active\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"NVR_NOT_FOUND\",\n    \"message\": \"string\",\n    \"field\": \"string\",\n    \"docs\": \"string\"\n  },\n  \"status\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d30502f5-28d1-4a5c-bbb9-4fca5cf7bfe5",
+              "name": "Firearm alert not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    "firearm"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"camera_mac_addresses\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"recipients\": [\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    },\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    }\n  ],\n  \"name\": \"<string>\",\n  \"schedule\": {\n    \"start_time\": \"00:00:00\",\n    \"end_time\": \"23:59:59\",\n    \"days_of_week\": [\n      \"monday\",\n      \"tuesday\",\n      \"wednesday\",\n      \"thursday\",\n      \"friday\",\n      \"saturday\",\n      \"sunday\"\n    ]\n  },\n  \"sensitivity\": \"Medium\",\n  \"push_notification_level\": \"active\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"NVR_NOT_FOUND\",\n    \"message\": \"string\",\n    \"field\": \"string\",\n    \"docs\": \"string\"\n  },\n  \"status\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b27e328a-2f8f-4517-965c-dde61f3bbaf4",
+              "name": "Camera assignment conflict",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    "firearm"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"camera_mac_addresses\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"recipients\": [\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    },\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    }\n  ],\n  \"name\": \"<string>\",\n  \"schedule\": {\n    \"start_time\": \"00:00:00\",\n    \"end_time\": \"23:59:59\",\n    \"days_of_week\": [\n      \"monday\",\n      \"tuesday\",\n      \"wednesday\",\n      \"thursday\",\n      \"friday\",\n      \"saturday\",\n      \"sunday\"\n    ]\n  },\n  \"sensitivity\": \"Medium\",\n  \"push_notification_level\": \"active\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"NVR_NOT_FOUND\",\n    \"message\": \"string\",\n    \"field\": \"string\",\n    \"docs\": \"string\"\n  },\n  \"status\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "eb02a176-2e5a-473f-afc0-726e827c9223",
+              "name": "Validation error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    "firearm"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"camera_mac_addresses\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"recipients\": [\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    },\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    }\n  ],\n  \"name\": \"<string>\",\n  \"schedule\": {\n    \"start_time\": \"00:00:00\",\n    \"end_time\": \"23:59:59\",\n    \"days_of_week\": [\n      \"monday\",\n      \"tuesday\",\n      \"wednesday\",\n      \"thursday\",\n      \"friday\",\n      \"saturday\",\n      \"sunday\"\n    ]\n  },\n  \"sensitivity\": \"Medium\",\n  \"push_notification_level\": \"active\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"NVR_NOT_FOUND\",\n    \"message\": \"string\",\n    \"field\": \"string\",\n    \"docs\": \"string\"\n  },\n  \"status\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "8b68f2ed-0f3b-4ebc-ae3a-df1256b8b083",
+          "name": "Delete firearm alert",
+          "request": {
+            "name": "Delete firearm alert",
+            "description": {
+              "content": "Deletes a firearm-detection alert configuration and any alerts it has produced. Returns 204 on success and 404 if the firearm alert does not exist in your organization.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "alerts",
+                "firearm",
+                ":firearm_alert_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "firearm_alert_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-Auth-Token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "7f82194a-1761-4540-8c13-277500152b2e",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    "firearm",
+                    ":firearm_alert_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "firearm_alert_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "No Content",
+              "code": 204,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "3c4ba139-0065-4644-b76d-86b22e2fca0f",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    "firearm",
+                    ":firearm_alert_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "firearm_alert_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"NVR_NOT_FOUND\",\n    \"message\": \"string\",\n    \"field\": \"string\",\n    \"docs\": \"string\"\n  },\n  \"status\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1c251e12-6735-4430-95ff-53aeab540e25",
+              "name": "Firearm alert not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    "firearm",
+                    ":firearm_alert_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "firearm_alert_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"NVR_NOT_FOUND\",\n    \"message\": \"string\",\n    \"field\": \"string\",\n    \"docs\": \"string\"\n  },\n  \"status\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fec279fa-a65f-427a-9851-9f077133e6b9",
+              "name": "Validation Error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    "firearm",
+                    ":firearm_alert_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "firearm_alert_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": [\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    },\n    {\n      \"loc\": [\n        \"string\",\n        \"string\"\n      ],\n      \"msg\": \"string\",\n      \"type\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "020e9890-a18d-4ef6-b7e8-c147e12acd18",
+          "name": "Update firearm alert",
+          "request": {
+            "name": "Update firearm alert",
+            "description": {
+              "content": "Partially updates a firearm-detection alert configuration; only the provided fields are changed. Providing recipients replaces the full recipient list. The schedule is interpreted in each camera's local time. Note: a null name is omitted from the response rather than serialized as null.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "alerts",
+                "firearm",
+                ":firearm_alert_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<integer>",
+                  "key": "firearm_alert_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-Auth-Token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"<string>\",\n  \"camera_mac_addresses\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"recipients\": [\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    },\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    }\n  ],\n  \"schedule\": {\n    \"start_time\": \"00:00:00\",\n    \"end_time\": \"23:59:59\",\n    \"days_of_week\": [\n      \"monday\",\n      \"tuesday\",\n      \"wednesday\",\n      \"thursday\",\n      \"friday\",\n      \"saturday\",\n      \"sunday\"\n    ]\n  },\n  \"sensitivity\": \"<string>\",\n  \"handgun_positive_stances\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"push_notification_level\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "95bcf7f6-863d-41c1-9344-5864336a70e2",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    "firearm",
+                    ":firearm_alert_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "firearm_alert_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"camera_mac_addresses\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"recipients\": [\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    },\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    }\n  ],\n  \"schedule\": {\n    \"start_time\": \"00:00:00\",\n    \"end_time\": \"23:59:59\",\n    \"days_of_week\": [\n      \"monday\",\n      \"tuesday\",\n      \"wednesday\",\n      \"thursday\",\n      \"friday\",\n      \"saturday\",\n      \"sunday\"\n    ]\n  },\n  \"sensitivity\": \"<string>\",\n  \"handgun_positive_stances\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"push_notification_level\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"firearm_alert_id\": 7812,\n  \"camera_mac_addresses\": [\n    \"string\",\n    \"string\"\n  ],\n  \"recipients\": [\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    },\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    }\n  ],\n  \"schedule\": {\n    \"start_time\": \"00:00:00\",\n    \"end_time\": \"23:59:59\",\n    \"days_of_week\": [\n      \"monday\",\n      \"tuesday\",\n      \"wednesday\",\n      \"thursday\",\n      \"friday\",\n      \"saturday\",\n      \"sunday\"\n    ]\n  },\n  \"sensitivity\": \"<string>\",\n  \"handgun_positive_stances\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"push_notification_level\": \"<string>\",\n  \"created_at\": \"1959-02-16T14:45:34.713Z\",\n  \"name\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "67e2b49e-5a7e-42ed-a915-daae55774ffa",
+              "name": "Invalid request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    "firearm",
+                    ":firearm_alert_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "firearm_alert_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"camera_mac_addresses\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"recipients\": [\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    },\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    }\n  ],\n  \"schedule\": {\n    \"start_time\": \"00:00:00\",\n    \"end_time\": \"23:59:59\",\n    \"days_of_week\": [\n      \"monday\",\n      \"tuesday\",\n      \"wednesday\",\n      \"thursday\",\n      \"friday\",\n      \"saturday\",\n      \"sunday\"\n    ]\n  },\n  \"sensitivity\": \"<string>\",\n  \"handgun_positive_stances\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"push_notification_level\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"NVR_NOT_FOUND\",\n    \"message\": \"string\",\n    \"field\": \"string\",\n    \"docs\": \"string\"\n  },\n  \"status\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "dfb38768-259a-4bcb-841a-946a85d9fc48",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    "firearm",
+                    ":firearm_alert_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "firearm_alert_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"camera_mac_addresses\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"recipients\": [\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    },\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    }\n  ],\n  \"schedule\": {\n    \"start_time\": \"00:00:00\",\n    \"end_time\": \"23:59:59\",\n    \"days_of_week\": [\n      \"monday\",\n      \"tuesday\",\n      \"wednesday\",\n      \"thursday\",\n      \"friday\",\n      \"saturday\",\n      \"sunday\"\n    ]\n  },\n  \"sensitivity\": \"<string>\",\n  \"handgun_positive_stances\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"push_notification_level\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"NVR_NOT_FOUND\",\n    \"message\": \"string\",\n    \"field\": \"string\",\n    \"docs\": \"string\"\n  },\n  \"status\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b3a87b66-9ec1-4d23-9c40-25fc8f59b179",
+              "name": "Firearm alert not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    "firearm",
+                    ":firearm_alert_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "firearm_alert_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"camera_mac_addresses\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"recipients\": [\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    },\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    }\n  ],\n  \"schedule\": {\n    \"start_time\": \"00:00:00\",\n    \"end_time\": \"23:59:59\",\n    \"days_of_week\": [\n      \"monday\",\n      \"tuesday\",\n      \"wednesday\",\n      \"thursday\",\n      \"friday\",\n      \"saturday\",\n      \"sunday\"\n    ]\n  },\n  \"sensitivity\": \"<string>\",\n  \"handgun_positive_stances\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"push_notification_level\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"NVR_NOT_FOUND\",\n    \"message\": \"string\",\n    \"field\": \"string\",\n    \"docs\": \"string\"\n  },\n  \"status\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b3bdc7ed-c8d1-4a13-b966-2b168e4dff3a",
+              "name": "Camera assignment conflict",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    "firearm",
+                    ":firearm_alert_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "firearm_alert_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"camera_mac_addresses\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"recipients\": [\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    },\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    }\n  ],\n  \"schedule\": {\n    \"start_time\": \"00:00:00\",\n    \"end_time\": \"23:59:59\",\n    \"days_of_week\": [\n      \"monday\",\n      \"tuesday\",\n      \"wednesday\",\n      \"thursday\",\n      \"friday\",\n      \"saturday\",\n      \"sunday\"\n    ]\n  },\n  \"sensitivity\": \"<string>\",\n  \"handgun_positive_stances\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"push_notification_level\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"NVR_NOT_FOUND\",\n    \"message\": \"string\",\n    \"field\": \"string\",\n    \"docs\": \"string\"\n  },\n  \"status\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ee4c8cca-6b86-459b-8172-18414776b6f1",
+              "name": "Validation error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "alerts",
+                    "firearm",
+                    ":firearm_alert_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<integer>",
+                      "key": "firearm_alert_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"camera_mac_addresses\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"recipients\": [\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    },\n    {\n      \"email\": \"<email>\",\n      \"notify_by_email\": true,\n      \"notify_by_sms\": true,\n      \"notify_by_push\": true\n    }\n  ],\n  \"schedule\": {\n    \"start_time\": \"00:00:00\",\n    \"end_time\": \"23:59:59\",\n    \"days_of_week\": [\n      \"monday\",\n      \"tuesday\",\n      \"wednesday\",\n      \"thursday\",\n      \"friday\",\n      \"saturday\",\n      \"sunday\"\n    ]\n  },\n  \"sensitivity\": \"<string>\",\n  \"handgun_positive_stances\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"push_notification_level\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"NVR_NOT_FOUND\",\n    \"message\": \"string\",\n    \"field\": \"string\",\n    \"docs\": \"string\"\n  },\n  \"status\": \"error\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://developer.coram.ai",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-Auth-Token"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "faa87a4e-8cb0-4d8f-8d0d-cebfbf803ff4",
+    "name": "Coram alerts API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "# Introduction\n\nThe Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows.\n\n# Supported Actions\n\nManage and interact with your Coram platform resources:\n\n| Resource | Description |\n| -------- | ----------- |\n| **Camera Groups** | Organize and configure camera collections |\n| **Cameras** | Access camera settings, streams, and metadata |\n| **Locations** | Manage physical site configurations |\n| **NVRs** | Control and monitor network video recorders |\n| **Access Control** | List access control doors and trigger remote unlocks |\n\n# Required Headers\n\nEvery API request must include the following headers:\n\n| Header | Required | Description |\n| ------ | -------- | ----------- |\n| `X-Auth-Token` | Yes | Your API key (from the API key List Page) |\n\n**Example:**\n```\ncurl -X GET \"https://api.coram.ai/developer-api/v1/cameras\" \\\n  -H \"X-Auth-Token: xxxxxxxxxxxxxxx\"\n```\n\n# Response Format\n\nAll API responses follow a consistent structure based on the operation result.\n\n## Success Response\n\n**List Operations** (e.g., `GET /v1/cameras`)\n\nReturns a `results` array with pagination support:\n\n```json\n{\n  \"results\": [\n    { \"id\": \"cam_001\", \"name\": \"Front Door\", ... },\n    { \"id\": \"cam_002\", \"name\": \"Lobby\", ... }\n  ],\n  \"has_more\": true\n}\n```\n\nWhen `has_more` is `true`, additional results are available. Use pagination parameters to fetch more.\n\n**Bulk/Batch Operations** (e.g., `POST /v1/cameras`, `PATCH /v1/cameras`)\n\nReturns a top-level `status` field indicating whether the API request was processed, and a `results` array where each item reflects the outcome of an individual operation:\n\n```json\n{\n  \"status\": \"success\",\n  \"results\": [\n    { \"status\": \"success\", \"data\": { \"id\": \"cam_001\", \"mac_address\": \"...\" } },\n    { \"status\": \"error\", \"error\": { \"code\": \"VALIDATION_ERROR\", \"message\": \"...\" } }\n  ]\n}\n```\n\n| Field | Description |\n| ----- | ----------- |\n| `status` (top-level) | `\"success\"` if the request was processed |\n| `results[].status` | `\"success\"` or `\"error\"` for each operation |\n| `results[].data` | Present when `status` is `\"success\"` |\n| `results[].error` | Present when `status` is `\"error\"` |\n\n## Error Response\n\nWhen an error occurs, the response includes `status` set to `\"error\"` along with detailed error information:\n\n```json\n{\n  \"status\": \"error\",\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"Invalid MAC address format\",\n    \"field\": \"mac_address\"\n  }\n}\n```\n\n**Error Fields:**\n\n| Field | Type | Description |\n| ----- | ---- | ----------- |\n| `code` | string | Machine-readable error code |\n| `message` | string | Human-readable error description |\n| `field` | string | The field that caused the error (if applicable) |\n\n\n# HTTP Status Codes\n\nThe API uses standard HTTP status codes to indicate the success or failure of requests:\n\n## Success Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `200 OK` | Request succeeded |\n| `201 Created` | Resource successfully created |\n| `204 No Content` | Request succeeded with no response body |\n\n## Client Error Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `400 Bad Request` | Invalid request syntax or parameters |\n| `401 Unauthorized` | Missing or invalid API key |\n| `403 Forbidden` | Valid API key but insufficient permissions |\n| `404 Not Found` | Requested resource does not exist |\n| `422 Unprocessable Entity` | Validation error in request body |\n| `429 Too Many Requests` | Rate limit exceeded |\n\n## Server Error Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `500 Internal Server Error` | Unexpected server error (rare) |\n| `502 Bad Gateway` | Upstream service unavailable |\n| `503 Service Unavailable` | Service temporarily unavailable |\n\n\n# Error Handling Best Practices\n\n1. **Always check the `status` field** — Verify if the response indicates `\"success\"` or `\"error\"`\n\n2. **Handle specific error codes** — Use the `error.code` field to handle different error types programmatically\n\n3. **Implement retry logic** — For `429` and `5xx` errors, implement exponential backoff\n\n4. **Log error details** — Capture `error.code`, `error.message`, and `error.field` for debugging\n\n**Example error handling:**\n```python\nresponse = api.create_camera(data)\n\nif response[\"status\"] == \"error\":\n    error = response[\"error\"]\n    if error[\"code\"] == \"VALIDATION_ERROR\":\n        print(f\"Invalid {error['field']}: {error['message']}\")\n    elif error[\"code\"] == \"DUPLICATE_RESOURCE\":\n        print(\"Camera already exists\")\n    else:\n        print(f\"Error: {error['message']}\")\n```\n\n---\n\n# Getting Started\n\n1. **Generate an API key** from your Coram app settings\n2. **Explore the endpoints** in the navigation to begin integrating\n\nNeed help? Contact [support@coram.ai](mailto:support@coram.ai)\n",
+      "type": "text/plain"
+    }
+  }
+}

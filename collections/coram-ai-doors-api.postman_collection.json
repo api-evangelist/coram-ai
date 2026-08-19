@@ -1,0 +1,560 @@
+{
+  "item": [
+    {
+      "id": "66c1c5d8-1371-4ec5-a06d-668f99d04996",
+      "name": "doors",
+      "description": {
+        "content": "List access control doors and trigger momentary remote unlocks. The same per-door permission checks the in-app unlock flow runs apply here — a key whose creator cannot unlock a door in the UI cannot unlock it via the API either.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "910d8577-c1e2-4d70-9cf9-5a8366690297",
+          "name": "List access control doors",
+          "request": {
+            "name": "List access control doors",
+            "description": {
+              "content": "Returns the doors the API key creator can see, with their online\nstatus. Admins see every door in the tenant; lower roles see only\ndoors they have permission to unlock. Use `page` and `limit` to\npaginate; `has_more` on the response signals more pages remain.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "access-control",
+                "doors"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "page",
+                  "value": "1",
+                  "description": "1-indexed page number."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "100",
+                  "description": "Maximum doors per page (capped at 100)."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-Auth-Token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "9b66492a-776d-4714-8a33-ac7d1123c79c",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "access-control",
+                    "doors"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"results\": [\n    {\n      \"id\": 4790,\n      \"name\": \"string\",\n      \"location_id\": 6583,\n      \"is_online\": false\n    },\n    {\n      \"id\": 322,\n      \"name\": \"string\",\n      \"location_id\": 4227,\n      \"is_online\": true\n    }\n  ],\n  \"has_more\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1a484988-790d-43fc-beac-753e4fcc3e0b",
+              "name": "Missing or invalid API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "access-control",
+                    "doors"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ed74afc0-5190-411a-ab9b-fbb3116e3f47",
+              "name": "API key lacks the required scope or role",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "access-control",
+                    "doors"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "82644046-175f-4f5d-8c9c-840816a5c112",
+          "name": "Unlock an access control door",
+          "request": {
+            "name": "Unlock an access control door",
+            "description": {
+              "content": "Sends a momentary-unlock command to the door's controller board.\nRequires `write:*` scope and an `admin` creator role. The same\npermission checks the in-app unlock flow runs are applied; an API key\nwhose creator no longer has access to the door is rejected.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "access-control",
+                "doors",
+                ":door_id",
+                "unlock"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<long>",
+                  "key": "door_id",
+                  "description": "(Required) ID of the door to unlock"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-Auth-Token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "e5ab3d20-2061-425b-abe3-4ec25a7c4ea6",
+              "name": "Unlock command issued",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "access-control",
+                    "doors",
+                    ":door_id",
+                    "unlock"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<long>",
+                      "key": "door_id",
+                      "description": "(Required) ID of the door to unlock"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"success\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "edde2b59-77cb-495b-a7c9-a99979895ebd",
+              "name": "Invalid door_id",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "access-control",
+                    "doors",
+                    ":door_id",
+                    "unlock"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<long>",
+                      "key": "door_id",
+                      "description": "(Required) ID of the door to unlock"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7be1b907-3e08-4665-ac45-96c258da85ae",
+              "name": "Missing or invalid API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "access-control",
+                    "doors",
+                    ":door_id",
+                    "unlock"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<long>",
+                      "key": "door_id",
+                      "description": "(Required) ID of the door to unlock"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2ac8d400-eca7-4201-9558-e5a39569bf78",
+              "name": "API key lacks the required scope or role, or the creator cannot unlock this door",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "access-control",
+                    "doors",
+                    ":door_id",
+                    "unlock"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<long>",
+                      "key": "door_id",
+                      "description": "(Required) ID of the door to unlock"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://developer.coram.ai",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-Auth-Token"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "b8017cd6-412e-4a32-a920-f7b1e7d42ca7",
+    "name": "Coram alerts doors API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "# Introduction\n\nThe Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows.\n\n# Supported Actions\n\nManage and interact with your Coram platform resources:\n\n| Resource | Description |\n| -------- | ----------- |\n| **Camera Groups** | Organize and configure camera collections |\n| **Cameras** | Access camera settings, streams, and metadata |\n| **Locations** | Manage physical site configurations |\n| **NVRs** | Control and monitor network video recorders |\n| **Access Control** | List access control doors and trigger remote unlocks |\n\n# Required Headers\n\nEvery API request must include the following headers:\n\n| Header | Required | Description |\n| ------ | -------- | ----------- |\n| `X-Auth-Token` | Yes | Your API key (from the API key List Page) |\n\n**Example:**\n```\ncurl -X GET \"https://api.coram.ai/developer-api/v1/cameras\" \\\n  -H \"X-Auth-Token: xxxxxxxxxxxxxxx\"\n```\n\n# Response Format\n\nAll API responses follow a consistent structure based on the operation result.\n\n## Success Response\n\n**List Operations** (e.g., `GET /v1/cameras`)\n\nReturns a `results` array with pagination support:\n\n```json\n{\n  \"results\": [\n    { \"id\": \"cam_001\", \"name\": \"Front Door\", ... },\n    { \"id\": \"cam_002\", \"name\": \"Lobby\", ... }\n  ],\n  \"has_more\": true\n}\n```\n\nWhen `has_more` is `true`, additional results are available. Use pagination parameters to fetch more.\n\n**Bulk/Batch Operations** (e.g., `POST /v1/cameras`, `PATCH /v1/cameras`)\n\nReturns a top-level `status` field indicating whether the API request was processed, and a `results` array where each item reflects the outcome of an individual operation:\n\n```json\n{\n  \"status\": \"success\",\n  \"results\": [\n    { \"status\": \"success\", \"data\": { \"id\": \"cam_001\", \"mac_address\": \"...\" } },\n    { \"status\": \"error\", \"error\": { \"code\": \"VALIDATION_ERROR\", \"message\": \"...\" } }\n  ]\n}\n```\n\n| Field | Description |\n| ----- | ----------- |\n| `status` (top-level) | `\"success\"` if the request was processed |\n| `results[].status` | `\"success\"` or `\"error\"` for each operation |\n| `results[].data` | Present when `status` is `\"success\"` |\n| `results[].error` | Present when `status` is `\"error\"` |\n\n## Error Response\n\nWhen an error occurs, the response includes `status` set to `\"error\"` along with detailed error information:\n\n```json\n{\n  \"status\": \"error\",\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"Invalid MAC address format\",\n    \"field\": \"mac_address\"\n  }\n}\n```\n\n**Error Fields:**\n\n| Field | Type | Description |\n| ----- | ---- | ----------- |\n| `code` | string | Machine-readable error code |\n| `message` | string | Human-readable error description |\n| `field` | string | The field that caused the error (if applicable) |\n\n\n# HTTP Status Codes\n\nThe API uses standard HTTP status codes to indicate the success or failure of requests:\n\n## Success Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `200 OK` | Request succeeded |\n| `201 Created` | Resource successfully created |\n| `204 No Content` | Request succeeded with no response body |\n\n## Client Error Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `400 Bad Request` | Invalid request syntax or parameters |\n| `401 Unauthorized` | Missing or invalid API key |\n| `403 Forbidden` | Valid API key but insufficient permissions |\n| `404 Not Found` | Requested resource does not exist |\n| `422 Unprocessable Entity` | Validation error in request body |\n| `429 Too Many Requests` | Rate limit exceeded |\n\n## Server Error Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `500 Internal Server Error` | Unexpected server error (rare) |\n| `502 Bad Gateway` | Upstream service unavailable |\n| `503 Service Unavailable` | Service temporarily unavailable |\n\n\n# Error Handling Best Practices\n\n1. **Always check the `status` field** — Verify if the response indicates `\"success\"` or `\"error\"`\n\n2. **Handle specific error codes** — Use the `error.code` field to handle different error types programmatically\n\n3. **Implement retry logic** — For `429` and `5xx` errors, implement exponential backoff\n\n4. **Log error details** — Capture `error.code`, `error.message`, and `error.field` for debugging\n\n**Example error handling:**\n```python\nresponse = api.create_camera(data)\n\nif response[\"status\"] == \"error\":\n    error = response[\"error\"]\n    if error[\"code\"] == \"VALIDATION_ERROR\":\n        print(f\"Invalid {error['field']}: {error['message']}\")\n    elif error[\"code\"] == \"DUPLICATE_RESOURCE\":\n        print(\"Camera already exists\")\n    else:\n        print(f\"Error: {error['message']}\")\n```\n\n---\n\n# Getting Started\n\n1. **Generate an API key** from your Coram app settings\n2. **Explore the endpoints** in the navigation to begin integrating\n\nNeed help? Contact [support@coram.ai](mailto:support@coram.ai)\n",
+      "type": "text/plain"
+    }
+  }
+}

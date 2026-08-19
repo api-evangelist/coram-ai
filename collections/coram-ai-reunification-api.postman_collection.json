@@ -1,0 +1,717 @@
+{
+  "item": [
+    {
+      "id": "76b9e0b7-2fcd-4ee7-a76f-8a0bc8fd3f59",
+      "name": "reunification",
+      "description": {
+        "content": "Bulk-import your school reunification roster — schools, students (with guardians), teachers, staff, and class sections — programmatically, the API equivalent of the in-app CSV upload. Each import is a full roster replace; poll the status endpoint for completion and partial-success counts.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "163273c3-b573-4a69-a531-e60b89a9d4c9",
+          "name": "Import reunification roster data",
+          "request": {
+            "name": "Import reunification roster data",
+            "description": {
+              "content": "Bulk-imports reunification roster data — schools, students (with their\nguardians), teachers, and staff — as JSON. The programmatic equivalent\nof the in-app CSV upload.\n\n**This is a full roster replace, not a partial update.** Each call\nreplaces the organization's entire reunification roster: every person\nand school you send is inserted or updated, and **anything you omit is\nremoved**. To keep someone, include them in every import; to remove\nsomeone, send a roster without them. Always send the complete roster —\nsending only `students`, for example, would delete all schools,\nteachers, and sections. To guard against that, the `schools`,\n`students`, `teachers`, and `sections` keys are **required to be\npresent** (they may be empty arrays); `staff` is optional. This mirrors\nthe in-app CSV upload, which requires every file.\n\nList each student, teacher, and staff member **once**. To place a person\nin multiple schools, put every school id in `school_ids` on that single\nobject — a repeated `student_id`/`teacher_id`/`staff_id` is rejected\n(`400`), not merged.\n\nCross-references are resolved against the ids in this same payload, so\nlist an entity before you reference it. A `school_id`, `student_id`, or\n`teacher_id` that doesn't resolve to something in the payload is\nsilently skipped — the surrounding record is still imported, just\nwithout that link — so a mistyped id quietly drops a school membership\nor section rather than failing the import.\n\nProcessing runs asynchronously and respects the same Auth0 rate limits\nas the in-app flow; only one import per organization runs at a time —\na request made while one is already running returns `409`. The `202`\nresponse is the initial in-progress status — poll\n`GET /reunification/imports/status` for completion and partial-success\ncounts.\n\n`school_location_mappings` maps each `school_id` in the payload to a\nCoram location ID. Requires `write:*` scope and an `admin` creator role;\nthe feature must be enabled for the organization.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "reunification",
+                "imports"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-Auth-Token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"schools\": [\n    {\n      \"school_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"sis_id\": \"<string>\",\n      \"address\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\"\n    },\n    {\n      \"school_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"sis_id\": \"<string>\",\n      \"address\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\"\n    }\n  ],\n  \"students\": [\n    {\n      \"student_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"grade\": \"<string>\",\n      \"guardians\": [\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        }\n      ]\n    },\n    {\n      \"student_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"grade\": \"<string>\",\n      \"guardians\": [\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        }\n      ]\n    }\n  ],\n  \"teachers\": [\n    {\n      \"teacher_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\"\n    },\n    {\n      \"teacher_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\"\n    }\n  ],\n  \"sections\": [\n    {\n      \"section_id\": \"<string>\",\n      \"school_id\": \"<string>\",\n      \"teacher_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"student_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"section_id\": \"<string>\",\n      \"school_id\": \"<string>\",\n      \"teacher_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"student_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"school_location_mappings\": {\n    \"key_0\": \"<integer>\",\n    \"key_1\": \"<integer>\"\n  },\n  \"staff\": [\n    {\n      \"staff_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"title\": \"<string>\",\n      \"department\": \"<string>\",\n      \"roles\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"staff_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"title\": \"<string>\",\n      \"department\": \"<string>\",\n      \"roles\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "0ff72753-3ac0-471e-b106-87b4eef52fb3",
+              "name": "Import accepted and processing started",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "reunification",
+                    "imports"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"schools\": [\n    {\n      \"school_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"sis_id\": \"<string>\",\n      \"address\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\"\n    },\n    {\n      \"school_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"sis_id\": \"<string>\",\n      \"address\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\"\n    }\n  ],\n  \"students\": [\n    {\n      \"student_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"grade\": \"<string>\",\n      \"guardians\": [\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        }\n      ]\n    },\n    {\n      \"student_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"grade\": \"<string>\",\n      \"guardians\": [\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        }\n      ]\n    }\n  ],\n  \"teachers\": [\n    {\n      \"teacher_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\"\n    },\n    {\n      \"teacher_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\"\n    }\n  ],\n  \"sections\": [\n    {\n      \"section_id\": \"<string>\",\n      \"school_id\": \"<string>\",\n      \"teacher_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"student_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"section_id\": \"<string>\",\n      \"school_id\": \"<string>\",\n      \"teacher_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"student_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"school_location_mappings\": {\n    \"key_0\": \"<integer>\",\n    \"key_1\": \"<integer>\",\n    \"key_2\": \"<integer>\"\n  },\n  \"staff\": [\n    {\n      \"staff_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"title\": \"<string>\",\n      \"department\": \"<string>\",\n      \"roles\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"staff_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"title\": \"<string>\",\n      \"department\": \"<string>\",\n      \"roles\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"string\",\n  \"status\": \"completed\",\n  \"synced_schools\": 0,\n  \"total_schools\": 0,\n  \"synced_students\": 0,\n  \"total_students\": 0,\n  \"synced_teachers\": 0,\n  \"total_teachers\": 0,\n  \"synced_staff\": 0,\n  \"total_staff\": 0,\n  \"synced_guardians\": 0,\n  \"total_guardians\": 0,\n  \"succeeded_users\": 0,\n  \"failed_users\": 0,\n  \"error_message\": \"string\",\n  \"started_at\": \"1972-06-05T13:13:30.451Z\",\n  \"completed_at\": \"2023-04-14T21:57:25.017Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "58a70ba4-b37f-4e15-b7c9-ea6929bfc5b5",
+              "name": "Empty payload, missing school_location_mappings, or invalid data",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "reunification",
+                    "imports"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"schools\": [\n    {\n      \"school_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"sis_id\": \"<string>\",\n      \"address\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\"\n    },\n    {\n      \"school_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"sis_id\": \"<string>\",\n      \"address\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\"\n    }\n  ],\n  \"students\": [\n    {\n      \"student_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"grade\": \"<string>\",\n      \"guardians\": [\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        }\n      ]\n    },\n    {\n      \"student_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"grade\": \"<string>\",\n      \"guardians\": [\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        }\n      ]\n    }\n  ],\n  \"teachers\": [\n    {\n      \"teacher_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\"\n    },\n    {\n      \"teacher_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\"\n    }\n  ],\n  \"sections\": [\n    {\n      \"section_id\": \"<string>\",\n      \"school_id\": \"<string>\",\n      \"teacher_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"student_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"section_id\": \"<string>\",\n      \"school_id\": \"<string>\",\n      \"teacher_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"student_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"school_location_mappings\": {\n    \"key_0\": \"<integer>\",\n    \"key_1\": \"<integer>\",\n    \"key_2\": \"<integer>\"\n  },\n  \"staff\": [\n    {\n      \"staff_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"title\": \"<string>\",\n      \"department\": \"<string>\",\n      \"roles\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"staff_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"title\": \"<string>\",\n      \"department\": \"<string>\",\n      \"roles\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "cd6c6a15-b858-459a-8748-df39aa0ba50a",
+              "name": "Missing or invalid API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "reunification",
+                    "imports"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"schools\": [\n    {\n      \"school_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"sis_id\": \"<string>\",\n      \"address\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\"\n    },\n    {\n      \"school_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"sis_id\": \"<string>\",\n      \"address\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\"\n    }\n  ],\n  \"students\": [\n    {\n      \"student_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"grade\": \"<string>\",\n      \"guardians\": [\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        }\n      ]\n    },\n    {\n      \"student_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"grade\": \"<string>\",\n      \"guardians\": [\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        }\n      ]\n    }\n  ],\n  \"teachers\": [\n    {\n      \"teacher_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\"\n    },\n    {\n      \"teacher_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\"\n    }\n  ],\n  \"sections\": [\n    {\n      \"section_id\": \"<string>\",\n      \"school_id\": \"<string>\",\n      \"teacher_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"student_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"section_id\": \"<string>\",\n      \"school_id\": \"<string>\",\n      \"teacher_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"student_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"school_location_mappings\": {\n    \"key_0\": \"<integer>\",\n    \"key_1\": \"<integer>\",\n    \"key_2\": \"<integer>\"\n  },\n  \"staff\": [\n    {\n      \"staff_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"title\": \"<string>\",\n      \"department\": \"<string>\",\n      \"roles\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"staff_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"title\": \"<string>\",\n      \"department\": \"<string>\",\n      \"roles\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c2284305-f6f6-4c69-bfe8-4f99ced412ac",
+              "name": "API key lacks the required scope/role, or the feature is not enabled for the organization",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "reunification",
+                    "imports"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"schools\": [\n    {\n      \"school_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"sis_id\": \"<string>\",\n      \"address\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\"\n    },\n    {\n      \"school_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"sis_id\": \"<string>\",\n      \"address\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\"\n    }\n  ],\n  \"students\": [\n    {\n      \"student_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"grade\": \"<string>\",\n      \"guardians\": [\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        }\n      ]\n    },\n    {\n      \"student_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"grade\": \"<string>\",\n      \"guardians\": [\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        }\n      ]\n    }\n  ],\n  \"teachers\": [\n    {\n      \"teacher_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\"\n    },\n    {\n      \"teacher_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\"\n    }\n  ],\n  \"sections\": [\n    {\n      \"section_id\": \"<string>\",\n      \"school_id\": \"<string>\",\n      \"teacher_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"student_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"section_id\": \"<string>\",\n      \"school_id\": \"<string>\",\n      \"teacher_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"student_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"school_location_mappings\": {\n    \"key_0\": \"<integer>\",\n    \"key_1\": \"<integer>\",\n    \"key_2\": \"<integer>\"\n  },\n  \"staff\": [\n    {\n      \"staff_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"title\": \"<string>\",\n      \"department\": \"<string>\",\n      \"roles\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"staff_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"title\": \"<string>\",\n      \"department\": \"<string>\",\n      \"roles\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "88295071-4bc1-4a13-9aaf-8623e82c47bd",
+              "name": "An import is already running for this organization; poll the existing one instead",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "reunification",
+                    "imports"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"schools\": [\n    {\n      \"school_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"sis_id\": \"<string>\",\n      \"address\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\"\n    },\n    {\n      \"school_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"sis_id\": \"<string>\",\n      \"address\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\"\n    }\n  ],\n  \"students\": [\n    {\n      \"student_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"grade\": \"<string>\",\n      \"guardians\": [\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        }\n      ]\n    },\n    {\n      \"student_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"grade\": \"<string>\",\n      \"guardians\": [\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        }\n      ]\n    }\n  ],\n  \"teachers\": [\n    {\n      \"teacher_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\"\n    },\n    {\n      \"teacher_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\"\n    }\n  ],\n  \"sections\": [\n    {\n      \"section_id\": \"<string>\",\n      \"school_id\": \"<string>\",\n      \"teacher_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"student_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"section_id\": \"<string>\",\n      \"school_id\": \"<string>\",\n      \"teacher_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"student_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"school_location_mappings\": {\n    \"key_0\": \"<integer>\",\n    \"key_1\": \"<integer>\",\n    \"key_2\": \"<integer>\"\n  },\n  \"staff\": [\n    {\n      \"staff_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"title\": \"<string>\",\n      \"department\": \"<string>\",\n      \"roles\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"staff_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"title\": \"<string>\",\n      \"department\": \"<string>\",\n      \"roles\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "540c2368-3fda-4fa4-8271-d8ce3083253d",
+              "name": "Unexpected server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "reunification",
+                    "imports"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"schools\": [\n    {\n      \"school_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"sis_id\": \"<string>\",\n      \"address\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\"\n    },\n    {\n      \"school_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"sis_id\": \"<string>\",\n      \"address\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\"\n    }\n  ],\n  \"students\": [\n    {\n      \"student_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"grade\": \"<string>\",\n      \"guardians\": [\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        }\n      ]\n    },\n    {\n      \"student_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"grade\": \"<string>\",\n      \"guardians\": [\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phone\": \"<string>\",\n          \"relationship\": \"<string>\"\n        }\n      ]\n    }\n  ],\n  \"teachers\": [\n    {\n      \"teacher_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\"\n    },\n    {\n      \"teacher_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\"\n    }\n  ],\n  \"sections\": [\n    {\n      \"section_id\": \"<string>\",\n      \"school_id\": \"<string>\",\n      \"teacher_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"student_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"section_id\": \"<string>\",\n      \"school_id\": \"<string>\",\n      \"teacher_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"student_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"school_location_mappings\": {\n    \"key_0\": \"<integer>\",\n    \"key_1\": \"<integer>\",\n    \"key_2\": \"<integer>\"\n  },\n  \"staff\": [\n    {\n      \"staff_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"title\": \"<string>\",\n      \"department\": \"<string>\",\n      \"roles\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"staff_id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"school_ids\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"sis_id\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"title\": \"<string>\",\n      \"department\": \"<string>\",\n      \"roles\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b32a9bed-e360-4f1e-b7ba-58fc60e7fa86",
+          "name": "Get the current reunification import status",
+          "request": {
+            "name": "Get the current reunification import status",
+            "description": {
+              "content": "Returns the status of the organization's most recent reunification\nimport, including per-entity synced/total counts and the\n`succeeded_users` / `failed_users` provisioning figures. Poll this\nafter starting an import. Requires `read:*` scope and a `regular`\ncreator role.\n\nNote: `succeeded_users` and `failed_users` are eventually consistent.\nGuest/staff accounts are provisioned in the background after the roster\nis imported, so these counts keep climbing for a few seconds after\n`status` becomes `completed`. Treat `completed` as \"roster imported\" and\nkeep polling the user counts until they stop changing.\n\n`completed` means the roster was imported and account provisioning was\ndispatched — it does **not** by itself mean every account succeeded.\nCheck `failed_users`: a non-zero value on a `completed` import is a\npartial success (e.g. seat limits or Auth0 rejections for some users).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "v1",
+                "reunification",
+                "imports",
+                "status"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "X-Auth-Token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "735be340-7eb8-4cdc-825f-005eeb90edd3",
+              "name": "Successful Response",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "reunification",
+                    "imports",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"string\",\n  \"status\": \"completed\",\n  \"synced_schools\": 0,\n  \"total_schools\": 0,\n  \"synced_students\": 0,\n  \"total_students\": 0,\n  \"synced_teachers\": 0,\n  \"total_teachers\": 0,\n  \"synced_staff\": 0,\n  \"total_staff\": 0,\n  \"synced_guardians\": 0,\n  \"total_guardians\": 0,\n  \"succeeded_users\": 0,\n  \"failed_users\": 0,\n  \"error_message\": \"string\",\n  \"started_at\": \"1972-06-05T13:13:30.451Z\",\n  \"completed_at\": \"2023-04-14T21:57:25.017Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e73a2953-da28-4e6a-ba34-da59699f9392",
+              "name": "Missing or invalid API key",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "reunification",
+                    "imports",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "eb2d45c0-193c-4961-9a90-a65dfbb22b6e",
+              "name": "API key lacks the required scope/role, or the feature is not enabled for the organization",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "reunification",
+                    "imports",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7acdec4f-a140-40d4-b790-9d1b9466cb92",
+              "name": "No import found for this organization",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "reunification",
+                    "imports",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "81aabc4f-d54d-4849-8a50-8f19914595f9",
+              "name": "Unexpected server error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "v1",
+                    "reunification",
+                    "imports",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "X-Auth-Token",
+                    "value": "<API Key>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"detail\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://developer.coram.ai",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-Auth-Token"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "b3d6877d-5fe4-4642-8cdb-01de7dbb0255",
+    "name": "Coram alerts reunification API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "# Introduction\n\nThe Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows.\n\n# Supported Actions\n\nManage and interact with your Coram platform resources:\n\n| Resource | Description |\n| -------- | ----------- |\n| **Camera Groups** | Organize and configure camera collections |\n| **Cameras** | Access camera settings, streams, and metadata |\n| **Locations** | Manage physical site configurations |\n| **NVRs** | Control and monitor network video recorders |\n| **Access Control** | List access control doors and trigger remote unlocks |\n\n# Required Headers\n\nEvery API request must include the following headers:\n\n| Header | Required | Description |\n| ------ | -------- | ----------- |\n| `X-Auth-Token` | Yes | Your API key (from the API key List Page) |\n\n**Example:**\n```\ncurl -X GET \"https://api.coram.ai/developer-api/v1/cameras\" \\\n  -H \"X-Auth-Token: xxxxxxxxxxxxxxx\"\n```\n\n# Response Format\n\nAll API responses follow a consistent structure based on the operation result.\n\n## Success Response\n\n**List Operations** (e.g., `GET /v1/cameras`)\n\nReturns a `results` array with pagination support:\n\n```json\n{\n  \"results\": [\n    { \"id\": \"cam_001\", \"name\": \"Front Door\", ... },\n    { \"id\": \"cam_002\", \"name\": \"Lobby\", ... }\n  ],\n  \"has_more\": true\n}\n```\n\nWhen `has_more` is `true`, additional results are available. Use pagination parameters to fetch more.\n\n**Bulk/Batch Operations** (e.g., `POST /v1/cameras`, `PATCH /v1/cameras`)\n\nReturns a top-level `status` field indicating whether the API request was processed, and a `results` array where each item reflects the outcome of an individual operation:\n\n```json\n{\n  \"status\": \"success\",\n  \"results\": [\n    { \"status\": \"success\", \"data\": { \"id\": \"cam_001\", \"mac_address\": \"...\" } },\n    { \"status\": \"error\", \"error\": { \"code\": \"VALIDATION_ERROR\", \"message\": \"...\" } }\n  ]\n}\n```\n\n| Field | Description |\n| ----- | ----------- |\n| `status` (top-level) | `\"success\"` if the request was processed |\n| `results[].status` | `\"success\"` or `\"error\"` for each operation |\n| `results[].data` | Present when `status` is `\"success\"` |\n| `results[].error` | Present when `status` is `\"error\"` |\n\n## Error Response\n\nWhen an error occurs, the response includes `status` set to `\"error\"` along with detailed error information:\n\n```json\n{\n  \"status\": \"error\",\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"Invalid MAC address format\",\n    \"field\": \"mac_address\"\n  }\n}\n```\n\n**Error Fields:**\n\n| Field | Type | Description |\n| ----- | ---- | ----------- |\n| `code` | string | Machine-readable error code |\n| `message` | string | Human-readable error description |\n| `field` | string | The field that caused the error (if applicable) |\n\n\n# HTTP Status Codes\n\nThe API uses standard HTTP status codes to indicate the success or failure of requests:\n\n## Success Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `200 OK` | Request succeeded |\n| `201 Created` | Resource successfully created |\n| `204 No Content` | Request succeeded with no response body |\n\n## Client Error Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `400 Bad Request` | Invalid request syntax or parameters |\n| `401 Unauthorized` | Missing or invalid API key |\n| `403 Forbidden` | Valid API key but insufficient permissions |\n| `404 Not Found` | Requested resource does not exist |\n| `422 Unprocessable Entity` | Validation error in request body |\n| `429 Too Many Requests` | Rate limit exceeded |\n\n## Server Error Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `500 Internal Server Error` | Unexpected server error (rare) |\n| `502 Bad Gateway` | Upstream service unavailable |\n| `503 Service Unavailable` | Service temporarily unavailable |\n\n\n# Error Handling Best Practices\n\n1. **Always check the `status` field** — Verify if the response indicates `\"success\"` or `\"error\"`\n\n2. **Handle specific error codes** — Use the `error.code` field to handle different error types programmatically\n\n3. **Implement retry logic** — For `429` and `5xx` errors, implement exponential backoff\n\n4. **Log error details** — Capture `error.code`, `error.message`, and `error.field` for debugging\n\n**Example error handling:**\n```python\nresponse = api.create_camera(data)\n\nif response[\"status\"] == \"error\":\n    error = response[\"error\"]\n    if error[\"code\"] == \"VALIDATION_ERROR\":\n        print(f\"Invalid {error['field']}: {error['message']}\")\n    elif error[\"code\"] == \"DUPLICATE_RESOURCE\":\n        print(\"Camera already exists\")\n    else:\n        print(f\"Error: {error['message']}\")\n```\n\n---\n\n# Getting Started\n\n1. **Generate an API key** from your Coram app settings\n2. **Explore the endpoints** in the navigation to begin integrating\n\nNeed help? Contact [support@coram.ai](mailto:support@coram.ai)\n",
+      "type": "text/plain"
+    }
+  }
+}

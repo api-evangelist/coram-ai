@@ -1,0 +1,64 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Coram alerts reunification API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "X-Auth-Token",
+      "value": "{{X-Auth-Token}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "reunification",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Import reunification roster data",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://developer.coram.ai/v1/reunification/imports",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-Auth-Token",
+              "value": "{{X-Auth-Token}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Bulk-imports reunification roster data — schools, students (with their\nguardians), teachers, and staff — as JSON. The programmatic equivalent\nof the in-app CSV upload.\n\n**This is a full roster replace, not a partial update.** Each call\nreplaces the organization's entire reunification roster: every person\nand school you send is inserted or updated, and **anything you omit is\nremoved**. To keep someone, include them in every import; to remove\nsomeone, send a roster without them. Always send the co"
+        },
+        {
+          "info": {
+            "name": "Get the current reunification import status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://developer.coram.ai/v1/reunification/imports/status",
+            "auth": {
+              "type": "apikey",
+              "key": "X-Auth-Token",
+              "value": "{{X-Auth-Token}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Returns the status of the organization's most recent reunification\nimport, including per-entity synced/total counts and the\n`succeeded_users` / `failed_users` provisioning figures. Poll this\nafter starting an import. Requires `read:*` scope and a `regular`\ncreator role.\n\nNote: `succeeded_users` and `failed_users` are eventually consistent.\nGuest/staff accounts are provisioned in the background after the roster\nis imported, so these counts keep climbing for a few seconds after\n`status` becomes `c"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
