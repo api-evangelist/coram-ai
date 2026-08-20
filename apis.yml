@@ -41,6 +41,15 @@ tags:
 - Artificial Intelligence
 - Security Cameras
 - Emergency Management
+- Computer-Vision
+tags_raw:
+- Company
+- Physical Security
+- Video Surveillance
+- Access Control
+- Artificial Intelligence
+- Security Cameras
+- Emergency Management
 - Computer Vision
 maintainers:
 - FN: Kin Lane
@@ -54,6 +63,8 @@ apis:
   humanURL: https://developer.coram.ai/
   baseURL: https://api.coram.ai/developer-api
   tags:
+  - Alerts
+  tags_raw:
   - alerts
   properties:
   - type: OpenAPI
@@ -100,6 +111,8 @@ apis:
   humanURL: https://developer.coram.ai/
   baseURL: https://api.coram.ai/developer-api
   tags:
+  - Camera
+  tags_raw:
   - cameras
   properties:
   - type: OpenAPI
@@ -123,6 +136,8 @@ apis:
   humanURL: https://developer.coram.ai/
   baseURL: https://api.coram.ai/developer-api
   tags:
+  - Doors
+  tags_raw:
   - doors
   properties:
   - type: OpenAPI
@@ -145,6 +160,8 @@ apis:
   humanURL: https://developer.coram.ai/
   baseURL: https://api.coram.ai/developer-api
   tags:
+  - Event
+  tags_raw:
   - events
   properties:
   - type: OpenAPI
@@ -167,6 +184,8 @@ apis:
   humanURL: https://developer.coram.ai/
   baseURL: https://api.coram.ai/developer-api
   tags:
+  - Locations
+  tags_raw:
   - locations
   properties:
   - type: OpenAPI
