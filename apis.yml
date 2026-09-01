@@ -123,7 +123,7 @@ apis:
   humanURL: https://developer.coram.ai/
   baseURL: https://api.coram.ai/developer-api
   tags:
-  - cameras
+  - Camera
   tags_raw:
   - cameras
   properties:
@@ -148,7 +148,7 @@ apis:
   humanURL: https://developer.coram.ai/
   baseURL: https://api.coram.ai/developer-api
   tags:
-  - doors
+  - Doors
   tags_raw:
   - doors
   properties:
