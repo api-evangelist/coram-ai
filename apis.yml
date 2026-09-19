@@ -197,7 +197,7 @@ apis:
   humanURL: https://developer.coram.ai/
   baseURL: https://api.coram.ai/developer-api
   tags:
-  - Locations
+  - Location
   tags_raw:
   - locations
   properties:
