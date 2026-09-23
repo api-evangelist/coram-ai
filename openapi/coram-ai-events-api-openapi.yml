@@ -1,7 +1,10 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: Coram alerts events API
-  description: "# Introduction\n\nThe Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows.\n\n# Supported Actions\n\nManage and interact with your Coram platform resources:\n\n| Resource | Description |\n| -------- | ----------- |\n| **Camera Groups** | Organize and configure camera collections |\n| **Cameras** | Access camera settings, streams, and metadata |\n| **Locations** | Manage physical site configurations |\n| **NVRs** | Control and monitor network video recorders |\n| **Access Control** | List access control doors and trigger remote unlocks |\n\n# Required Headers\n\nEvery API request must include the following headers:\n\n| Header | Required | Description |\n| ------ | -------- | ----------- |\n| `X-Auth-Token` | Yes | Your API key (from the API key List Page) |\n\n**Example:**\n```\ncurl -X GET \"https://api.coram.ai/developer-api/v1/cameras\" \\\n  -H \"X-Auth-Token: xxxxxxxxxxxxxxx\"\n```\n\n# Response Format\n\nAll API responses follow a consistent structure based on the operation result.\n\n## Success Response\n\n**List Operations** (e.g., `GET /v1/cameras`)\n\nReturns a `results` array with pagination support:\n\n```json\n{\n  \"results\": [\n    { \"id\": \"cam_001\", \"name\": \"Front Door\", ... },\n    { \"id\": \"cam_002\", \"name\": \"Lobby\", ... }\n  ],\n  \"has_more\": true\n}\n```\n\nWhen `has_more` is `true`, additional results are available. Use pagination parameters to fetch more.\n\n**Bulk/Batch Operations** (e.g., `POST /v1/cameras`, `PATCH /v1/cameras`)\n\nReturns a top-level `status` field indicating whether the API request was processed, and a `results` array where each item reflects the outcome of an individual operation:\n\n```json\n{\n  \"status\": \"success\",\n  \"results\": [\n    { \"status\": \"success\", \"data\": { \"id\": \"cam_001\", \"mac_address\": \"...\" } },\n    { \"status\": \"error\", \"error\": { \"code\": \"VALIDATION_ERROR\", \"message\": \"...\" } }\n  ]\n}\n```\n\n| Field | Description |\n| ----- | ----------- |\n| `status` (top-level) | `\"success\"` if the request was processed |\n| `results[].status` | `\"success\"` or `\"error\"` for each operation |\n| `results[].data` | Present when `status` is `\"success\"` |\n| `results[].error` | Present when `status` is `\"error\"` |\n\n## Error Response\n\nWhen an error occurs, the response includes `status` set to `\"error\"` along with detailed error information:\n\n```json\n{\n  \"status\": \"error\",\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"Invalid MAC address format\",\n    \"field\": \"mac_address\"\n  }\n}\n```\n\n**Error Fields:**\n\n| Field | Type | Description |\n| ----- | ---- | ----------- |\n| `code` | string | Machine-readable error code |\n| `message` | string | Human-readable error description |\n| `field` | string | The field that caused the error (if applicable) |\n\n\n# HTTP Status Codes\n\nThe API uses standard HTTP status codes to indicate the success or failure of requests:\n\n## Success Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `200 OK` | Request succeeded |\n| `201 Created` | Resource successfully created |\n| `204 No Content` | Request succeeded with no response body |\n\n## Client Error Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `400 Bad Request` | Invalid request syntax or parameters |\n| `401 Unauthorized` | Missing or invalid API key |\n| `403 Forbidden` | Valid API key but insufficient permissions |\n| `404 Not Found` | Requested resource does not exist |\n| `422 Unprocessable Entity` | Validation error in request body |\n| `429 Too Many Requests` | Rate limit exceeded |\n\n## Server Error Codes\n\n| Code | Description |\n| ---- | ----------- |\n| `500 Internal Server Error` | Unexpected server error (rare) |\n| `502 Bad Gateway` | Upstream service unavailable |\n| `503 Service Unavailable` | Service temporarily unavailable |\n\n\n# Error Handling Best Practices\n\n1. **Always check the `status` field** — Verify if the response indicates `\"success\"` or `\"error\"`\n\n2. **Handle specific error codes** — Use the `error.code` field to handle different error types programmatically\n\n3. **Implement retry logic** — For `429` and `5xx` errors, implement exponential backoff\n\n4. **Log error details** — Capture `error.code`, `error.message`, and `error.field` for debugging\n\n**Example error handling:**\n```python\nresponse = api.create_camera(data)\n\nif response[\"status\"] == \"error\":\n    error = response[\"error\"]\n    if error[\"code\"] == \"VALIDATION_ERROR\":\n        print(f\"Invalid {error['field']}: {error['message']}\")\n    elif error[\"code\"] == \"DUPLICATE_RESOURCE\":\n        print(\"Camera already exists\")\n    else:\n        print(f\"Error: {error['message']}\")\n```\n\n---\n\n# Getting Started\n\n1. **Generate an API key** from your Coram app settings\n2. **Explore the endpoints** in the navigation to begin integrating\n\nNeed help? Contact [support@coram.ai](mailto:support@coram.ai)\n"
+  title: Coram Events API
+  description: '# Introduction
+
+
+    The Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows.'
   version: 1.0.0
 servers:
 - url: https://developer.coram.ai
@@ -9,13 +12,13 @@ servers:
 security:
 - X-Auth-Token: []
 tags:
-- name: events
+- name: Events
   description: Query access control device events (card scans, REX presses, forced-open / held-open alarms, battery alerts, …) and fetch the MP4 video clip recorded by the door's primary camera around an event's timestamp.
 paths:
   /v1/access-control/events/{event_id}/clip:
     get:
       tags:
-      - events
+      - Events
       summary: Get event clip URL
       description: Returns a public download URL for the MP4 video clip captured by the event's door's primary camera around the event timestamp. The URL does not require authentication and expires after 24 hours. Use the event_id from the events list endpoint or a webhook payload to fetch the clip.
       operationId: GetEventClip
@@ -66,11 +69,9 @@ paths:
 
         (card_id, access_decision_reason, etc.). Treat it defensively: new
 
-        keys may appear in future event types.
-
-        '
+        keys may appear in future event types.'
       tags:
-      - events
+      - Events
       security:
       - X-Auth-Token: []
       parameters:
@@ -180,6 +181,43 @@ paths:
       x-public-api-version: v1
 components:
   schemas:
+    EventList:
+      type: object
+      required:
+      - results
+      - has_more
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        has_more:
+          type: boolean
+          description: True if a further page beyond `page` exists.
+      x-public-api-group: events
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    AuthErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: 'Human-readable error description. Matches the shape FastAPI uses
+
+            for `HTTPException` responses, so existing code that parses the
+
+            Python developer-api''s auth errors works unchanged.
+
+            '
     ValidationError:
       properties:
         loc:
@@ -213,19 +251,11 @@ components:
         name:
           type: string
         location_id:
-          type: integer
+          type:
+          - integer
+          - 'null'
           format: int64
-          nullable: true
       x-public-api-group: events
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
     Event:
       type: object
       required:
@@ -262,34 +292,6 @@ components:
 
             '
       x-public-api-group: events
-    EventList:
-      type: object
-      required:
-      - results
-      - has_more
-      properties:
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Event'
-        has_more:
-          type: boolean
-          description: True if a further page beyond `page` exists.
-      x-public-api-group: events
-    AuthErrorResponse:
-      type: object
-      required:
-      - detail
-      properties:
-        detail:
-          type: string
-          description: 'Human-readable error description. Matches the shape FastAPI uses
-
-            for `HTTPException` responses, so existing code that parses the
-
-            Python developer-api''s auth errors works unchanged.
-
-            '
     EventClipResponse:
       properties:
         preview_url:

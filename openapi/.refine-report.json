@@ -1,14 +1,7 @@
 {
   "provider": "coram-ai",
   "sources": [
-    "coram-ai-alerts-api-openapi.yml",
-    "coram-ai-camera-groups-api-openapi.yml",
-    "coram-ai-cameras-api-openapi.yml",
-    "coram-ai-doors-api-openapi.yml",
-    "coram-ai-events-api-openapi.yml",
-    "coram-ai-locations-api-openapi.yml",
-    "coram-ai-nvrs-api-openapi.yml",
-    "coram-ai-reunification-api-openapi.yml"
+    "_original/coram-ai-openapi-original.json"
   ],
   "outputs": [
     "coram-ai-alerts-api-openapi.yml",
@@ -23,6 +16,19 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "coram-ai-openapi-original.json: upgraded openapi 3.0.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "coram-ai-alerts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "coram-ai-camera-groups-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "coram-ai-cameras-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "coram-ai-doors-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "coram-ai-events-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "coram-ai-locations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "coram-ai-nvrs-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "coram-ai-reunification-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
