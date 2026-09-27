@@ -46,6 +46,9 @@ x-tier-reason: developer-api-harvested
 specificationVersion: '0.23'
 created: '2026-07-17'
 modified: '2026-07-18'
+x-docs-platform: scalar
+x-docs-platform-confidence: medium
+x-docs-platform-checked: 2026-09-24
 tags:
 - Company
 - Physical Security
@@ -54,7 +57,7 @@ tags:
 - Artificial Intelligence
 - Security Cameras
 - Emergency Management
-- Computer-Vision
+- Computer Vision
 tags_raw:
 - Company
 - Physical Security
@@ -64,6 +67,7 @@ tags_raw:
 - Security Cameras
 - Emergency Management
 - Computer Vision
+- Computer-Vision
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -71,7 +75,7 @@ maintainers:
   email: info@apis.io
 apis:
 - aid: coram-ai:coram-ai-alerts-api
-  name: Coram Ai alerts API
+  name: Coram Ai Alerts API
   description: The alerts API from Coram Ai — 5 operation(s) for alerts.
   humanURL: https://developer.coram.ai/
   baseURL: https://api.coram.ai/developer-api
@@ -93,7 +97,7 @@ apis:
   - type: Conformance
     url: conformance/coram-ai-conformance.yml
 - aid: coram-ai:coram-ai-camera-groups-api
-  name: Coram Ai camera-groups API
+  name: Coram Ai Camera Groups API
   description: >-
     Organize cameras into logical collections for easier management. Camera groups allow you to categorize
     cameras by location, purpose, or any custom criteria. Use these endpoints to create, update, list,
@@ -116,7 +120,7 @@ apis:
   - type: Conformance
     url: conformance/coram-ai-conformance.yml
 - aid: coram-ai:coram-ai-cameras-api
-  name: Coram Ai cameras API
+  name: Coram Ai Cameras API
   description: >-
     Manage individual cameras within your organization. Use these endpoints to register new cameras, update
     camera settings, retrieve camera information and status, move cameras between locations, and delete
@@ -141,7 +145,7 @@ apis:
   - type: Conformance
     url: conformance/coram-ai-conformance.yml
 - aid: coram-ai:coram-ai-doors-api
-  name: Coram Ai doors API
+  name: Coram Ai Doors API
   description: >-
     List access control doors and trigger momentary remote unlocks. The same per-door permission checks
     the in-app unlock flow runs apply here — a key whose creator cannot unlock a door in the UI cannot
@@ -166,7 +170,7 @@ apis:
   - type: Conformance
     url: conformance/coram-ai-conformance.yml
 - aid: coram-ai:coram-ai-events-api
-  name: Coram Ai events API
+  name: Coram Ai Events API
   description: >-
     Query access control device events (card scans, REX presses, forced-open / held-open alarms, battery
     alerts, …) and fetch the MP4 video clip recorded by the door's primary camera around an event's timestamp.
@@ -190,7 +194,7 @@ apis:
   - type: Conformance
     url: conformance/coram-ai-conformance.yml
 - aid: coram-ai:coram-ai-locations-api
-  name: Coram Ai locations API
+  name: Coram Ai Locations API
   description: >-
     Manage physical site configurations where cameras and NVRs are deployed. Locations represent your
     facilities, buildings, or areas. Use these endpoints to create, update, list, and delete locations.
@@ -214,7 +218,7 @@ apis:
   - type: Conformance
     url: conformance/coram-ai-conformance.yml
 - aid: coram-ai:coram-ai-nvrs-api
-  name: Coram Ai nvrs API
+  name: Coram Ai Nvrs API
   description: >-
     Control and monitor Network Video Recorders (NVRs) in your infrastructure. NVRs are hardware devices
     that record and store video from connected cameras. Use these endpoints to register NVRs, update their
@@ -237,7 +241,7 @@ apis:
   - type: Conformance
     url: conformance/coram-ai-conformance.yml
 - aid: coram-ai:coram-ai-reunification-api
-  name: Coram Ai reunification API
+  name: Coram Ai Reunification API
   description: >-
     Bulk-import your school reunification roster — schools, students (with guardians), teachers, staff,
     and class sections — programmatically, the API equivalent of the in-app CSV upload. Each import is

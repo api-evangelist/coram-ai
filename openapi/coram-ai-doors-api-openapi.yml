@@ -121,20 +121,17 @@ paths:
       x-public-api-version: v1
 components:
   schemas:
-    AuthErrorResponse:
+    UnlockResponse:
       type: object
       required:
-      - detail
+      - status
       properties:
-        detail:
+        status:
           type: string
-          description: 'Human-readable error description. Matches the shape FastAPI uses
-
-            for `HTTPException` responses, so existing code that parses the
-
-            Python developer-api''s auth errors works unchanged.
-
-            '
+          enum:
+          - success
+          description: Always `success` on a 200; non-200 responses use AuthErrorResponse.
+      x-public-api-group: doors
     Door:
       type: object
       required:
@@ -162,6 +159,20 @@ components:
 
             '
       x-public-api-group: doors
+    AuthErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: 'Human-readable error description. Matches the shape FastAPI uses
+
+            for `HTTPException` responses, so existing code that parses the
+
+            Python developer-api''s auth errors works unchanged.
+
+            '
     DoorList:
       type: object
       required:
@@ -179,17 +190,6 @@ components:
             currently returns every door the caller can see.
 
             '
-      x-public-api-group: doors
-    UnlockResponse:
-      type: object
-      required:
-      - status
-      properties:
-        status:
-          type: string
-          enum:
-          - success
-          description: Always `success` on a 200; non-200 responses use AuthErrorResponse.
       x-public-api-group: doors
   securitySchemes:
     X-Auth-Token:
