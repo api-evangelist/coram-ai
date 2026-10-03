@@ -210,119 +210,19 @@ paths:
       parameters: []
 components:
   schemas:
-    AuthErrorResponse:
+    ReunificationGuardian:
       type: object
       required:
-      - detail
-      properties:
-        detail:
-          type: string
-          description: 'Human-readable error description. Matches the shape FastAPI uses
-
-            for `HTTPException` responses, so existing code that parses the
-
-            Python developer-api''s auth errors works unchanged.
-
-            '
-    ReunificationTeacher:
-      type: object
-      required:
-      - teacher_id
       - name
-      - school_ids
       properties:
-        teacher_id:
-          type: string
         name:
-          type: string
-        sis_id:
           type: string
         email:
           type: string
-        phone_number:
+        phone:
           type: string
-        school_ids:
-          type: array
-          items:
-            type: string
-    ReunificationStaff:
-      type: object
-      required:
-      - staff_id
-      - name
-      - school_ids
-      properties:
-        staff_id:
+        relationship:
           type: string
-        name:
-          type: string
-        sis_id:
-          type: string
-        email:
-          type: string
-        phone_number:
-          type: string
-        title:
-          type: string
-        department:
-          type: string
-        roles:
-          type: array
-          items:
-            type: string
-        school_ids:
-          type: array
-          items:
-            type: string
-    ReunificationImportInput:
-      type: object
-      required:
-      - schools
-      - students
-      - teachers
-      - sections
-      - school_location_mappings
-      description: 'Full-replace roster payload. `schools`, `students`, `teachers`, and
-
-        `sections` must be present (may be empty arrays) so an omitted key can''t
-
-        silently delete that entity type; `staff` is optional. Phone numbers are
-
-        normalized to E.164; a number that can''t be parsed for the region is
-
-        dropped (stored as null), not rejected — so a malformed guardian
-
-        contact number is silently lost rather than failing the import.
-
-        '
-      properties:
-        schools:
-          type: array
-          items:
-            $ref: '#/components/schemas/ReunificationSchool'
-        students:
-          type: array
-          items:
-            $ref: '#/components/schemas/ReunificationStudent'
-        teachers:
-          type: array
-          items:
-            $ref: '#/components/schemas/ReunificationTeacher'
-        staff:
-          type: array
-          items:
-            $ref: '#/components/schemas/ReunificationStaff'
-        sections:
-          type: array
-          description: Class/section memberships that establish student↔teacher relationships.
-          items:
-            $ref: '#/components/schemas/ReunificationSection'
-        school_location_mappings:
-          type: object
-          additionalProperties:
-            type: integer
-            format: int32
-          description: Maps each school_id in the payload to a Coram location ID.
     ReunificationImportStatus:
       type: object
       required:
@@ -398,6 +298,35 @@ components:
         completed_at:
           type: string
           format: date-time
+    ReunificationStaff:
+      type: object
+      required:
+      - staff_id
+      - name
+      - school_ids
+      properties:
+        staff_id:
+          type: string
+        name:
+          type: string
+        sis_id:
+          type: string
+        email:
+          type: string
+        phone_number:
+          type: string
+        title:
+          type: string
+        department:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        school_ids:
+          type: array
+          items:
+            type: string
     ReunificationSchool:
       type: object
       required:
@@ -419,6 +348,41 @@ components:
           type: string
         zip:
           type: string
+    ReunificationTeacher:
+      type: object
+      required:
+      - teacher_id
+      - name
+      - school_ids
+      properties:
+        teacher_id:
+          type: string
+        name:
+          type: string
+        sis_id:
+          type: string
+        email:
+          type: string
+        phone_number:
+          type: string
+        school_ids:
+          type: array
+          items:
+            type: string
+    AuthErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: 'Human-readable error description. Matches the shape FastAPI uses
+
+            for `HTTPException` responses, so existing code that parses the
+
+            Python developer-api''s auth errors works unchanged.
+
+            '
     ReunificationStudent:
       type: object
       required:
@@ -465,19 +429,55 @@ components:
           type: array
           items:
             type: string
-    ReunificationGuardian:
+    ReunificationImportInput:
       type: object
       required:
-      - name
+      - schools
+      - students
+      - teachers
+      - sections
+      - school_location_mappings
+      description: 'Full-replace roster payload. `schools`, `students`, `teachers`, and
+
+        `sections` must be present (may be empty arrays) so an omitted key can''t
+
+        silently delete that entity type; `staff` is optional. Phone numbers are
+
+        normalized to E.164; a number that can''t be parsed for the region is
+
+        dropped (stored as null), not rejected — so a malformed guardian
+
+        contact number is silently lost rather than failing the import.
+
+        '
       properties:
-        name:
-          type: string
-        email:
-          type: string
-        phone:
-          type: string
-        relationship:
-          type: string
+        schools:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReunificationSchool'
+        students:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReunificationStudent'
+        teachers:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReunificationTeacher'
+        staff:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReunificationStaff'
+        sections:
+          type: array
+          description: Class/section memberships that establish student↔teacher relationships.
+          items:
+            $ref: '#/components/schemas/ReunificationSection'
+        school_location_mappings:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+          description: Maps each school_id in the payload to a Coram location ID.
   securitySchemes:
     X-Auth-Token:
       type: apiKey

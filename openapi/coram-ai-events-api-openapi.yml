@@ -181,72 +181,6 @@ paths:
       x-public-api-version: v1
 components:
   schemas:
-    AuthErrorResponse:
-      type: object
-      required:
-      - detail
-      properties:
-        detail:
-          type: string
-          description: 'Human-readable error description. Matches the shape FastAPI uses
-
-            for `HTTPException` responses, so existing code that parses the
-
-            Python developer-api''s auth errors works unchanged.
-
-            '
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    EventList:
-      type: object
-      required:
-      - results
-      - has_more
-      properties:
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Event'
-        has_more:
-          type: boolean
-          description: True if a further page beyond `page` exists.
-      x-public-api-group: events
-    EventDoor:
-      type: object
-      required:
-      - id
-      - name
-      properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-        location_id:
-          type:
-          - integer
-          - 'null'
-          format: int64
-      x-public-api-group: events
     EventClipResponse:
       properties:
         preview_url:
@@ -292,6 +226,44 @@ components:
       title: EventClipResponse
       description: Response for the access control event clip download endpoint.
       x-public-api-group: events
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    EventDoor:
+      type: object
+      required:
+      - id
+      - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        location_id:
+          type:
+          - integer
+          - 'null'
+          format: int64
+      x-public-api-group: events
     HTTPValidationError:
       properties:
         detail:
@@ -301,6 +273,34 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    AuthErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: 'Human-readable error description. Matches the shape FastAPI uses
+
+            for `HTTPException` responses, so existing code that parses the
+
+            Python developer-api''s auth errors works unchanged.
+
+            '
+    EventList:
+      type: object
+      required:
+      - results
+      - has_more
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        has_more:
+          type: boolean
+          description: True if a further page beyond `page` exists.
+      x-public-api-group: events
     Event:
       type: object
       required:

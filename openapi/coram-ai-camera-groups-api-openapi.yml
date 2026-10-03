@@ -117,6 +117,66 @@ paths:
       parameters: []
 components:
   schemas:
+    CameraGroup:
+      properties:
+        id:
+          type: integer
+          title: Id
+          description: Unique camera group identifier
+        name:
+          type: string
+          title: Name
+          description: Camera group display name
+      type: object
+      required:
+      - id
+      - name
+      title: CameraGroup
+      description: A logical grouping of cameras for organization and access control.
+      x-public-api-group: camera-groups
+    ErrorDetails:
+      properties:
+        code:
+          allOf:
+          - $ref: '#/components/schemas/ErrorCode'
+          description: Error code
+        message:
+          type: string
+          title: Message
+          description: Error message
+        field:
+          type: string
+          title: Field
+          description: Error field
+        docs:
+          type: string
+          title: Docs
+          description: Error docs
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorDetails
+      description: Error message
+    CameraGroupList:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/CameraGroup'
+          type: array
+          title: Results
+          description: List of camera groups
+        has_more:
+          type: boolean
+          title: Has More
+          description: True if additional pages are available
+      type: object
+      required:
+      - results
+      - has_more
+      title: CameraGroupList
+      description: Paginated list of camera groups.
+      x-public-api-group: camera-groups
     ErrorCode:
       type: string
       enum:
@@ -168,6 +228,33 @@ components:
       - DUPLICATE_GROUP_IDS
       title: ErrorCode
       description: Centralized error codes for Developer API endpoints.
+    CreateCameraGroupResponse:
+      properties:
+        data:
+          allOf:
+          - $ref: '#/components/schemas/CameraGroup'
+          title: Data
+          description: The newly created camera group data
+      type: object
+      required:
+      - data
+      title: CreateCameraGroupResponse
+      description: Response after successfully creating a camera group.
+      x-public-api-group: camera-groups
+    CreateCameraGroupPayload:
+      properties:
+        name:
+          type: string
+          maxLength: 30
+          minLength: 1
+          title: Name
+          description: Display name for the new camera group (max 30 characters)
+      type: object
+      required:
+      - name
+      title: CreateCameraGroupPayload
+      description: Request payload for creating a camera group.
+      x-public-api-group: camera-groups
     ErrorResponse:
       properties:
         status:
@@ -186,93 +273,6 @@ components:
       - error
       title: ErrorResponse
       description: Error response model.
-    CreateCameraGroupResponse:
-      properties:
-        data:
-          allOf:
-          - $ref: '#/components/schemas/CameraGroup'
-          title: Data
-          description: The newly created camera group data
-      type: object
-      required:
-      - data
-      title: CreateCameraGroupResponse
-      description: Response after successfully creating a camera group.
-      x-public-api-group: camera-groups
-    CameraGroupList:
-      properties:
-        results:
-          items:
-            $ref: '#/components/schemas/CameraGroup'
-          type: array
-          title: Results
-          description: List of camera groups
-        has_more:
-          type: boolean
-          title: Has More
-          description: True if additional pages are available
-      type: object
-      required:
-      - results
-      - has_more
-      title: CameraGroupList
-      description: Paginated list of camera groups.
-      x-public-api-group: camera-groups
-    CreateCameraGroupPayload:
-      properties:
-        name:
-          type: string
-          maxLength: 30
-          minLength: 1
-          title: Name
-          description: Display name for the new camera group (max 30 characters)
-      type: object
-      required:
-      - name
-      title: CreateCameraGroupPayload
-      description: Request payload for creating a camera group.
-      x-public-api-group: camera-groups
-    ErrorDetails:
-      properties:
-        code:
-          allOf:
-          - $ref: '#/components/schemas/ErrorCode'
-          description: Error code
-        message:
-          type: string
-          title: Message
-          description: Error message
-        field:
-          type: string
-          title: Field
-          description: Error field
-        docs:
-          type: string
-          title: Docs
-          description: Error docs
-      type: object
-      required:
-      - code
-      - message
-      title: ErrorDetails
-      description: Error message
-    CameraGroup:
-      properties:
-        id:
-          type: integer
-          title: Id
-          description: Unique camera group identifier
-        name:
-          type: string
-          title: Name
-          description: Camera group display name
-      type: object
-      required:
-      - id
-      - name
-      title: CameraGroup
-      description: A logical grouping of cameras for organization and access control.
-      x-public-api-group: camera-groups
   securitySchemes:
     X-Auth-Token:
       type: apiKey
