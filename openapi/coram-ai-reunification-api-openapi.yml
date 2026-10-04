@@ -210,6 +210,95 @@ paths:
       parameters: []
 components:
   schemas:
+    ReunificationStudent:
+      type: object
+      required:
+      - student_id
+      - name
+      - school_ids
+      properties:
+        student_id:
+          type: string
+        name:
+          type: string
+        sis_id:
+          type: string
+        email:
+          type: string
+        phone_number:
+          type: string
+        grade:
+          type: string
+        school_ids:
+          type: array
+          description: School IDs the student belongs to. The first is the primary school; the rest are secondary.
+          items:
+            type: string
+        guardians:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReunificationGuardian'
+    ReunificationStaff:
+      type: object
+      required:
+      - staff_id
+      - name
+      - school_ids
+      properties:
+        staff_id:
+          type: string
+        name:
+          type: string
+        sis_id:
+          type: string
+        email:
+          type: string
+        phone_number:
+          type: string
+        title:
+          type: string
+        department:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        school_ids:
+          type: array
+          items:
+            type: string
+    AuthErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: 'Human-readable error description. Matches the shape FastAPI uses
+
+            for `HTTPException` responses, so existing code that parses the
+
+            Python developer-api''s auth errors works unchanged.
+
+            '
+    ReunificationSection:
+      type: object
+      required:
+      - section_id
+      description: A class/section linking students to teachers (drives student↔teacher relationships).
+      properties:
+        section_id:
+          type: string
+        school_id:
+          type: string
+        teacher_ids:
+          type: array
+          items:
+            type: string
+        student_ids:
+          type: array
+          items:
+            type: string
     ReunificationGuardian:
       type: object
       required:
@@ -298,35 +387,6 @@ components:
         completed_at:
           type: string
           format: date-time
-    ReunificationStaff:
-      type: object
-      required:
-      - staff_id
-      - name
-      - school_ids
-      properties:
-        staff_id:
-          type: string
-        name:
-          type: string
-        sis_id:
-          type: string
-        email:
-          type: string
-        phone_number:
-          type: string
-        title:
-          type: string
-        department:
-          type: string
-        roles:
-          type: array
-          items:
-            type: string
-        school_ids:
-          type: array
-          items:
-            type: string
     ReunificationSchool:
       type: object
       required:
@@ -348,87 +408,6 @@ components:
           type: string
         zip:
           type: string
-    ReunificationTeacher:
-      type: object
-      required:
-      - teacher_id
-      - name
-      - school_ids
-      properties:
-        teacher_id:
-          type: string
-        name:
-          type: string
-        sis_id:
-          type: string
-        email:
-          type: string
-        phone_number:
-          type: string
-        school_ids:
-          type: array
-          items:
-            type: string
-    AuthErrorResponse:
-      type: object
-      required:
-      - detail
-      properties:
-        detail:
-          type: string
-          description: 'Human-readable error description. Matches the shape FastAPI uses
-
-            for `HTTPException` responses, so existing code that parses the
-
-            Python developer-api''s auth errors works unchanged.
-
-            '
-    ReunificationStudent:
-      type: object
-      required:
-      - student_id
-      - name
-      - school_ids
-      properties:
-        student_id:
-          type: string
-        name:
-          type: string
-        sis_id:
-          type: string
-        email:
-          type: string
-        phone_number:
-          type: string
-        grade:
-          type: string
-        school_ids:
-          type: array
-          description: School IDs the student belongs to. The first is the primary school; the rest are secondary.
-          items:
-            type: string
-        guardians:
-          type: array
-          items:
-            $ref: '#/components/schemas/ReunificationGuardian'
-    ReunificationSection:
-      type: object
-      required:
-      - section_id
-      description: A class/section linking students to teachers (drives student↔teacher relationships).
-      properties:
-        section_id:
-          type: string
-        school_id:
-          type: string
-        teacher_ids:
-          type: array
-          items:
-            type: string
-        student_ids:
-          type: array
-          items:
-            type: string
     ReunificationImportInput:
       type: object
       required:
@@ -478,6 +457,27 @@ components:
             type: integer
             format: int32
           description: Maps each school_id in the payload to a Coram location ID.
+    ReunificationTeacher:
+      type: object
+      required:
+      - teacher_id
+      - name
+      - school_ids
+      properties:
+        teacher_id:
+          type: string
+        name:
+          type: string
+        sis_id:
+          type: string
+        email:
+          type: string
+        phone_number:
+          type: string
+        school_ids:
+          type: array
+          items:
+            type: string
   securitySchemes:
     X-Auth-Token:
       type: apiKey

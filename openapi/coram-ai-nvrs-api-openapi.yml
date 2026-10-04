@@ -186,67 +186,47 @@ paths:
       parameters: []
 components:
   schemas:
-    InternetStatus:
+    Location:
       properties:
-        domain:
-          type: string
-          title: Domain
-          description: Domain/IP that was pinged
-        avg_ping_latency_ms:
-          type: number
-          title: Avg Ping Latency Ms
-          description: Average ping latency in milliseconds
-        packet_loss:
-          type: number
-          title: Packet Loss
-          description: Packet loss percentage (0-100)
-        internet_speed:
-          allOf:
-          - $ref: '#/components/schemas/InternetSpeed'
-          title: Internet Speed
-          description: Internet speed test results
-      type: object
-      required:
-      - domain
-      title: InternetStatus
-      description: Internet connectivity status and speed information.
-    ErrorResponse:
-      properties:
-        status:
-          type: string
-          enum:
-          - error
-          title: Status
-          default: error
-        error:
-          allOf:
-          - $ref: '#/components/schemas/ErrorDetails'
-          title: Error
-          description: Error details
-      type: object
-      required:
-      - error
-      title: ErrorResponse
-      description: Error response model.
-    RegisterNVRPayload:
-      properties:
-        nvr:
-          type: string
-          minLength: 1
-          title: nvr
-          description: Display name for the NVR
-        location_id:
+        id:
           type: integer
-          exclusiveMinimum: 0.0
-          title: location_id
-          description: Location ID to assign the NVR to
+          title: Id
+          description: Unique location identifier
+        name:
+          type: string
+          title: Name
+          description: Location display name
+        address:
+          type: string
+          title: Address
+          description: Physical street address
+        timezone:
+          type: string
+          title: Timezone
+          description: Timezone (IANA format, e.g., 'America/New_York')
       type: object
       required:
-      - nvr
-      - location_id
-      title: RegisterNVRPayload
-      description: Request model for registering an NVR.
-      x-public-api-group: nvrs
+      - id
+      - name
+      - address
+      title: Location
+      description: A physical location where cameras and NVRs are installed.
+      x-public-api-group: locations
+    Status:
+      properties:
+        last_seen_time:
+          type: string
+          title: Last Seen Time
+          description: Last connection timestamp (ISO 8601 format)
+        is_online:
+          type: boolean
+          title: Is Online
+          description: Whether the NVR is currently connected
+      type: object
+      required:
+      - is_online
+      title: Status
+      description: Current connectivity status of the NVR.
     NetworkInfo:
       properties:
         ip_address:
@@ -264,145 +244,6 @@ components:
       type: object
       title: NetworkInfo
       description: Network configuration of the NVR.
-    SpeedTestFailureResponse:
-      properties:
-        status:
-          type: string
-          enum:
-          - error
-          title: Status
-          default: error
-        error:
-          allOf:
-          - $ref: '#/components/schemas/ErrorDetails'
-          title: ErrorDetails
-          description: Error details
-      type: object
-      required:
-      - error
-      title: SpeedTestFailureResponse
-      description: Failure response for speed test request.
-    PingFailureResponse:
-      properties:
-        status:
-          type: string
-          enum:
-          - error
-          title: Status
-          default: error
-        error:
-          allOf:
-          - $ref: '#/components/schemas/ErrorDetails'
-          title: ErrorDetails
-          description: Error details
-      type: object
-      required:
-      - error
-      title: PingFailureResponse
-      description: Failure response for ping request.
-    RegisterNVRSuccessData:
-      properties:
-        nvr:
-          type: string
-          title: nvr
-          description: NVR display name
-      type: object
-      required:
-      - nvr
-      title: RegisterNVRSuccessData
-      description: Data returned for a successfully registered NVR.
-      x-public-api-group: nvrs
-    RegisterNVRSuccessResult:
-      properties:
-        status:
-          type: string
-          enum:
-          - success
-          title: Status
-          default: success
-        data:
-          allOf:
-          - $ref: '#/components/schemas/RegisterNVRSuccessData'
-          title: RegisterNVRSuccessData
-          description: Success data
-      type: object
-      required:
-      - data
-      title: RegisterNVRSuccessResult
-      description: Success result for NVR registration.
-      x-public-api-group: nvrs
-    ErrorDetails:
-      properties:
-        code:
-          allOf:
-          - $ref: '#/components/schemas/ErrorCode'
-          description: Error code
-        message:
-          type: string
-          title: Message
-          description: Error message
-        field:
-          type: string
-          title: Field
-          description: Error field
-        docs:
-          type: string
-          title: Docs
-          description: Error docs
-      type: object
-      required:
-      - code
-      - message
-      title: ErrorDetails
-      description: Error message
-    SpeedTestRequestPayload:
-      properties:
-        nvr:
-          type: string
-          title: nvr
-          description: NVR name to run the speed test from
-      type: object
-      required:
-      - nvr
-      title: SpeedTestRequestPayload
-      description: Request model for speed test from an NVR.
-    NVRList:
-      properties:
-        results:
-          items:
-            $ref: '#/components/schemas/NVR'
-          type: array
-          title: NVR
-          description: List of NVRs
-        has_more:
-          type: boolean
-          title: Has More
-          description: True if additional pages are available
-      type: object
-      required:
-      - results
-      - has_more
-      title: NVRList
-      description: Paginated list of NVRs.
-      x-public-api-group: nvrs
-    SpeedTestSuccessResponse:
-      properties:
-        status:
-          type: string
-          enum:
-          - success
-          title: Status
-          default: success
-        data:
-          allOf:
-          - $ref: '#/components/schemas/SpeedTestSuccessData'
-          title: SpeedTestSuccessData
-          description: Speed test results
-      type: object
-      required:
-      - data
-      title: SpeedTestSuccessResponse
-      description: Success response for speed test request.
     NVR:
       properties:
         name:
@@ -455,47 +296,244 @@ components:
       title: NVR
       description: Network Video Recorder details.
       x-public-api-group: nvrs
-    Location:
+    SpeedTestSuccessResponse:
       properties:
-        id:
-          type: integer
-          title: Id
-          description: Unique location identifier
-        name:
+        status:
           type: string
-          title: Name
-          description: Location display name
-        address:
-          type: string
-          title: Address
-          description: Physical street address
-        timezone:
-          type: string
-          title: Timezone
-          description: Timezone (IANA format, e.g., 'America/New_York')
+          enum:
+          - success
+          title: Status
+          default: success
+        data:
+          allOf:
+          - $ref: '#/components/schemas/SpeedTestSuccessData'
+          title: SpeedTestSuccessData
+          description: Speed test results
       type: object
       required:
-      - id
-      - name
-      - address
-      title: Location
-      description: A physical location where cameras and NVRs are installed.
-      x-public-api-group: locations
-    Status:
+      - data
+      title: SpeedTestSuccessResponse
+      description: Success response for speed test request.
+    RegisterNVRErrorResult:
       properties:
-        last_seen_time:
+        status:
           type: string
-          title: Last Seen Time
-          description: Last connection timestamp (ISO 8601 format)
-        is_online:
+          enum:
+          - error
+          title: Status
+          default: error
+        error:
+          allOf:
+          - $ref: '#/components/schemas/ErrorDetails'
+          title: ErrorDetails
+          description: Error details
+      type: object
+      required:
+      - error
+      title: RegisterNVRErrorResult
+      description: Error result for NVR registration.
+      x-public-api-group: nvrs
+    PingSuccessResponse:
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          title: Status
+          default: success
+        data:
+          allOf:
+          - $ref: '#/components/schemas/PingSuccessData'
+          title: PingSuccessData
+          description: Ping test results
+      type: object
+      required:
+      - data
+      title: PingSuccessResponse
+      description: Success response for ping request.
+    InternetStatus:
+      properties:
+        domain:
+          type: string
+          title: Domain
+          description: Domain/IP that was pinged
+        avg_ping_latency_ms:
+          type: number
+          title: Avg Ping Latency Ms
+          description: Average ping latency in milliseconds
+        packet_loss:
+          type: number
+          title: Packet Loss
+          description: Packet loss percentage (0-100)
+        internet_speed:
+          allOf:
+          - $ref: '#/components/schemas/InternetSpeed'
+          title: Internet Speed
+          description: Internet speed test results
+      type: object
+      required:
+      - domain
+      title: InternetStatus
+      description: Internet connectivity status and speed information.
+    NVRList:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/NVR'
+          type: array
+          title: NVR
+          description: List of NVRs
+        has_more:
           type: boolean
-          title: Is Online
-          description: Whether the NVR is currently connected
+          title: Has More
+          description: True if additional pages are available
       type: object
       required:
-      - is_online
-      title: Status
-      description: Current connectivity status of the NVR.
+      - results
+      - has_more
+      title: NVRList
+      description: Paginated list of NVRs.
+      x-public-api-group: nvrs
+    RegisterNVRSuccessData:
+      properties:
+        nvr:
+          type: string
+          title: nvr
+          description: NVR display name
+      type: object
+      required:
+      - nvr
+      title: RegisterNVRSuccessData
+      description: Data returned for a successfully registered NVR.
+      x-public-api-group: nvrs
+    ErrorResponse:
+      properties:
+        status:
+          type: string
+          enum:
+          - error
+          title: Status
+          default: error
+        error:
+          allOf:
+          - $ref: '#/components/schemas/ErrorDetails'
+          title: Error
+          description: Error details
+      type: object
+      required:
+      - error
+      title: ErrorResponse
+      description: Error response model.
+    PingRequestBody:
+      properties:
+        ip_address:
+          type: string
+          title: ip_address
+          description: IPv4 address to ping
+        nvr:
+          type: string
+          title: nvr
+          description: NVR name to run the ping from
+      type: object
+      required:
+      - ip_address
+      - nvr
+      title: PingRequestBody
+      description: Request model for ping test from an NVR.
+    PingSuccessData:
+      properties:
+        timestamp:
+          type: string
+          title: Timestamp
+          description: Timestamp of ping result (ISO 8601 format)
+        domain:
+          type: string
+          title: Domain
+          description: Domain/IP that was pinged
+        avg_ping_latency_ms:
+          type: number
+          title: Avg Ping Latency Ms
+          description: Average ping latency in milliseconds
+        packet_loss:
+          type: number
+          title: Packet Loss
+          description: Packet loss percentage (0-100)
+      type: object
+      required:
+      - timestamp
+      - domain
+      - avg_ping_latency_ms
+      - packet_loss
+      title: PingSuccessData
+      description: Ping test results.
+    SpeedTestFailureResponse:
+      properties:
+        status:
+          type: string
+          enum:
+          - error
+          title: Status
+          default: error
+        error:
+          allOf:
+          - $ref: '#/components/schemas/ErrorDetails'
+          title: ErrorDetails
+          description: Error details
+      type: object
+      required:
+      - error
+      title: SpeedTestFailureResponse
+      description: Failure response for speed test request.
+    CameraInfo:
+      properties:
+        num_cameras_enabled:
+          type: integer
+          title: Num Cameras Enabled
+          description: Number of enabled cameras
+        num_cameras_disabled:
+          type: integer
+          title: Num Cameras Disabled
+          description: Number of disabled cameras
+        num_available_cameras_slots:
+          type: integer
+          title: Num Available Cameras Slots
+          description: Number of available camera slots
+        max_cameras_slots:
+          type: integer
+          title: Max Cameras Slots
+          description: Maximum camera slots supported
+        num_online_cameras:
+          type: integer
+          title: Num Online Cameras
+          description: Number of currently online cameras
+      type: object
+      required:
+      - num_cameras_enabled
+      - num_cameras_disabled
+      - num_available_cameras_slots
+      - max_cameras_slots
+      - num_online_cameras
+      title: CameraInfo
+      description: Camera capacity and status summary for the NVR.
+      x-public-api-group: cameras
+    PingFailureResponse:
+      properties:
+        status:
+          type: string
+          enum:
+          - error
+          title: Status
+          default: error
+        error:
+          allOf:
+          - $ref: '#/components/schemas/ErrorDetails'
+          title: ErrorDetails
+          description: Error details
+      type: object
+      required:
+      - error
+      title: PingFailureResponse
+      description: Failure response for ping request.
     SpeedTestSuccessData:
       properties:
         timestamp:
@@ -530,6 +568,92 @@ components:
       - upload_speed_bps
       title: SpeedTestSuccessData
       description: Speed test results.
+    RegisterNVRResponse:
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          title: Status
+          default: success
+        summary:
+          allOf:
+          - $ref: '#/components/schemas/Summary'
+          title: Summary
+          description: Summary of the registration operation
+        results:
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/RegisterNVRSuccessResult'
+            - $ref: '#/components/schemas/RegisterNVRErrorResult'
+            discriminator:
+              propertyName: status
+              mapping:
+                success: '#/components/schemas/RegisterNVRSuccessResult'
+                error: '#/components/schemas/RegisterNVRErrorResult'
+          type: array
+          title: RegisterNVRResult
+          description: List of NVR registration results
+      type: object
+      required:
+      - summary
+      title: RegisterNVRResponse
+      description: Response model for bulk NVR registration.
+      x-public-api-group: nvrs
+    ErrorDetails:
+      properties:
+        code:
+          allOf:
+          - $ref: '#/components/schemas/ErrorCode'
+          description: Error code
+        message:
+          type: string
+          title: Message
+          description: Error message
+        field:
+          type: string
+          title: Field
+          description: Error field
+        docs:
+          type: string
+          title: Docs
+          description: Error docs
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorDetails
+      description: Error message
+    SpeedTestRequestPayload:
+      properties:
+        nvr:
+          type: string
+          title: nvr
+          description: NVR name to run the speed test from
+      type: object
+      required:
+      - nvr
+      title: SpeedTestRequestPayload
+      description: Request model for speed test from an NVR.
+    RegisterNVRSuccessResult:
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          title: Status
+          default: success
+        data:
+          allOf:
+          - $ref: '#/components/schemas/RegisterNVRSuccessData'
+          title: RegisterNVRSuccessData
+          description: Success data
+      type: object
+      required:
+      - data
+      title: RegisterNVRSuccessResult
+      description: Success result for NVR registration.
+      x-public-api-group: nvrs
     Summary:
       properties:
         total:
@@ -553,50 +677,24 @@ components:
       - failure_count
       title: Summary
       description: Summary of operation.
-    PingSuccessData:
+    RegisterNVRPayload:
       properties:
-        timestamp:
+        nvr:
           type: string
-          title: Timestamp
-          description: Timestamp of ping result (ISO 8601 format)
-        domain:
-          type: string
-          title: Domain
-          description: Domain/IP that was pinged
-        avg_ping_latency_ms:
-          type: number
-          title: Avg Ping Latency Ms
-          description: Average ping latency in milliseconds
-        packet_loss:
-          type: number
-          title: Packet Loss
-          description: Packet loss percentage (0-100)
+          minLength: 1
+          title: nvr
+          description: Display name for the NVR
+        location_id:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: location_id
+          description: Location ID to assign the NVR to
       type: object
       required:
-      - timestamp
-      - domain
-      - avg_ping_latency_ms
-      - packet_loss
-      title: PingSuccessData
-      description: Ping test results.
-    RegisterNVRErrorResult:
-      properties:
-        status:
-          type: string
-          enum:
-          - error
-          title: Status
-          default: error
-        error:
-          allOf:
-          - $ref: '#/components/schemas/ErrorDetails'
-          title: ErrorDetails
-          description: Error details
-      type: object
-      required:
-      - error
-      title: RegisterNVRErrorResult
-      description: Error result for NVR registration.
+      - nvr
+      - location_id
+      title: RegisterNVRPayload
+      description: Request model for registering an NVR.
       x-public-api-group: nvrs
     InternetSpeed:
       properties:
@@ -670,104 +768,6 @@ components:
       - DUPLICATE_GROUP_IDS
       title: ErrorCode
       description: Centralized error codes for Developer API endpoints.
-    PingSuccessResponse:
-      properties:
-        status:
-          type: string
-          enum:
-          - success
-          title: Status
-          default: success
-        data:
-          allOf:
-          - $ref: '#/components/schemas/PingSuccessData'
-          title: PingSuccessData
-          description: Ping test results
-      type: object
-      required:
-      - data
-      title: PingSuccessResponse
-      description: Success response for ping request.
-    PingRequestBody:
-      properties:
-        ip_address:
-          type: string
-          title: ip_address
-          description: IPv4 address to ping
-        nvr:
-          type: string
-          title: nvr
-          description: NVR name to run the ping from
-      type: object
-      required:
-      - ip_address
-      - nvr
-      title: PingRequestBody
-      description: Request model for ping test from an NVR.
-    CameraInfo:
-      properties:
-        num_cameras_enabled:
-          type: integer
-          title: Num Cameras Enabled
-          description: Number of enabled cameras
-        num_cameras_disabled:
-          type: integer
-          title: Num Cameras Disabled
-          description: Number of disabled cameras
-        num_available_cameras_slots:
-          type: integer
-          title: Num Available Cameras Slots
-          description: Number of available camera slots
-        max_cameras_slots:
-          type: integer
-          title: Max Cameras Slots
-          description: Maximum camera slots supported
-        num_online_cameras:
-          type: integer
-          title: Num Online Cameras
-          description: Number of currently online cameras
-      type: object
-      required:
-      - num_cameras_enabled
-      - num_cameras_disabled
-      - num_available_cameras_slots
-      - max_cameras_slots
-      - num_online_cameras
-      title: CameraInfo
-      description: Camera capacity and status summary for the NVR.
-      x-public-api-group: cameras
-    RegisterNVRResponse:
-      properties:
-        status:
-          type: string
-          enum:
-          - success
-          title: Status
-          default: success
-        summary:
-          allOf:
-          - $ref: '#/components/schemas/Summary'
-          title: Summary
-          description: Summary of the registration operation
-        results:
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/RegisterNVRSuccessResult'
-            - $ref: '#/components/schemas/RegisterNVRErrorResult'
-            discriminator:
-              propertyName: status
-              mapping:
-                success: '#/components/schemas/RegisterNVRSuccessResult'
-                error: '#/components/schemas/RegisterNVRErrorResult'
-          type: array
-          title: RegisterNVRResult
-          description: List of NVR registration results
-      type: object
-      required:
-      - summary
-      title: RegisterNVRResponse
-      description: Response model for bulk NVR registration.
-      x-public-api-group: nvrs
   securitySchemes:
     X-Auth-Token:
       type: apiKey

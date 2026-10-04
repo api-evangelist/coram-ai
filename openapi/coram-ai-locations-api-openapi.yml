@@ -106,25 +106,61 @@ paths:
       parameters: []
 components:
   schemas:
-    LocationList:
+    CreateLocationErrorResult:
       properties:
-        results:
-          items:
-            $ref: '#/components/schemas/Location'
-          type: array
-          title: Location
-          description: List of locations
-        has_more:
-          type: boolean
-          title: Has More
-          description: True if additional pages are available
+        status:
+          type: string
+          enum:
+          - error
+          title: Status
+          default: error
+        error:
+          allOf:
+          - $ref: '#/components/schemas/ErrorDetails'
+          title: ErrorDetails
+          description: Error details
       type: object
       required:
-      - results
-      - has_more
-      title: LocationList
-      description: Paginated list of locations.
+      - error
+      title: CreateLocationErrorResult
+      description: Error result for location creation.
       x-public-api-group: locations
+    CreateLocationSuccessData:
+      properties:
+        id:
+          type: integer
+          title: id
+          description: Unique identifier of the created location
+      type: object
+      required:
+      - id
+      title: CreateLocationSuccessData
+      description: Data returned for a successfully created location.
+      x-public-api-group: locations
+    ErrorDetails:
+      properties:
+        code:
+          allOf:
+          - $ref: '#/components/schemas/ErrorCode'
+          description: Error code
+        message:
+          type: string
+          title: Message
+          description: Error message
+        field:
+          type: string
+          title: Field
+          description: Error field
+        docs:
+          type: string
+          title: Docs
+          description: Error docs
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorDetails
+      description: Error message
     Location:
       properties:
         id:
@@ -151,6 +187,48 @@ components:
       title: Location
       description: A physical location where cameras and NVRs are installed.
       x-public-api-group: locations
+    LocationList:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/Location'
+          type: array
+          title: Location
+          description: List of locations
+        has_more:
+          type: boolean
+          title: Has More
+          description: True if additional pages are available
+      type: object
+      required:
+      - results
+      - has_more
+      title: LocationList
+      description: Paginated list of locations.
+      x-public-api-group: locations
+    Summary:
+      properties:
+        total:
+          type: integer
+          title: Total
+          description: Total number of operations in request
+        success_count:
+          type: integer
+          minimum: 0.0
+          title: Success Count
+          description: Number of successful operations
+        failure_count:
+          type: integer
+          minimum: 0.0
+          title: Failure Count
+          description: Number of failed operations
+      type: object
+      required:
+      - total
+      - success_count
+      - failure_count
+      title: Summary
+      description: Summary of operation.
     CreateLocationResponse:
       properties:
         status:
@@ -183,30 +261,67 @@ components:
       title: CreateLocationResponse
       description: Response model for bulk location creation.
       x-public-api-group: locations
-    ErrorDetails:
+    CreateLocationSuccessResult:
       properties:
-        code:
+        status:
+          type: string
+          enum:
+          - success
+          title: Status
+          default: success
+        data:
           allOf:
-          - $ref: '#/components/schemas/ErrorCode'
-          description: Error code
-        message:
-          type: string
-          title: Message
-          description: Error message
-        field:
-          type: string
-          title: Field
-          description: Error field
-        docs:
-          type: string
-          title: Docs
-          description: Error docs
+          - $ref: '#/components/schemas/CreateLocationSuccessData'
+          title: CreateLocationSuccessData
+          description: Success data
       type: object
       required:
-      - code
-      - message
-      title: ErrorDetails
-      description: Error message
+      - data
+      title: CreateLocationSuccessResult
+      description: Success result for location creation.
+      x-public-api-group: locations
+    ErrorResponse:
+      properties:
+        status:
+          type: string
+          enum:
+          - error
+          title: Status
+          default: error
+        error:
+          allOf:
+          - $ref: '#/components/schemas/ErrorDetails'
+          title: Error
+          description: Error details
+      type: object
+      required:
+      - error
+      title: ErrorResponse
+      description: Error response model.
+    CreateLocationPayload:
+      properties:
+        name:
+          type: string
+          maxLength: 30
+          minLength: 1
+          title: name
+          description: Display name for the location (max 30 characters)
+        address:
+          type: string
+          minLength: 5
+          title: address
+          description: Physical street address (min 5 characters)
+        timezone:
+          type: string
+          title: timezone
+          description: Timezone (IANA format, e.g., 'America/New_York')
+      type: object
+      required:
+      - name
+      - address
+      title: CreateLocationPayload
+      description: Request model for creating a location.
+      x-public-api-group: locations
     ErrorCode:
       type: string
       enum:
@@ -258,121 +373,6 @@ components:
       - DUPLICATE_GROUP_IDS
       title: ErrorCode
       description: Centralized error codes for Developer API endpoints.
-    CreateLocationSuccessResult:
-      properties:
-        status:
-          type: string
-          enum:
-          - success
-          title: Status
-          default: success
-        data:
-          allOf:
-          - $ref: '#/components/schemas/CreateLocationSuccessData'
-          title: CreateLocationSuccessData
-          description: Success data
-      type: object
-      required:
-      - data
-      title: CreateLocationSuccessResult
-      description: Success result for location creation.
-      x-public-api-group: locations
-    CreateLocationErrorResult:
-      properties:
-        status:
-          type: string
-          enum:
-          - error
-          title: Status
-          default: error
-        error:
-          allOf:
-          - $ref: '#/components/schemas/ErrorDetails'
-          title: ErrorDetails
-          description: Error details
-      type: object
-      required:
-      - error
-      title: CreateLocationErrorResult
-      description: Error result for location creation.
-      x-public-api-group: locations
-    ErrorResponse:
-      properties:
-        status:
-          type: string
-          enum:
-          - error
-          title: Status
-          default: error
-        error:
-          allOf:
-          - $ref: '#/components/schemas/ErrorDetails'
-          title: Error
-          description: Error details
-      type: object
-      required:
-      - error
-      title: ErrorResponse
-      description: Error response model.
-    CreateLocationPayload:
-      properties:
-        name:
-          type: string
-          maxLength: 30
-          minLength: 1
-          title: name
-          description: Display name for the location (max 30 characters)
-        address:
-          type: string
-          minLength: 5
-          title: address
-          description: Physical street address (min 5 characters)
-        timezone:
-          type: string
-          title: timezone
-          description: Timezone (IANA format, e.g., 'America/New_York')
-      type: object
-      required:
-      - name
-      - address
-      title: CreateLocationPayload
-      description: Request model for creating a location.
-      x-public-api-group: locations
-    Summary:
-      properties:
-        total:
-          type: integer
-          title: Total
-          description: Total number of operations in request
-        success_count:
-          type: integer
-          minimum: 0.0
-          title: Success Count
-          description: Number of successful operations
-        failure_count:
-          type: integer
-          minimum: 0.0
-          title: Failure Count
-          description: Number of failed operations
-      type: object
-      required:
-      - total
-      - success_count
-      - failure_count
-      title: Summary
-      description: Summary of operation.
-    CreateLocationSuccessData:
-      properties:
-        id:
-          type: integer
-          title: id
-          description: Unique identifier of the created location
-      type: object
-      required:
-      - id
-      title: CreateLocationSuccessData
-      description: Data returned for a successfully created location.
-      x-public-api-group: locations
   securitySchemes:
     X-Auth-Token:
       type: apiKey

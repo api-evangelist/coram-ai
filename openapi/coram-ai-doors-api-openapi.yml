@@ -121,17 +121,6 @@ paths:
       x-public-api-version: v1
 components:
   schemas:
-    UnlockResponse:
-      type: object
-      required:
-      - status
-      properties:
-        status:
-          type: string
-          enum:
-          - success
-          description: Always `success` on a 200; non-200 responses use AuthErrorResponse.
-      x-public-api-group: doors
     Door:
       type: object
       required:
@@ -173,6 +162,17 @@ components:
             Python developer-api''s auth errors works unchanged.
 
             '
+    UnlockResponse:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          description: Always `success` on a 200; non-200 responses use AuthErrorResponse.
+      x-public-api-group: doors
     DoorList:
       type: object
       required:
