@@ -195,44 +195,15 @@ components:
             Python developer-api''s auth errors works unchanged.
 
             '
-    ValidationError:
+    HTTPValidationError:
       properties:
-        loc:
+        detail:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
+          title: Detail
       type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    EventDoor:
-      type: object
-      required:
-      - id
-      - name
-      properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-        location_id:
-          type:
-          - integer
-          - 'null'
-          format: int64
-      x-public-api-group: events
+      title: HTTPValidationError
     EventClipResponse:
       properties:
         preview_url:
@@ -278,15 +249,27 @@ components:
       title: EventClipResponse
       description: Response for the access control event clip download endpoint.
       x-public-api-group: events
-    HTTPValidationError:
+    ValidationError:
       properties:
-        detail:
+        loc:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Detail
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
       type: object
-      title: HTTPValidationError
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     EventList:
       type: object
       required:
@@ -300,6 +283,23 @@ components:
         has_more:
           type: boolean
           description: True if a further page beyond `page` exists.
+      x-public-api-group: events
+    EventDoor:
+      type: object
+      required:
+      - id
+      - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        location_id:
+          type:
+          - integer
+          - 'null'
+          format: int64
       x-public-api-group: events
     Event:
       type: object

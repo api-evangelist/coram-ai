@@ -272,23 +272,72 @@ paths:
       parameters: []
 components:
   schemas:
-    CameraFeatureFlag:
+    MoveCameraResponse:
       properties:
-        is_audio_enabled:
-          type: boolean
-          title: Is Audio Enabled
-          description: Whether audio recording is enabled
-        is_license_plate_detection_enabled:
-          type: boolean
-          title: Is License Plate Detection Enabled
-          description: Whether license plate detection is enabled
-        auto_tracking:
-          type: boolean
-          title: Auto Tracking
-          description: Whether PTZ auto-tracking is enabled
+        status:
+          type: string
+          enum:
+          - success
+          title: Status
+          default: success
+        summary:
+          allOf:
+          - $ref: '#/components/schemas/Summary'
+          title: Summary
+          description: Summary of the move operation
+        results:
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/MoveCameraSuccessResult'
+            - $ref: '#/components/schemas/MoveCameraErrorResult'
+            discriminator:
+              propertyName: status
+              mapping:
+                success: '#/components/schemas/MoveCameraSuccessResult'
+                error: '#/components/schemas/MoveCameraErrorResult'
+          type: array
+          title: MoveCameraResult
+          description: List of camera move results
       type: object
-      title: CameraFeatureFlag
-      description: Feature flags to update on a camera.
+      required:
+      - summary
+      title: MoveCameraResponse
+      description: Response model for bulk camera move.
+      x-public-api-group: cameras
+    CameraList:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/Camera'
+          type: array
+          title: Camera
+          description: List of cameras
+        has_more:
+          type: boolean
+          title: Has More
+          description: True if additional pages are available
+      type: object
+      required:
+      - results
+      - has_more
+      title: CameraList
+      description: Paginated list of cameras.
+      x-public-api-group: cameras
+    CameraStatus:
+      properties:
+        is_online:
+          type: boolean
+          title: Is Online
+          description: Indicates whether the camera is currently connected and accessible
+        last_seen_time:
+          type: string
+          title: Last Seen Time
+          description: Last connection timestamp (ISO 8601 format)
+      type: object
+      required:
+      - is_online
+      title: CameraStatus
+      description: Current connectivity status of a camera.
       x-public-api-group: cameras
     CameraGroup:
       properties:
@@ -307,6 +356,261 @@ components:
       title: CameraGroup
       description: A logical grouping of cameras for organization and access control.
       x-public-api-group: camera-groups
+    DeleteCameraPayload:
+      properties:
+        mac_address:
+          type: string
+          title: mac_address
+          description: Camera MAC address
+      type: object
+      required:
+      - mac_address
+      title: DeleteCameraPayload
+      description: Request model for deleting a single camera in bulk operation.
+      x-public-api-group: cameras
+    CameraLocation:
+      properties:
+        id:
+          type: integer
+          title: Id
+          description: Unique location identifier
+        name:
+          type: string
+          title: Name
+          description: Location display name
+        timezone:
+          type: string
+          title: Timezone
+          description: IANA timezone (e.g., 'America/New_York')
+      type: object
+      required:
+      - id
+      - name
+      - timezone
+      title: CameraLocation
+      description: Location associated with cameras and camera groups.
+      x-public-api-group: cameras
+    DeleteCameraSuccessData:
+      properties:
+        mac_address:
+          type: string
+          title: mac_address
+          description: Camera MAC address
+      type: object
+      required:
+      - mac_address
+      title: DeleteCameraSuccessData
+      description: Data returned for a successfully deleted camera.
+      x-public-api-group: cameras
+    RegisterCameraErrorResult:
+      properties:
+        status:
+          type: string
+          enum:
+          - error
+          title: Status
+          default: error
+        error:
+          allOf:
+          - $ref: '#/components/schemas/ErrorDetails'
+          title: ErrorDetails
+          description: Error details
+      type: object
+      required:
+      - error
+      title: RegisterCameraErrorResult
+      description: Error result for camera registration.
+      x-public-api-group: cameras
+    MoveCameraErrorResult:
+      properties:
+        status:
+          type: string
+          enum:
+          - error
+          title: Status
+          default: error
+        error:
+          allOf:
+          - $ref: '#/components/schemas/ErrorDetails'
+          title: ErrorDetails
+          description: Error details
+      type: object
+      required:
+      - error
+      title: MoveCameraErrorResult
+      description: Error result for camera move.
+      x-public-api-group: cameras
+    DeleteCameraSuccessResult:
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          title: Status
+          default: success
+        data:
+          allOf:
+          - $ref: '#/components/schemas/DeleteCameraSuccessData'
+          title: DeleteCameraSuccessData
+          description: Success data
+      type: object
+      required:
+      - data
+      title: DeleteCameraSuccessResult
+      description: Success result for camera delete.
+      x-public-api-group: cameras
+    CameraFeatureFlag:
+      properties:
+        is_audio_enabled:
+          type: boolean
+          title: Is Audio Enabled
+          description: Whether audio recording is enabled
+        is_license_plate_detection_enabled:
+          type: boolean
+          title: Is License Plate Detection Enabled
+          description: Whether license plate detection is enabled
+        auto_tracking:
+          type: boolean
+          title: Auto Tracking
+          description: Whether PTZ auto-tracking is enabled
+      type: object
+      title: CameraFeatureFlag
+      description: Feature flags to update on a camera.
+      x-public-api-group: cameras
+    Summary:
+      properties:
+        total:
+          type: integer
+          title: Total
+          description: Total number of operations in request
+        success_count:
+          type: integer
+          minimum: 0.0
+          title: Success Count
+          description: Number of successful operations
+        failure_count:
+          type: integer
+          minimum: 0.0
+          title: Failure Count
+          description: Number of failed operations
+      type: object
+      required:
+      - total
+      - success_count
+      - failure_count
+      title: Summary
+      description: Summary of operation.
+    RegisterCameraResponse:
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          title: Status
+          default: success
+        summary:
+          allOf:
+          - $ref: '#/components/schemas/Summary'
+          title: Summary
+          description: Summary of the registration operation
+        results:
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/RegisterCameraSuccessResult'
+            - $ref: '#/components/schemas/RegisterCameraErrorResult'
+            discriminator:
+              propertyName: status
+              mapping:
+                success: '#/components/schemas/RegisterCameraSuccessResult'
+                error: '#/components/schemas/RegisterCameraErrorResult'
+          type: array
+          title: RegisterCameraResult
+          description: List of camera registration results
+      type: object
+      required:
+      - summary
+      title: RegisterCameraResponse
+      description: Success response model for camera registration.
+      x-public-api-group: cameras
+    RegisterCameraPayload:
+      properties:
+        mac_address:
+          type: string
+          title: mac_address
+          description: Camera MAC address. If omitted, a synthetic unique identifier is generated server-side.
+        name:
+          type: string
+          minLength: 1
+          title: name
+          description: Camera display name
+        ip:
+          type: string
+          title: ip
+          description: Camera IP address
+        vendor:
+          type: string
+          title: vendor
+          description: Camera manufacturer. Defaults to 'Unknown' when not provided.
+        rtsp_port:
+          type: integer
+          maximum: 65535.0
+          minimum: 1.0
+          title: rtsp_port
+          description: RTSP port number
+          default: 554
+        rtsp_url_path:
+          type: string
+          title: rtsp_url_path
+          description: Path component of the RTSP URL (e.g. '/Streaming/Channels/101'). Combined with ip, rtsp_port and credentials at runtime to form the full URL. Defaults to '/unknown' to match the placeholder used elsewhere in the system; callers should set this when the actual path is known.
+          default: /unknown
+        credentials:
+          allOf:
+          - $ref: '#/components/schemas/Credentials'
+          title: Credentials
+          description: Camera credentials
+        nvrs:
+          items:
+            type: string
+            minLength: 1
+          type: array
+          minLength: 1
+          title: nvrs
+          description: List of NVR display names from which the camera will be assigned to one. The system selects an available NVR from this list during registration.
+      type: object
+      required:
+      - name
+      - ip
+      - nvrs
+      title: RegisterCameraPayload
+      description: Request model for registering a single camera in bulk operation.
+      x-public-api-group: cameras
+    FeatureFlags:
+      properties:
+        is_audio_enabled:
+          type: boolean
+          title: Is Audio Enabled
+          description: Whether audio recording is enabled
+        is_license_plate_detection_enabled:
+          type: boolean
+          title: Is License Plate Detection Enabled
+          description: Whether license plate detection is enabled
+        is_force_fps_enabled:
+          type: boolean
+          title: Is Force Fps Enabled
+          description: Whether FPS is forced to a specific value
+        auto_tracking:
+          type: boolean
+          title: Auto Tracking
+          description: Whether PTZ auto-tracking is enabled
+      type: object
+      required:
+      - is_audio_enabled
+      - is_license_plate_detection_enabled
+      - is_force_fps_enabled
+      - auto_tracking
+      title: FeatureFlags
+      description: Current feature flag settings for a camera.
+      x-public-api-group: cameras
     UpdateCameraErrorResult:
       properties:
         status:
@@ -325,93 +629,6 @@ components:
       - error
       title: UpdateCameraErrorResult
       description: Error result for camera update.
-      x-public-api-group: cameras
-    DeleteCameraResponse:
-      properties:
-        status:
-          type: string
-          enum:
-          - success
-          title: Status
-          default: success
-        summary:
-          allOf:
-          - $ref: '#/components/schemas/Summary'
-          title: Summary
-          description: Summary of the delete operation
-        results:
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/DeleteCameraSuccessResult'
-            - $ref: '#/components/schemas/DeleteCameraErrorResult'
-            discriminator:
-              propertyName: status
-              mapping:
-                success: '#/components/schemas/DeleteCameraSuccessResult'
-                error: '#/components/schemas/DeleteCameraErrorResult'
-          type: array
-          title: DeleteCameraResult
-          description: List of camera delete results
-      type: object
-      required:
-      - summary
-      title: DeleteCameraResponse
-      description: Success response model for camera delete.
-      x-public-api-group: cameras
-    DeleteCameraErrorResult:
-      properties:
-        status:
-          type: string
-          enum:
-          - error
-          title: Status
-          default: error
-        error:
-          allOf:
-          - $ref: '#/components/schemas/ErrorDetails'
-          title: ErrorDetails
-          description: Error details
-      type: object
-      required:
-      - error
-      title: DeleteCameraErrorResult
-      description: Error result for camera delete.
-      x-public-api-group: cameras
-    UpdateCameraSuccessResult:
-      properties:
-        status:
-          type: string
-          enum:
-          - success
-          title: Status
-          default: success
-        data:
-          allOf:
-          - $ref: '#/components/schemas/UpdateCameraSuccessData'
-          title: UpdateCameraSuccessData
-          description: Success data
-      type: object
-      required:
-      - data
-      title: UpdateCameraSuccessResult
-      description: Success result for camera update.
-      x-public-api-group: cameras
-    MoveCameraPayload:
-      properties:
-        mac_address:
-          type: string
-          title: mac_address
-          description: Camera MAC address
-        target_nvr:
-          type: string
-          title: target_nvr
-          description: Name of the NVR to move the camera to
-      type: object
-      required:
-      - mac_address
-      - target_nvr
-      title: MoveCameraPayload
-      description: Request model for moving a camera to a different NVR.
       x-public-api-group: cameras
     UpdateCameraResponse:
       properties:
@@ -445,38 +662,24 @@ components:
       title: UpdateCameraResponse
       description: Response model for bulk camera update.
       x-public-api-group: cameras
-    CameraNVRInfo:
+    MoveCameraSuccessResult:
       properties:
-        name:
+        status:
           type: string
-          title: Name
-          description: NVR display name
-        timezone:
-          type: string
-          title: Timezone
-          description: NVR timezone (IANA format, e.g., 'America/New_York')
+          enum:
+          - success
+          title: Status
+          default: success
+        data:
+          allOf:
+          - $ref: '#/components/schemas/MoveCameraSuccessData'
+          title: MoveCameraSuccessData
+          description: Success data
       type: object
       required:
-      - name
-      title: CameraNVRInfo
-      description: NVR (Network Video Recorder) associated with the camera.
-      x-public-api-group: cameras
-    Credentials:
-      properties:
-        username:
-          type: string
-          title: Username
-          description: Camera login username
-        password:
-          type: string
-          title: Password
-          description: Camera login password
-      type: object
-      required:
-      - username
-      - password
-      title: Credentials
-      description: Authentication credentials for camera access.
+      - data
+      title: MoveCameraSuccessResult
+      description: Success result for camera move.
       x-public-api-group: cameras
     MoveCameraSuccessData:
       properties:
@@ -495,7 +698,24 @@ components:
       title: MoveCameraSuccessData
       description: Data returned for a successfully moved camera.
       x-public-api-group: cameras
-    MoveCameraResponse:
+    MoveCameraPayload:
+      properties:
+        mac_address:
+          type: string
+          title: mac_address
+          description: Camera MAC address
+        target_nvr:
+          type: string
+          title: target_nvr
+          description: Name of the NVR to move the camera to
+      type: object
+      required:
+      - mac_address
+      - target_nvr
+      title: MoveCameraPayload
+      description: Request model for moving a camera to a different NVR.
+      x-public-api-group: cameras
+    DeleteCameraResponse:
       properties:
         status:
           type: string
@@ -507,82 +727,41 @@ components:
           allOf:
           - $ref: '#/components/schemas/Summary'
           title: Summary
-          description: Summary of the move operation
+          description: Summary of the delete operation
         results:
           items:
             oneOf:
-            - $ref: '#/components/schemas/MoveCameraSuccessResult'
-            - $ref: '#/components/schemas/MoveCameraErrorResult'
+            - $ref: '#/components/schemas/DeleteCameraSuccessResult'
+            - $ref: '#/components/schemas/DeleteCameraErrorResult'
             discriminator:
               propertyName: status
               mapping:
-                success: '#/components/schemas/MoveCameraSuccessResult'
-                error: '#/components/schemas/MoveCameraErrorResult'
+                success: '#/components/schemas/DeleteCameraSuccessResult'
+                error: '#/components/schemas/DeleteCameraErrorResult'
           type: array
-          title: MoveCameraResult
-          description: List of camera move results
+          title: DeleteCameraResult
+          description: List of camera delete results
       type: object
       required:
       - summary
-      title: MoveCameraResponse
-      description: Response model for bulk camera move.
+      title: DeleteCameraResponse
+      description: Success response model for camera delete.
       x-public-api-group: cameras
-    MoveCameraErrorResult:
+    CameraNVRInfo:
       properties:
-        status:
+        name:
           type: string
-          enum:
-          - error
-          title: Status
-          default: error
-        error:
-          allOf:
-          - $ref: '#/components/schemas/ErrorDetails'
-          title: ErrorDetails
-          description: Error details
-      type: object
-      required:
-      - error
-      title: MoveCameraErrorResult
-      description: Error result for camera move.
-      x-public-api-group: cameras
-    RegisterCameraSuccessResult:
-      properties:
-        status:
+          title: Name
+          description: NVR display name
+        timezone:
           type: string
-          enum:
-          - success
-          title: Status
-          default: success
-        data:
-          allOf:
-          - $ref: '#/components/schemas/RegisterCameraSuccessData'
-          title: RegisterCameraSuccessData
-          description: Success data
+          title: Timezone
+          description: NVR timezone (IANA format, e.g., 'America/New_York')
       type: object
       required:
-      - data
-      title: RegisterCameraSuccessResult
-      description: Success result for camera registration.
-      x-public-api-group: cameras
-    CameraList:
-      properties:
-        results:
-          items:
-            $ref: '#/components/schemas/Camera'
-          type: array
-          title: Camera
-          description: List of cameras
-        has_more:
-          type: boolean
-          title: Has More
-          description: True if additional pages are available
-      type: object
-      required:
-      - results
-      - has_more
-      title: CameraList
-      description: Paginated list of cameras.
+      - name
+      title: CameraNVRInfo
+      description: NVR (Network Video Recorder) associated with the camera.
       x-public-api-group: cameras
     Camera:
       properties:
@@ -690,410 +869,6 @@ components:
       title: Camera
       description: Complete camera information in list response.
       x-public-api-group: cameras
-    RegisterCameraPayload:
-      properties:
-        mac_address:
-          type: string
-          title: mac_address
-          description: Camera MAC address. If omitted, a synthetic unique identifier is generated server-side.
-        name:
-          type: string
-          minLength: 1
-          title: name
-          description: Camera display name
-        ip:
-          type: string
-          title: ip
-          description: Camera IP address
-        vendor:
-          type: string
-          title: vendor
-          description: Camera manufacturer. Defaults to 'Unknown' when not provided.
-        rtsp_port:
-          type: integer
-          maximum: 65535.0
-          minimum: 1.0
-          title: rtsp_port
-          description: RTSP port number
-          default: 554
-        rtsp_url_path:
-          type: string
-          title: rtsp_url_path
-          description: Path component of the RTSP URL (e.g. '/Streaming/Channels/101'). Combined with ip, rtsp_port and credentials at runtime to form the full URL. Defaults to '/unknown' to match the placeholder used elsewhere in the system; callers should set this when the actual path is known.
-          default: /unknown
-        credentials:
-          allOf:
-          - $ref: '#/components/schemas/Credentials'
-          title: Credentials
-          description: Camera credentials
-        nvrs:
-          items:
-            type: string
-            minLength: 1
-          type: array
-          minLength: 1
-          title: nvrs
-          description: List of NVR display names from which the camera will be assigned to one. The system selects an available NVR from this list during registration.
-      type: object
-      required:
-      - name
-      - ip
-      - nvrs
-      title: RegisterCameraPayload
-      description: Request model for registering a single camera in bulk operation.
-      x-public-api-group: cameras
-    DeleteCameraSuccessResult:
-      properties:
-        status:
-          type: string
-          enum:
-          - success
-          title: Status
-          default: success
-        data:
-          allOf:
-          - $ref: '#/components/schemas/DeleteCameraSuccessData'
-          title: DeleteCameraSuccessData
-          description: Success data
-      type: object
-      required:
-      - data
-      title: DeleteCameraSuccessResult
-      description: Success result for camera delete.
-      x-public-api-group: cameras
-    RegisterCameraSuccessData:
-      properties:
-        mac_address:
-          type: string
-          title: mac_address
-          description: Camera MAC address
-        nvr:
-          allOf:
-          - $ref: '#/components/schemas/CameraNVRInfo'
-          title: Nvr
-          description: NVR the camera was assigned to
-      type: object
-      required:
-      - mac_address
-      - nvr
-      title: RegisterCameraSuccessData
-      description: Data returned for a successfully registered camera.
-      x-public-api-group: cameras
-    ErrorResponse:
-      properties:
-        status:
-          type: string
-          enum:
-          - error
-          title: Status
-          default: error
-        error:
-          allOf:
-          - $ref: '#/components/schemas/ErrorDetails'
-          title: Error
-          description: Error details
-      type: object
-      required:
-      - error
-      title: ErrorResponse
-      description: Error response model.
-    DeleteCameraSuccessData:
-      properties:
-        mac_address:
-          type: string
-          title: mac_address
-          description: Camera MAC address
-      type: object
-      required:
-      - mac_address
-      title: DeleteCameraSuccessData
-      description: Data returned for a successfully deleted camera.
-      x-public-api-group: cameras
-    RegisterCameraResponse:
-      properties:
-        status:
-          type: string
-          enum:
-          - success
-          title: Status
-          default: success
-        summary:
-          allOf:
-          - $ref: '#/components/schemas/Summary'
-          title: Summary
-          description: Summary of the registration operation
-        results:
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/RegisterCameraSuccessResult'
-            - $ref: '#/components/schemas/RegisterCameraErrorResult'
-            discriminator:
-              propertyName: status
-              mapping:
-                success: '#/components/schemas/RegisterCameraSuccessResult'
-                error: '#/components/schemas/RegisterCameraErrorResult'
-          type: array
-          title: RegisterCameraResult
-          description: List of camera registration results
-      type: object
-      required:
-      - summary
-      title: RegisterCameraResponse
-      description: Success response model for camera registration.
-      x-public-api-group: cameras
-    MoveCameraSuccessResult:
-      properties:
-        status:
-          type: string
-          enum:
-          - success
-          title: Status
-          default: success
-        data:
-          allOf:
-          - $ref: '#/components/schemas/MoveCameraSuccessData'
-          title: MoveCameraSuccessData
-          description: Success data
-      type: object
-      required:
-      - data
-      title: MoveCameraSuccessResult
-      description: Success result for camera move.
-      x-public-api-group: cameras
-    UpdateCameraPayload:
-      properties:
-        mac_address:
-          type: string
-          title: mac_address
-          description: Camera MAC address
-        name:
-          type: string
-          title: name
-          description: New display name (max 30 characters)
-        credentials:
-          allOf:
-          - $ref: '#/components/schemas/Credentials'
-          title: credentials
-          description: Camera credentials
-        enforced_rtsp_url:
-          type: string
-          title: Enforced Rtsp Url
-          description: Custom RTSP URL to override auto-discovery. Provide the path component beginning with '/' (e.g. '/Streaming/Channels/101'); it is combined with the camera's IP, port and credentials at connection time. A full 'rtsp://host:port/path' URL is also accepted and reduced to its path.
-        feature_flags:
-          allOf:
-          - $ref: '#/components/schemas/CameraFeatureFlag'
-          title: CameraFeatureFlag
-          description: Camera feature flags
-        group_ids:
-          items:
-            type: integer
-          type: array
-          title: group_ids
-          description: List of group IDs to assign (empty list resets to default group)
-      type: object
-      required:
-      - mac_address
-      title: UpdateCameraPayload
-      description: Request model for updating a single camera in bulk operation.
-      x-public-api-group: cameras
-    ErrorDetails:
-      properties:
-        code:
-          allOf:
-          - $ref: '#/components/schemas/ErrorCode'
-          description: Error code
-        message:
-          type: string
-          title: Message
-          description: Error message
-        field:
-          type: string
-          title: Field
-          description: Error field
-        docs:
-          type: string
-          title: Docs
-          description: Error docs
-      type: object
-      required:
-      - code
-      - message
-      title: ErrorDetails
-      description: Error message
-    FeatureFlags:
-      properties:
-        is_audio_enabled:
-          type: boolean
-          title: Is Audio Enabled
-          description: Whether audio recording is enabled
-        is_license_plate_detection_enabled:
-          type: boolean
-          title: Is License Plate Detection Enabled
-          description: Whether license plate detection is enabled
-        is_force_fps_enabled:
-          type: boolean
-          title: Is Force Fps Enabled
-          description: Whether FPS is forced to a specific value
-        auto_tracking:
-          type: boolean
-          title: Auto Tracking
-          description: Whether PTZ auto-tracking is enabled
-      type: object
-      required:
-      - is_audio_enabled
-      - is_license_plate_detection_enabled
-      - is_force_fps_enabled
-      - auto_tracking
-      title: FeatureFlags
-      description: Current feature flag settings for a camera.
-      x-public-api-group: cameras
-    CameraStatus:
-      properties:
-        is_online:
-          type: boolean
-          title: Is Online
-          description: Indicates whether the camera is currently connected and accessible
-        last_seen_time:
-          type: string
-          title: Last Seen Time
-          description: Last connection timestamp (ISO 8601 format)
-      type: object
-      required:
-      - is_online
-      title: CameraStatus
-      description: Current connectivity status of a camera.
-      x-public-api-group: cameras
-    Summary:
-      properties:
-        total:
-          type: integer
-          title: Total
-          description: Total number of operations in request
-        success_count:
-          type: integer
-          minimum: 0.0
-          title: Success Count
-          description: Number of successful operations
-        failure_count:
-          type: integer
-          minimum: 0.0
-          title: Failure Count
-          description: Number of failed operations
-      type: object
-      required:
-      - total
-      - success_count
-      - failure_count
-      title: Summary
-      description: Summary of operation.
-    RegisterCameraRequest:
-      properties:
-        cameras:
-          items:
-            $ref: '#/components/schemas/RegisterCameraPayload'
-          type: array
-          title: RegisterCameraPayload
-          description: List of cameras to register
-        location_id:
-          type: integer
-          title: location_id
-          description: Location ID to assign cameras to
-      type: object
-      required:
-      - cameras
-      - location_id
-      title: RegisterCameraRequest
-      description: Request model for bulk camera registration.
-      x-public-api-group: cameras
-    RegisterCameraErrorResult:
-      properties:
-        status:
-          type: string
-          enum:
-          - error
-          title: Status
-          default: error
-        error:
-          allOf:
-          - $ref: '#/components/schemas/ErrorDetails'
-          title: ErrorDetails
-          description: Error details
-      type: object
-      required:
-      - error
-      title: RegisterCameraErrorResult
-      description: Error result for camera registration.
-      x-public-api-group: cameras
-    CameraLocation:
-      properties:
-        id:
-          type: integer
-          title: Id
-          description: Unique location identifier
-        name:
-          type: string
-          title: Name
-          description: Location display name
-        timezone:
-          type: string
-          title: Timezone
-          description: IANA timezone (e.g., 'America/New_York')
-      type: object
-      required:
-      - id
-      - name
-      - timezone
-      title: CameraLocation
-      description: Location associated with cameras and camera groups.
-      x-public-api-group: cameras
-    UpdateCameraSuccessData:
-      properties:
-        mac_address:
-          type: string
-          title: Mac Address
-          description: Camera MAC address
-        name:
-          type: string
-          title: name
-          description: Camera display name
-        credentials:
-          allOf:
-          - $ref: '#/components/schemas/Credentials'
-          title: Credentials
-          description: Camera credentials
-        enforced_rtsp_url:
-          type: string
-          title: enforced_rtsp_url
-          description: Custom RTSP URL
-        feature_flags:
-          allOf:
-          - $ref: '#/components/schemas/CameraFeatureFlag'
-          title: CameraFeatureFlag
-          description: Camera feature flags
-        group_ids:
-          items:
-            type: integer
-          type: array
-          title: group_ids
-          description: Updated group IDs
-      type: object
-      required:
-      - mac_address
-      title: UpdateCameraSuccessData
-      description: Data returned for a successfully updated camera.
-      x-public-api-group: cameras
-    DeleteCameraPayload:
-      properties:
-        mac_address:
-          type: string
-          title: mac_address
-          description: Camera MAC address
-      type: object
-      required:
-      - mac_address
-      title: DeleteCameraPayload
-      description: Request model for deleting a single camera in bulk operation.
-      x-public-api-group: cameras
     ErrorCode:
       type: string
       enum:
@@ -1145,6 +920,231 @@ components:
       - DUPLICATE_GROUP_IDS
       title: ErrorCode
       description: Centralized error codes for Developer API endpoints.
+    RegisterCameraRequest:
+      properties:
+        cameras:
+          items:
+            $ref: '#/components/schemas/RegisterCameraPayload'
+          type: array
+          title: RegisterCameraPayload
+          description: List of cameras to register
+        location_id:
+          type: integer
+          title: location_id
+          description: Location ID to assign cameras to
+      type: object
+      required:
+      - cameras
+      - location_id
+      title: RegisterCameraRequest
+      description: Request model for bulk camera registration.
+      x-public-api-group: cameras
+    DeleteCameraErrorResult:
+      properties:
+        status:
+          type: string
+          enum:
+          - error
+          title: Status
+          default: error
+        error:
+          allOf:
+          - $ref: '#/components/schemas/ErrorDetails'
+          title: ErrorDetails
+          description: Error details
+      type: object
+      required:
+      - error
+      title: DeleteCameraErrorResult
+      description: Error result for camera delete.
+      x-public-api-group: cameras
+    RegisterCameraSuccessResult:
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          title: Status
+          default: success
+        data:
+          allOf:
+          - $ref: '#/components/schemas/RegisterCameraSuccessData'
+          title: RegisterCameraSuccessData
+          description: Success data
+      type: object
+      required:
+      - data
+      title: RegisterCameraSuccessResult
+      description: Success result for camera registration.
+      x-public-api-group: cameras
+    Credentials:
+      properties:
+        username:
+          type: string
+          title: Username
+          description: Camera login username
+        password:
+          type: string
+          title: Password
+          description: Camera login password
+      type: object
+      required:
+      - username
+      - password
+      title: Credentials
+      description: Authentication credentials for camera access.
+      x-public-api-group: cameras
+    RegisterCameraSuccessData:
+      properties:
+        mac_address:
+          type: string
+          title: mac_address
+          description: Camera MAC address
+        nvr:
+          allOf:
+          - $ref: '#/components/schemas/CameraNVRInfo'
+          title: Nvr
+          description: NVR the camera was assigned to
+      type: object
+      required:
+      - mac_address
+      - nvr
+      title: RegisterCameraSuccessData
+      description: Data returned for a successfully registered camera.
+      x-public-api-group: cameras
+    ErrorResponse:
+      properties:
+        status:
+          type: string
+          enum:
+          - error
+          title: Status
+          default: error
+        error:
+          allOf:
+          - $ref: '#/components/schemas/ErrorDetails'
+          title: Error
+          description: Error details
+      type: object
+      required:
+      - error
+      title: ErrorResponse
+      description: Error response model.
+    UpdateCameraSuccessData:
+      properties:
+        mac_address:
+          type: string
+          title: Mac Address
+          description: Camera MAC address
+        name:
+          type: string
+          title: name
+          description: Camera display name
+        credentials:
+          allOf:
+          - $ref: '#/components/schemas/Credentials'
+          title: Credentials
+          description: Camera credentials
+        enforced_rtsp_url:
+          type: string
+          title: enforced_rtsp_url
+          description: Custom RTSP URL
+        feature_flags:
+          allOf:
+          - $ref: '#/components/schemas/CameraFeatureFlag'
+          title: CameraFeatureFlag
+          description: Camera feature flags
+        group_ids:
+          items:
+            type: integer
+          type: array
+          title: group_ids
+          description: Updated group IDs
+      type: object
+      required:
+      - mac_address
+      title: UpdateCameraSuccessData
+      description: Data returned for a successfully updated camera.
+      x-public-api-group: cameras
+    ErrorDetails:
+      properties:
+        code:
+          allOf:
+          - $ref: '#/components/schemas/ErrorCode'
+          description: Error code
+        message:
+          type: string
+          title: Message
+          description: Error message
+        field:
+          type: string
+          title: Field
+          description: Error field
+        docs:
+          type: string
+          title: Docs
+          description: Error docs
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorDetails
+      description: Error message
+    UpdateCameraSuccessResult:
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          title: Status
+          default: success
+        data:
+          allOf:
+          - $ref: '#/components/schemas/UpdateCameraSuccessData'
+          title: UpdateCameraSuccessData
+          description: Success data
+      type: object
+      required:
+      - data
+      title: UpdateCameraSuccessResult
+      description: Success result for camera update.
+      x-public-api-group: cameras
+    UpdateCameraPayload:
+      properties:
+        mac_address:
+          type: string
+          title: mac_address
+          description: Camera MAC address
+        name:
+          type: string
+          title: name
+          description: New display name (max 30 characters)
+        credentials:
+          allOf:
+          - $ref: '#/components/schemas/Credentials'
+          title: credentials
+          description: Camera credentials
+        enforced_rtsp_url:
+          type: string
+          title: Enforced Rtsp Url
+          description: Custom RTSP URL to override auto-discovery. Provide the path component beginning with '/' (e.g. '/Streaming/Channels/101'); it is combined with the camera's IP, port and credentials at connection time. A full 'rtsp://host:port/path' URL is also accepted and reduced to its path.
+        feature_flags:
+          allOf:
+          - $ref: '#/components/schemas/CameraFeatureFlag'
+          title: CameraFeatureFlag
+          description: Camera feature flags
+        group_ids:
+          items:
+            type: integer
+          type: array
+          title: group_ids
+          description: List of group IDs to assign (empty list resets to default group)
+      type: object
+      required:
+      - mac_address
+      title: UpdateCameraPayload
+      description: Request model for updating a single camera in bulk operation.
+      x-public-api-group: cameras
   securitySchemes:
     X-Auth-Token:
       type: apiKey

@@ -210,34 +210,6 @@ paths:
       parameters: []
 components:
   schemas:
-    ReunificationStudent:
-      type: object
-      required:
-      - student_id
-      - name
-      - school_ids
-      properties:
-        student_id:
-          type: string
-        name:
-          type: string
-        sis_id:
-          type: string
-        email:
-          type: string
-        phone_number:
-          type: string
-        grade:
-          type: string
-        school_ids:
-          type: array
-          description: School IDs the student belongs to. The first is the primary school; the rest are secondary.
-          items:
-            type: string
-        guardians:
-          type: array
-          items:
-            $ref: '#/components/schemas/ReunificationGuardian'
     ReunificationStaff:
       type: object
       required:
@@ -281,37 +253,55 @@ components:
             Python developer-api''s auth errors works unchanged.
 
             '
-    ReunificationSection:
+    ReunificationImportInput:
       type: object
       required:
-      - section_id
-      description: A class/section linking students to teachers (drives student↔teacher relationships).
+      - schools
+      - students
+      - teachers
+      - sections
+      - school_location_mappings
+      description: 'Full-replace roster payload. `schools`, `students`, `teachers`, and
+
+        `sections` must be present (may be empty arrays) so an omitted key can''t
+
+        silently delete that entity type; `staff` is optional. Phone numbers are
+
+        normalized to E.164; a number that can''t be parsed for the region is
+
+        dropped (stored as null), not rejected — so a malformed guardian
+
+        contact number is silently lost rather than failing the import.
+
+        '
       properties:
-        section_id:
-          type: string
-        school_id:
-          type: string
-        teacher_ids:
+        schools:
           type: array
           items:
-            type: string
-        student_ids:
+            $ref: '#/components/schemas/ReunificationSchool'
+        students:
           type: array
           items:
-            type: string
-    ReunificationGuardian:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-        email:
-          type: string
-        phone:
-          type: string
-        relationship:
-          type: string
+            $ref: '#/components/schemas/ReunificationStudent'
+        teachers:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReunificationTeacher'
+        staff:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReunificationStaff'
+        sections:
+          type: array
+          description: Class/section memberships that establish student↔teacher relationships.
+          items:
+            $ref: '#/components/schemas/ReunificationSection'
+        school_location_mappings:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+          description: Maps each school_id in the payload to a Coram location ID.
     ReunificationImportStatus:
       type: object
       required:
@@ -408,55 +398,65 @@ components:
           type: string
         zip:
           type: string
-    ReunificationImportInput:
+    ReunificationStudent:
       type: object
       required:
-      - schools
-      - students
-      - teachers
-      - sections
-      - school_location_mappings
-      description: 'Full-replace roster payload. `schools`, `students`, `teachers`, and
-
-        `sections` must be present (may be empty arrays) so an omitted key can''t
-
-        silently delete that entity type; `staff` is optional. Phone numbers are
-
-        normalized to E.164; a number that can''t be parsed for the region is
-
-        dropped (stored as null), not rejected — so a malformed guardian
-
-        contact number is silently lost rather than failing the import.
-
-        '
+      - student_id
+      - name
+      - school_ids
       properties:
-        schools:
+        student_id:
+          type: string
+        name:
+          type: string
+        sis_id:
+          type: string
+        email:
+          type: string
+        phone_number:
+          type: string
+        grade:
+          type: string
+        school_ids:
+          type: array
+          description: School IDs the student belongs to. The first is the primary school; the rest are secondary.
+          items:
+            type: string
+        guardians:
           type: array
           items:
-            $ref: '#/components/schemas/ReunificationSchool'
-        students:
+            $ref: '#/components/schemas/ReunificationGuardian'
+    ReunificationSection:
+      type: object
+      required:
+      - section_id
+      description: A class/section linking students to teachers (drives student↔teacher relationships).
+      properties:
+        section_id:
+          type: string
+        school_id:
+          type: string
+        teacher_ids:
           type: array
           items:
-            $ref: '#/components/schemas/ReunificationStudent'
-        teachers:
+            type: string
+        student_ids:
           type: array
           items:
-            $ref: '#/components/schemas/ReunificationTeacher'
-        staff:
-          type: array
-          items:
-            $ref: '#/components/schemas/ReunificationStaff'
-        sections:
-          type: array
-          description: Class/section memberships that establish student↔teacher relationships.
-          items:
-            $ref: '#/components/schemas/ReunificationSection'
-        school_location_mappings:
-          type: object
-          additionalProperties:
-            type: integer
-            format: int32
-          description: Maps each school_id in the payload to a Coram location ID.
+            type: string
+    ReunificationGuardian:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        relationship:
+          type: string
     ReunificationTeacher:
       type: object
       required:
