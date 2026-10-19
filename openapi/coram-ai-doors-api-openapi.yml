@@ -4,7 +4,225 @@ info:
   description: '# Introduction
 
 
-    The Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows.'
+    The Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows. # Supported Actions
+
+
+    Manage and interact with your Coram platform resources:
+
+
+    | Resource | Description |
+
+    | -------- | ----------- |
+
+    | **Camera Groups** | Organize and configure camera collections |
+
+    | **Cameras** | Access camera settings, streams, and metadata |
+
+    | **Locations** | Manage physical site configurations |
+
+    | **NVRs** | Control and monitor network video recorders |
+
+    | **Access Control** | Manage doors, cards, and permissions |
+
+
+    ## Access Control
+
+
+    Card and permission changes are saved before they reach controllers. If a request fails, check the saved state before retrying. # Required Headers
+
+
+    Every API request must include the following headers:
+
+
+    | Header | Required | Description |
+
+    | ------ | -------- | ----------- |
+
+    | `X-Auth-Token` | Yes | Your API key (from the API key List Page) |
+
+
+    **Example:**
+
+    ```
+
+    curl -X GET "https://api.coram.ai/developer-api/v1/cameras" \
+
+    -H "X-Auth-Token: xxxxxxxxxxxxxxx"
+
+    ```
+
+
+    # Response Format
+
+
+    All API responses follow a consistent structure based on the operation result. ## Success Response
+
+
+    **List Operations** (e.g., `GET /v1/cameras`)
+
+
+    Returns a `results` array with pagination support:
+
+
+    ```json
+
+    {
+
+    "results": [
+
+    { "id": "cam_001", "name": "Front Door", ... },
+
+    { "id": "cam_002", "name": "Lobby", ... }
+
+    ],
+
+    "has_more": true
+
+    }
+
+    ```
+
+
+    When `has_more` is `true`, additional results are available. Use pagination parameters to fetch more. **Bulk/Batch Operations** (e.g., `POST /v1/cameras`, `PATCH /v1/cameras`)
+
+
+    Returns a top-level `status` field indicating whether the API request was processed, and a `results` array where each item reflects the outcome of an individual operation:
+
+
+    ```json
+
+    {
+
+    "status": "success",
+
+    "results": [
+
+    { "status": "success", "data": { "id": "cam_001", "mac_address": "..." } },
+
+    { "status": "error", "error": { "code": "VALIDATION_ERROR", "message": "..." } }
+
+    ]
+
+    }
+
+    ```
+
+
+    | Field | Description |
+
+    | ----- | ----------- |
+
+    | `status` (top-level) | `"success"` if the request was processed |
+
+    | `results[].status` | `"success"` or `"error"` for each operation |
+
+    | `results[].data` | Present when `status` is `"success"` |
+
+    | `results[].error` | Present when `status` is `"error"` |
+
+
+    ## Error Response
+
+
+    When an error occurs, the response includes `status` set to `"error"` along with detailed error information:
+
+
+    ```json
+
+    {
+
+    "status": "error",
+
+    "error": {
+
+    "code": "VALIDATION_ERROR",
+
+    "message": "Invalid MAC address format",
+
+    "field": "mac_address"
+
+    }
+
+    }
+
+    ```
+
+
+    **Error Fields:**
+
+
+    | Field | Type | Description |
+
+    | ----- | ---- | ----------- |
+
+    | `code` | string | Machine-readable error code |
+
+    | `message` | string | Human-readable error description |
+
+    | `field` | string | The field that caused the error (if applicable) |
+
+
+    # HTTP Status Codes
+
+
+    The API uses standard HTTP status codes to indicate the success or failure of requests:
+
+
+    ## Success Codes
+
+
+    | Code | Description |
+
+    | ---- | ----------- |
+
+    | `200 OK` | Request succeeded |
+
+    | `201 Created` | Resource successfully created |
+
+    | `204 No Content` | Request succeeded with no response body |
+
+
+    ## Client Error Codes
+
+
+    | Code | Description |
+
+    | ---- | ----------- |
+
+    | `400 Bad Request` | Invalid request syntax or parameters |
+
+    | `401 Unauthorized` | Missing or invalid API key |
+
+    | `403 Forbidden` | Valid API key but insufficient permissions |
+
+    | `404 Not Found` | Requested resource does not exist |
+
+    | `422 Unprocessable Entity` | Validation error in request body |
+
+    | `429 Too Many Requests` | Rate limit exceeded |
+
+
+    ## Server Error Codes
+
+
+    | Code | Description |
+
+    | ---- | ----------- |
+
+    | `500 Internal Server Error` | Unexpected server error (rare) |
+
+    | `502 Bad Gateway` | Upstream service unavailable |
+
+    | `503 Service Unavailable` | Service temporarily unavailable |
+
+
+    # Error Handling Best Practices
+
+
+    1. **Always check the `status` field** — Verify if the response indicates `"success"` or `"error"`
+
+
+    2.'
   version: 1.0.0
 servers:
 - url: https://developer.coram.ai
@@ -121,49 +339,6 @@ paths:
       x-public-api-version: v1
 components:
   schemas:
-    AuthErrorResponse:
-      type: object
-      required:
-      - detail
-      properties:
-        detail:
-          type: string
-          description: 'Human-readable error description. Matches the shape FastAPI uses
-
-            for `HTTPException` responses, so existing code that parses the
-
-            Python developer-api''s auth errors works unchanged.
-
-            '
-    DoorList:
-      type: object
-      required:
-      - results
-      - has_more
-      properties:
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Door'
-        has_more:
-          type: boolean
-          description: 'Reserved for future pagination; always false today. The endpoint
-
-            currently returns every door the caller can see.
-
-            '
-      x-public-api-group: doors
-    UnlockResponse:
-      type: object
-      required:
-      - status
-      properties:
-        status:
-          type: string
-          enum:
-          - success
-          description: Always `success` on a 200; non-200 responses use AuthErrorResponse.
-      x-public-api-group: doors
     Door:
       type: object
       required:
@@ -191,6 +366,49 @@ components:
 
             '
       x-public-api-group: doors
+    AuthErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: 'Human-readable error description. Matches the shape FastAPI uses
+
+            for `HTTPException` responses, so existing code that parses the
+
+            Python developer-api''s auth errors works unchanged.
+
+            '
+    UnlockResponse:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          description: Always `success` on a 200; non-200 responses use AuthErrorResponse.
+      x-public-api-group: doors
+    DoorList:
+      type: object
+      required:
+      - results
+      - has_more
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Door'
+        has_more:
+          type: boolean
+          description: 'Reserved for future pagination; always false today. The endpoint
+
+            currently returns every door the caller can see.
+
+            '
+      x-public-api-group: doors
   securitySchemes:
     X-Auth-Token:
       type: apiKey
@@ -207,7 +425,9 @@ x-tagGroups:
 - name: Access Control
   tags:
   - doors
+  - credentials
   - events
+  - permissions
 - name: Emergency Management System
   tags:
   - reunification

@@ -1,0 +1,395 @@
+openapi: 3.2.0
+info:
+  title: Coram Locations API
+  description: '# Introduction
+
+
+    The Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows.'
+  version: 1.0.0
+servers:
+- url: https://developer.coram.ai
+  description: Production
+security:
+- X-Auth-Token: []
+tags:
+- name: Locations
+  description: Manage physical site configurations where cameras and NVRs are deployed. Locations represent your facilities, buildings, or areas. Use these endpoints to create, update, list, and delete locations.
+paths:
+  /v1/locations:
+    get:
+      tags:
+      - Locations
+      summary: List locations
+      description: 'List all locations accessible to the user.
+
+
+        Retrieve locations accessible to the user for the organization.
+
+        Returns locations across all product lines the user has access to.'
+      operationId: list_locations
+      parameters:
+      - required: false
+        schema:
+          type: integer
+          minimum: 1.0
+          title: page
+          default: 1
+        name: page
+        in: query
+      - required: false
+        schema:
+          type: integer
+          maximum: 100.0
+          minimum: 1.0
+          title: limit
+          default: 100
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationList'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-public-api-version: v1
+      x-public-api: true
+      security:
+      - X-Auth-Token: []
+    post:
+      tags:
+      - Locations
+      summary: Create locations
+      description: 'Create multiple locations in bulk.
+
+
+        Create one or more locations for the organization.'
+      operationId: create_locations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/CreateLocationPayload'
+              type: array
+              title: CreateLocationPayload
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateLocationResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - X-Auth-Token: []
+      x-public-api-version: v1
+      x-public-api: true
+      parameters: []
+components:
+  schemas:
+    CreateLocationSuccessResult:
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          title: Status
+          default: success
+        data:
+          allOf:
+          - $ref: '#/components/schemas/CreateLocationSuccessData'
+          title: CreateLocationSuccessData
+          description: Success data
+      type: object
+      required:
+      - data
+      title: CreateLocationSuccessResult
+      description: Success result for location creation.
+      x-public-api-group: locations
+    CreateLocationPayload:
+      properties:
+        name:
+          type: string
+          maxLength: 30
+          minLength: 1
+          title: name
+          description: Display name for the location (max 30 characters)
+        address:
+          type: string
+          minLength: 5
+          title: address
+          description: Physical street address (min 5 characters)
+        timezone:
+          type: string
+          title: timezone
+          description: Timezone (IANA format, e.g., 'America/New_York')
+      type: object
+      required:
+      - name
+      - address
+      title: CreateLocationPayload
+      description: Request model for creating a location.
+      x-public-api-group: locations
+    CreateLocationResponse:
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          title: Status
+          default: success
+        summary:
+          allOf:
+          - $ref: '#/components/schemas/Summary'
+          title: Summary
+          description: Summary of the creation operation
+        results:
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/CreateLocationSuccessResult'
+            - $ref: '#/components/schemas/CreateLocationErrorResult'
+            discriminator:
+              propertyName: status
+              mapping:
+                success: '#/components/schemas/CreateLocationSuccessResult'
+                error: '#/components/schemas/CreateLocationErrorResult'
+          type: array
+          title: CreateLocationResult
+          description: List of location creation results
+      type: object
+      required:
+      - summary
+      title: CreateLocationResponse
+      description: Response model for bulk location creation.
+      x-public-api-group: locations
+    Location:
+      properties:
+        id:
+          type: integer
+          title: Id
+          description: Unique location identifier
+        name:
+          type: string
+          title: Name
+          description: Location display name
+        address:
+          type: string
+          title: Address
+          description: Physical street address
+        timezone:
+          type: string
+          title: Timezone
+          description: Timezone (IANA format, e.g., 'America/New_York')
+      type: object
+      required:
+      - id
+      - name
+      - address
+      title: Location
+      description: A physical location where cameras and NVRs are installed.
+      x-public-api-group: locations
+    LocationList:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/Location'
+          type: array
+          title: Location
+          description: List of locations
+        has_more:
+          type: boolean
+          title: Has More
+          description: True if additional pages are available
+      type: object
+      required:
+      - results
+      - has_more
+      title: LocationList
+      description: Paginated list of locations.
+      x-public-api-group: locations
+    ErrorResponse:
+      properties:
+        status:
+          type: string
+          enum:
+          - error
+          title: Status
+          default: error
+        error:
+          allOf:
+          - $ref: '#/components/schemas/ErrorDetails'
+          title: Error
+          description: Error details
+      type: object
+      required:
+      - error
+      title: ErrorResponse
+      description: Error response model.
+    Summary:
+      properties:
+        total:
+          type: integer
+          title: Total
+          description: Total number of operations in request
+        success_count:
+          type: integer
+          minimum: 0.0
+          title: Success Count
+          description: Number of successful operations
+        failure_count:
+          type: integer
+          minimum: 0.0
+          title: Failure Count
+          description: Number of failed operations
+      type: object
+      required:
+      - total
+      - success_count
+      - failure_count
+      title: Summary
+      description: Summary of operation.
+    ErrorDetails:
+      properties:
+        code:
+          allOf:
+          - $ref: '#/components/schemas/ErrorCode'
+          description: Error code
+        message:
+          type: string
+          title: Message
+          description: Error message
+        field:
+          type: string
+          title: Field
+          description: Error field
+        docs:
+          type: string
+          title: Docs
+          description: Error docs
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorDetails
+      description: Error message
+    CreateLocationErrorResult:
+      properties:
+        status:
+          type: string
+          enum:
+          - error
+          title: Status
+          default: error
+        error:
+          allOf:
+          - $ref: '#/components/schemas/ErrorDetails'
+          title: ErrorDetails
+          description: Error details
+      type: object
+      required:
+      - error
+      title: CreateLocationErrorResult
+      description: Error result for location creation.
+      x-public-api-group: locations
+    ErrorCode:
+      type: string
+      enum:
+      - VALIDATION_ERROR
+      - BATCH_SIZE_EXCEEDED
+      - NO_CAMERAS_PROVIDED
+      - PARTIAL_OPERATIONS_NOT_SUPPORTED
+      - CAMERA_ALREADY_EXISTS
+      - CAMERA_NOT_FOUND
+      - NO_LICENSES_AVAILABLE
+      - INVALID_MAC_ADDRESS
+      - INVALID_IP_ADDRESS
+      - DUPLICATE_MAC_ADDRESSES
+      - NVR_CAPACITY_EXCEEDED
+      - NVR_NOT_FOUND
+      - INVALID_NVR_NAME
+      - LOCATION_NOT_FOUND
+      - NVR_REGISTRATION_FAILED
+      - NVR_ALREADY_REGISTERED
+      - PING_REQUEST_TIMEOUT
+      - PING_REQUEST_FAILED
+      - SPEEDTEST_REQUEST_TIMEOUT
+      - SPEEDTEST_REQUEST_FAILED
+      - NO_NVRS_PROVIDED
+      - DUPLICATE_NVR_NAMES
+      - LOCATION_ACCESS_DENIED
+      - LOCATION_NAME_ALREADY_EXISTS
+      - LOCATION_CREATION_FAILED
+      - NO_LOCATIONS_PROVIDED
+      - DUPLICATE_LOCATION_NAMES
+      - ALERT_EVENT_NOT_FOUND
+      - ALERT_NO_VIDEO_AVAILABLE
+      - ALERT_CAMERA_NOT_FOUND
+      - ALERT_CLIP_GENERATION_FAILED
+      - ALERT_NOT_FIREARM
+      - FIREARM_ALERT_NOT_FOUND
+      - INVALID_RECIPIENT_EMAILS
+      - PREMIUM_ALERT_CAMERA_LIMIT_EXCEEDED
+      - CAMERA_ALREADY_IN_USE
+      - ACCESS_EVENT_NOT_FOUND
+      - ACCESS_EVENT_NO_VIDEO_AVAILABLE
+      - ACCESS_EVENT_CLIP_GENERATION_FAILED
+      - CAMERA_GROUP_NOT_FOUND
+      - CAMERA_GROUP_NAME_ALREADY_EXISTS
+      - CAMERA_GROUP_CREATION_FAILED
+      - NO_GROUPS_PROVIDED
+      - DUPLICATE_GROUP_NAMES
+      - INVALID_GROUP_ID
+      - DUPLICATE_GROUP_IDS
+      title: ErrorCode
+      description: Centralized error codes for Developer API endpoints.
+    CreateLocationSuccessData:
+      properties:
+        id:
+          type: integer
+          title: id
+          description: Unique identifier of the created location
+      type: object
+      required:
+      - id
+      title: CreateLocationSuccessData
+      description: Data returned for a successfully created location.
+      x-public-api-group: locations
+  securitySchemes:
+    X-Auth-Token:
+      type: apiKey
+      in: header
+      name: X-Auth-Token
+x-tagGroups:
+- name: Surveillance
+  tags:
+  - cameras
+  - camera-groups
+  - locations
+  - nvrs
+  - alerts
+- name: Access Control
+  tags:
+  - doors
+  - events
+- name: Emergency Management System
+  tags:
+  - reunification

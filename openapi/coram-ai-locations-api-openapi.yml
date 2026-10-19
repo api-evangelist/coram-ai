@@ -4,7 +4,225 @@ info:
   description: '# Introduction
 
 
-    The Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows.'
+    The Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows. # Supported Actions
+
+
+    Manage and interact with your Coram platform resources:
+
+
+    | Resource | Description |
+
+    | -------- | ----------- |
+
+    | **Camera Groups** | Organize and configure camera collections |
+
+    | **Cameras** | Access camera settings, streams, and metadata |
+
+    | **Locations** | Manage physical site configurations |
+
+    | **NVRs** | Control and monitor network video recorders |
+
+    | **Access Control** | Manage doors, cards, and permissions |
+
+
+    ## Access Control
+
+
+    Card and permission changes are saved before they reach controllers. If a request fails, check the saved state before retrying. # Required Headers
+
+
+    Every API request must include the following headers:
+
+
+    | Header | Required | Description |
+
+    | ------ | -------- | ----------- |
+
+    | `X-Auth-Token` | Yes | Your API key (from the API key List Page) |
+
+
+    **Example:**
+
+    ```
+
+    curl -X GET "https://api.coram.ai/developer-api/v1/cameras" \
+
+    -H "X-Auth-Token: xxxxxxxxxxxxxxx"
+
+    ```
+
+
+    # Response Format
+
+
+    All API responses follow a consistent structure based on the operation result. ## Success Response
+
+
+    **List Operations** (e.g., `GET /v1/cameras`)
+
+
+    Returns a `results` array with pagination support:
+
+
+    ```json
+
+    {
+
+    "results": [
+
+    { "id": "cam_001", "name": "Front Door", ... },
+
+    { "id": "cam_002", "name": "Lobby", ... }
+
+    ],
+
+    "has_more": true
+
+    }
+
+    ```
+
+
+    When `has_more` is `true`, additional results are available. Use pagination parameters to fetch more. **Bulk/Batch Operations** (e.g., `POST /v1/cameras`, `PATCH /v1/cameras`)
+
+
+    Returns a top-level `status` field indicating whether the API request was processed, and a `results` array where each item reflects the outcome of an individual operation:
+
+
+    ```json
+
+    {
+
+    "status": "success",
+
+    "results": [
+
+    { "status": "success", "data": { "id": "cam_001", "mac_address": "..." } },
+
+    { "status": "error", "error": { "code": "VALIDATION_ERROR", "message": "..." } }
+
+    ]
+
+    }
+
+    ```
+
+
+    | Field | Description |
+
+    | ----- | ----------- |
+
+    | `status` (top-level) | `"success"` if the request was processed |
+
+    | `results[].status` | `"success"` or `"error"` for each operation |
+
+    | `results[].data` | Present when `status` is `"success"` |
+
+    | `results[].error` | Present when `status` is `"error"` |
+
+
+    ## Error Response
+
+
+    When an error occurs, the response includes `status` set to `"error"` along with detailed error information:
+
+
+    ```json
+
+    {
+
+    "status": "error",
+
+    "error": {
+
+    "code": "VALIDATION_ERROR",
+
+    "message": "Invalid MAC address format",
+
+    "field": "mac_address"
+
+    }
+
+    }
+
+    ```
+
+
+    **Error Fields:**
+
+
+    | Field | Type | Description |
+
+    | ----- | ---- | ----------- |
+
+    | `code` | string | Machine-readable error code |
+
+    | `message` | string | Human-readable error description |
+
+    | `field` | string | The field that caused the error (if applicable) |
+
+
+    # HTTP Status Codes
+
+
+    The API uses standard HTTP status codes to indicate the success or failure of requests:
+
+
+    ## Success Codes
+
+
+    | Code | Description |
+
+    | ---- | ----------- |
+
+    | `200 OK` | Request succeeded |
+
+    | `201 Created` | Resource successfully created |
+
+    | `204 No Content` | Request succeeded with no response body |
+
+
+    ## Client Error Codes
+
+
+    | Code | Description |
+
+    | ---- | ----------- |
+
+    | `400 Bad Request` | Invalid request syntax or parameters |
+
+    | `401 Unauthorized` | Missing or invalid API key |
+
+    | `403 Forbidden` | Valid API key but insufficient permissions |
+
+    | `404 Not Found` | Requested resource does not exist |
+
+    | `422 Unprocessable Entity` | Validation error in request body |
+
+    | `429 Too Many Requests` | Rate limit exceeded |
+
+
+    ## Server Error Codes
+
+
+    | Code | Description |
+
+    | ---- | ----------- |
+
+    | `500 Internal Server Error` | Unexpected server error (rare) |
+
+    | `502 Bad Gateway` | Upstream service unavailable |
+
+    | `503 Service Unavailable` | Service temporarily unavailable |
+
+
+    # Error Handling Best Practices
+
+
+    1. **Always check the `status` field** — Verify if the response indicates `"success"` or `"error"`
+
+
+    2.'
   version: 1.0.0
 servers:
 - url: https://developer.coram.ai
@@ -64,8 +282,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-      x-public-api-version: v1
       x-public-api: true
+      x-public-api-version: v1
       security:
       - X-Auth-Token: []
     post:
@@ -101,30 +319,35 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
       security:
       - X-Auth-Token: []
-      x-public-api-version: v1
       x-public-api: true
+      x-public-api-version: v1
       parameters: []
 components:
   schemas:
-    CreateLocationSuccessResult:
+    ErrorDetails:
       properties:
-        status:
-          type: string
-          enum:
-          - success
-          title: Status
-          default: success
-        data:
+        code:
           allOf:
-          - $ref: '#/components/schemas/CreateLocationSuccessData'
-          title: CreateLocationSuccessData
-          description: Success data
+          - $ref: '#/components/schemas/ErrorCode'
+          description: Error code
+        message:
+          type: string
+          title: Message
+          description: Error message
+        field:
+          type: string
+          title: Field
+          description: Error field
+        docs:
+          type: string
+          title: Docs
+          description: Error docs
       type: object
       required:
-      - data
-      title: CreateLocationSuccessResult
-      description: Success result for location creation.
-      x-public-api-group: locations
+      - code
+      - message
+      title: ErrorDetails
+      description: Error message
     CreateLocationPayload:
       properties:
         name:
@@ -149,7 +372,19 @@ components:
       title: CreateLocationPayload
       description: Request model for creating a location.
       x-public-api-group: locations
-    CreateLocationResponse:
+    CreateLocationSuccessData:
+      properties:
+        id:
+          type: integer
+          title: id
+          description: Unique identifier of the created location
+      type: object
+      required:
+      - id
+      title: CreateLocationSuccessData
+      description: Data returned for a successfully created location.
+      x-public-api-group: locations
+    CreateLocationSuccessResult:
       properties:
         status:
           type: string
@@ -157,30 +392,40 @@ components:
           - success
           title: Status
           default: success
-        summary:
+        data:
           allOf:
-          - $ref: '#/components/schemas/Summary'
-          title: Summary
-          description: Summary of the creation operation
-        results:
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/CreateLocationSuccessResult'
-            - $ref: '#/components/schemas/CreateLocationErrorResult'
-            discriminator:
-              propertyName: status
-              mapping:
-                success: '#/components/schemas/CreateLocationSuccessResult'
-                error: '#/components/schemas/CreateLocationErrorResult'
-          type: array
-          title: CreateLocationResult
-          description: List of location creation results
+          - $ref: '#/components/schemas/CreateLocationSuccessData'
+          title: CreateLocationSuccessData
+          description: Success data
       type: object
       required:
-      - summary
-      title: CreateLocationResponse
-      description: Response model for bulk location creation.
+      - data
+      title: CreateLocationSuccessResult
+      description: Success result for location creation.
       x-public-api-group: locations
+    Summary:
+      properties:
+        total:
+          type: integer
+          title: Total
+          description: Total number of operations in request
+        success_count:
+          type: integer
+          minimum: 0.0
+          title: Success Count
+          description: Number of successful operations
+        failure_count:
+          type: integer
+          minimum: 0.0
+          title: Failure Count
+          description: Number of failed operations
+      type: object
+      required:
+      - total
+      - success_count
+      - failure_count
+      title: Summary
+      description: Summary of operation.
     Location:
       properties:
         id:
@@ -207,25 +452,6 @@ components:
       title: Location
       description: A physical location where cameras and NVRs are installed.
       x-public-api-group: locations
-    LocationList:
-      properties:
-        results:
-          items:
-            $ref: '#/components/schemas/Location'
-          type: array
-          title: Location
-          description: List of locations
-        has_more:
-          type: boolean
-          title: Has More
-          description: True if additional pages are available
-      type: object
-      required:
-      - results
-      - has_more
-      title: LocationList
-      description: Paginated list of locations.
-      x-public-api-group: locations
     ErrorResponse:
       properties:
         status:
@@ -244,53 +470,6 @@ components:
       - error
       title: ErrorResponse
       description: Error response model.
-    Summary:
-      properties:
-        total:
-          type: integer
-          title: Total
-          description: Total number of operations in request
-        success_count:
-          type: integer
-          minimum: 0.0
-          title: Success Count
-          description: Number of successful operations
-        failure_count:
-          type: integer
-          minimum: 0.0
-          title: Failure Count
-          description: Number of failed operations
-      type: object
-      required:
-      - total
-      - success_count
-      - failure_count
-      title: Summary
-      description: Summary of operation.
-    ErrorDetails:
-      properties:
-        code:
-          allOf:
-          - $ref: '#/components/schemas/ErrorCode'
-          description: Error code
-        message:
-          type: string
-          title: Message
-          description: Error message
-        field:
-          type: string
-          title: Field
-          description: Error field
-        docs:
-          type: string
-          title: Docs
-          description: Error docs
-      type: object
-      required:
-      - code
-      - message
-      title: ErrorDetails
-      description: Error message
     CreateLocationErrorResult:
       properties:
         status:
@@ -361,17 +540,56 @@ components:
       - DUPLICATE_GROUP_IDS
       title: ErrorCode
       description: Centralized error codes for Developer API endpoints.
-    CreateLocationSuccessData:
+    CreateLocationResponse:
       properties:
-        id:
-          type: integer
-          title: id
-          description: Unique identifier of the created location
+        status:
+          type: string
+          enum:
+          - success
+          title: Status
+          default: success
+        summary:
+          allOf:
+          - $ref: '#/components/schemas/Summary'
+          title: Summary
+          description: Summary of the creation operation
+        results:
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/CreateLocationSuccessResult'
+            - $ref: '#/components/schemas/CreateLocationErrorResult'
+            discriminator:
+              propertyName: status
+              mapping:
+                success: '#/components/schemas/CreateLocationSuccessResult'
+                error: '#/components/schemas/CreateLocationErrorResult'
+          type: array
+          title: CreateLocationResult
+          description: List of location creation results
       type: object
       required:
-      - id
-      title: CreateLocationSuccessData
-      description: Data returned for a successfully created location.
+      - summary
+      title: CreateLocationResponse
+      description: Response model for bulk location creation.
+      x-public-api-group: locations
+    LocationList:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/Location'
+          type: array
+          title: Location
+          description: List of locations
+        has_more:
+          type: boolean
+          title: Has More
+          description: True if additional pages are available
+      type: object
+      required:
+      - results
+      - has_more
+      title: LocationList
+      description: Paginated list of locations.
       x-public-api-group: locations
   securitySchemes:
     X-Auth-Token:
@@ -389,7 +607,9 @@ x-tagGroups:
 - name: Access Control
   tags:
   - doors
+  - credentials
   - events
+  - permissions
 - name: Emergency Management System
   tags:
   - reunification

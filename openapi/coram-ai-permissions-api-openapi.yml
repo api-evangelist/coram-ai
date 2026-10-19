@@ -1,0 +1,629 @@
+openapi: 3.2.0
+info:
+  title: Coram Permissions API
+  description: '# Introduction
+
+
+    The Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows. # Supported Actions
+
+
+    Manage and interact with your Coram platform resources:
+
+
+    | Resource | Description |
+
+    | -------- | ----------- |
+
+    | **Camera Groups** | Organize and configure camera collections |
+
+    | **Cameras** | Access camera settings, streams, and metadata |
+
+    | **Locations** | Manage physical site configurations |
+
+    | **NVRs** | Control and monitor network video recorders |
+
+    | **Access Control** | Manage doors, cards, and permissions |
+
+
+    ## Access Control
+
+
+    Card and permission changes are saved before they reach controllers. If a request fails, check the saved state before retrying. # Required Headers
+
+
+    Every API request must include the following headers:
+
+
+    | Header | Required | Description |
+
+    | ------ | -------- | ----------- |
+
+    | `X-Auth-Token` | Yes | Your API key (from the API key List Page) |
+
+
+    **Example:**
+
+    ```
+
+    curl -X GET "https://api.coram.ai/developer-api/v1/cameras" \
+
+    -H "X-Auth-Token: xxxxxxxxxxxxxxx"
+
+    ```
+
+
+    # Response Format
+
+
+    All API responses follow a consistent structure based on the operation result. ## Success Response
+
+
+    **List Operations** (e.g., `GET /v1/cameras`)
+
+
+    Returns a `results` array with pagination support:
+
+
+    ```json
+
+    {
+
+    "results": [
+
+    { "id": "cam_001", "name": "Front Door", ... },
+
+    { "id": "cam_002", "name": "Lobby", ... }
+
+    ],
+
+    "has_more": true
+
+    }
+
+    ```
+
+
+    When `has_more` is `true`, additional results are available. Use pagination parameters to fetch more. **Bulk/Batch Operations** (e.g., `POST /v1/cameras`, `PATCH /v1/cameras`)
+
+
+    Returns a top-level `status` field indicating whether the API request was processed, and a `results` array where each item reflects the outcome of an individual operation:
+
+
+    ```json
+
+    {
+
+    "status": "success",
+
+    "results": [
+
+    { "status": "success", "data": { "id": "cam_001", "mac_address": "..." } },
+
+    { "status": "error", "error": { "code": "VALIDATION_ERROR", "message": "..." } }
+
+    ]
+
+    }
+
+    ```
+
+
+    | Field | Description |
+
+    | ----- | ----------- |
+
+    | `status` (top-level) | `"success"` if the request was processed |
+
+    | `results[].status` | `"success"` or `"error"` for each operation |
+
+    | `results[].data` | Present when `status` is `"success"` |
+
+    | `results[].error` | Present when `status` is `"error"` |
+
+
+    ## Error Response
+
+
+    When an error occurs, the response includes `status` set to `"error"` along with detailed error information:
+
+
+    ```json
+
+    {
+
+    "status": "error",
+
+    "error": {
+
+    "code": "VALIDATION_ERROR",
+
+    "message": "Invalid MAC address format",
+
+    "field": "mac_address"
+
+    }
+
+    }
+
+    ```
+
+
+    **Error Fields:**
+
+
+    | Field | Type | Description |
+
+    | ----- | ---- | ----------- |
+
+    | `code` | string | Machine-readable error code |
+
+    | `message` | string | Human-readable error description |
+
+    | `field` | string | The field that caused the error (if applicable) |
+
+
+    # HTTP Status Codes
+
+
+    The API uses standard HTTP status codes to indicate the success or failure of requests:
+
+
+    ## Success Codes
+
+
+    | Code | Description |
+
+    | ---- | ----------- |
+
+    | `200 OK` | Request succeeded |
+
+    | `201 Created` | Resource successfully created |
+
+    | `204 No Content` | Request succeeded with no response body |
+
+
+    ## Client Error Codes
+
+
+    | Code | Description |
+
+    | ---- | ----------- |
+
+    | `400 Bad Request` | Invalid request syntax or parameters |
+
+    | `401 Unauthorized` | Missing or invalid API key |
+
+    | `403 Forbidden` | Valid API key but insufficient permissions |
+
+    | `404 Not Found` | Requested resource does not exist |
+
+    | `422 Unprocessable Entity` | Validation error in request body |
+
+    | `429 Too Many Requests` | Rate limit exceeded |
+
+
+    ## Server Error Codes
+
+
+    | Code | Description |
+
+    | ---- | ----------- |
+
+    | `500 Internal Server Error` | Unexpected server error (rare) |
+
+    | `502 Bad Gateway` | Upstream service unavailable |
+
+    | `503 Service Unavailable` | Service temporarily unavailable |
+
+
+    # Error Handling Best Practices
+
+
+    1. **Always check the `status` field** — Verify if the response indicates `"success"` or `"error"`
+
+
+    2.'
+  version: 1.0.0
+servers:
+- url: https://developer.coram.ai
+  description: Production
+security:
+- X-Auth-Token: []
+tags:
+- name: Permissions
+  description: Choose which doors users can unlock and when.
+paths:
+  /v1/access-control/permissions:
+    get:
+      operationId: list_access_control_permissions
+      summary: List permissions
+      description: List your organization's permissions.
+      tags:
+      - Permissions
+      security:
+      - X-Auth-Token: []
+      parameters:
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+        description: 1-indexed page number.
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 100
+        description: Maximum permissions per page.
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionList'
+        '401':
+          description: Missing or invalid API key
+        '403':
+          description: API key lacks read scope or an admin creator role
+      x-public-api: true
+      x-public-api-version: v1
+    post:
+      operationId: create_access_control_permission
+      summary: Create a permission
+      description: Grant users and user groups access to doors and door groups on a schedule.
+      tags:
+      - Permissions
+      security:
+      - X-Auth-Token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionInput'
+            examples:
+              weekly:
+                summary: Every Monday
+                value:
+                  name: Monday access
+                  user_ids:
+                  - 101
+                  user_group_ids: []
+                  door_ids:
+                  - 201
+                  door_group_ids: []
+                  schedule:
+                    timeslots:
+                    - start_day_of_week: 1
+                      start_time: 09:00
+                      end_day_of_week: 1
+                      end_time: '17:00'
+                    time_start: null
+                    time_end: null
+                    rrule: null
+              every_other_week:
+                summary: Every other Monday
+                value:
+                  name: Biweekly Monday access
+                  user_ids:
+                  - 101
+                  user_group_ids: []
+                  door_ids:
+                  - 201
+                  door_group_ids: []
+                  schedule:
+                    timeslots:
+                    - start_day_of_week: 1
+                      start_time: 09:00
+                      end_day_of_week: 1
+                      end_time: '17:00'
+                    time_start: '2026-10-12T00:00:00Z'
+                    time_end: null
+                    rrule: FREQ=WEEKLY;INTERVAL=2
+      responses:
+        '201':
+          description: Permission created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Permission'
+        '400':
+          description: Invalid payload or target IDs
+        '401':
+          description: Missing or invalid API key
+        '403':
+          description: API key lacks write scope or an admin creator role
+        '500':
+          description: Server error
+      x-public-api: true
+      x-public-api-version: v1
+      parameters: []
+  /v1/access-control/permissions/{permission_id}:
+    get:
+      parameters:
+      - in: path
+        name: permission_id
+        required: true
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+      operationId: get_access_control_permission
+      summary: Get a permission
+      description: Get a permission's users, doors, and schedule.
+      tags:
+      - Permissions
+      security:
+      - X-Auth-Token: []
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Permission'
+        '401':
+          description: Missing or invalid API key
+        '403':
+          description: API key lacks read scope or an admin creator role
+        '404':
+          description: Permission not found in this tenant
+      x-public-api: true
+      x-public-api-version: v1
+    put:
+      parameters:
+      - in: path
+        name: permission_id
+        required: true
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+      operationId: update_access_control_permission
+      summary: Update a permission
+      description: Replace the permission's name, users, user groups, doors, door groups, and schedule.
+      tags:
+      - Permissions
+      security:
+      - X-Auth-Token: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionInput'
+      responses:
+        '200':
+          description: Permission updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Permission'
+        '400':
+          description: Invalid payload or target IDs
+        '401':
+          description: Missing or invalid API key
+        '403':
+          description: API key lacks write scope or an admin creator role
+        '404':
+          description: Permission not found in this tenant
+        '500':
+          description: Server error
+      x-public-api: true
+      x-public-api-version: v1
+    delete:
+      parameters:
+      - in: path
+        name: permission_id
+        required: true
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+      operationId: delete_access_control_permission
+      summary: Delete a permission
+      description: Delete this permission. Other permissions still apply.
+      tags:
+      - Permissions
+      security:
+      - X-Auth-Token: []
+      responses:
+        '204':
+          description: Permission deleted
+        '401':
+          description: Missing or invalid API key
+        '403':
+          description: API key lacks write scope or an admin creator role
+        '404':
+          description: Permission not found in this tenant
+        '500':
+          description: Server error
+      x-public-api: true
+      x-public-api-version: v1
+components:
+  schemas:
+    PermissionSchedule:
+      type: object
+      required:
+      - timeslots
+      example:
+        timeslots:
+        - start_day_of_week: 1
+          start_time: 09:00
+          end_day_of_week: 1
+          end_time: '17:00'
+        time_start: null
+        time_end: null
+        rrule: null
+      properties:
+        timeslots:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/PermissionTimeslot'
+        time_start:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        time_end:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        rrule:
+          type:
+          - string
+          - 'null'
+          description: Optional recurrence rule. Omit or set to `null` to repeat your timeslots every week, within any `time_start` and `time_end` limits. For less frequent repetition, use an [iCalendar recurrence rule](https://www.rfc-editor.org/rfc/rfc5545#section-3.3.10). For example, `FREQ=WEEKLY;INTERVAL=2` repeats every other week. This requires `time_start` to anchor the first week. For weekly rules, weekdays come from your timeslots; you don't need to specify `BYDAY`.
+      x-public-api-group: permissions
+    Permission:
+      type: object
+      required:
+      - id
+      - name
+      - user_ids
+      - user_group_ids
+      - door_ids
+      - door_group_ids
+      - schedule
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        user_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+        user_group_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+        door_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+        door_group_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+        schedule:
+          $ref: '#/components/schemas/PermissionSchedule'
+      x-public-api-group: permissions
+    PermissionInput:
+      type: object
+      required:
+      - name
+      - user_ids
+      - door_ids
+      - schedule
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        user_ids:
+          type: array
+          uniqueItems: true
+          items:
+            type: integer
+            format: int64
+            minimum: 1
+          description: User IDs in your organization.
+        user_group_ids:
+          type: array
+          default: []
+          uniqueItems: true
+          items:
+            type: integer
+            format: int64
+            minimum: 1
+          description: User group IDs in your organization. Omitted groups are removed on update.
+        door_ids:
+          type: array
+          uniqueItems: true
+          items:
+            type: integer
+            format: int64
+            minimum: 1
+          description: Active door IDs in your organization.
+        door_group_ids:
+          type: array
+          default: []
+          uniqueItems: true
+          items:
+            type: integer
+            format: int64
+            minimum: 1
+          description: Door group IDs in your organization. Omitted groups are removed on update.
+        schedule:
+          $ref: '#/components/schemas/PermissionSchedule'
+      x-public-api-group: permissions
+    PermissionList:
+      type: object
+      required:
+      - results
+      - has_more
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permission'
+        has_more:
+          type: boolean
+      x-public-api-group: permissions
+    PermissionTimeslot:
+      type: object
+      required:
+      - start_day_of_week
+      - start_time
+      - end_day_of_week
+      - end_time
+      properties:
+        start_day_of_week:
+          type: integer
+          minimum: 1
+          maximum: 7
+        start_time:
+          type: string
+          description: Local start time in HH:MM format.
+        end_day_of_week:
+          type: integer
+          minimum: 1
+          maximum: 7
+        end_time:
+          type: string
+          description: Local end time in HH:MM format.
+      x-public-api-group: permissions
+  securitySchemes:
+    X-Auth-Token:
+      type: apiKey
+      in: header
+      name: X-Auth-Token
+x-tagGroups:
+- name: Surveillance
+  tags:
+  - cameras
+  - camera-groups
+  - locations
+  - nvrs
+  - alerts
+- name: Access Control
+  tags:
+  - doors
+  - credentials
+  - events
+  - permissions
+- name: Emergency Management System
+  tags:
+  - reunification

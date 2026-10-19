@@ -1,0 +1,295 @@
+openapi: 3.2.0
+info:
+  title: Coram Camera Groups API
+  description: '# Introduction
+
+
+    The Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows.'
+  version: 1.0.0
+servers:
+- url: https://developer.coram.ai
+  description: Production
+security:
+- X-Auth-Token: []
+tags:
+- name: camera-groups
+  description: Organize cameras into logical collections for easier management. Camera groups allow you to categorize cameras by location, purpose, or any custom criteria. Use these endpoints to create, update, list, and delete camera groups.
+paths:
+  /v1/camera-groups:
+    get:
+      tags:
+      - camera-groups
+      summary: List camera groups
+      description: 'List camera groups.
+
+
+        Retrieve a paginated list of camera groups.
+
+        Groups are used to organize cameras for easier management and access control.'
+      operationId: list_camera_groups
+      parameters:
+      - required: false
+        schema:
+          type: integer
+          minimum: 1.0
+          title: Page
+          default: 1
+        name: page
+        in: query
+      - required: false
+        schema:
+          type: integer
+          maximum: 100.0
+          minimum: 1.0
+          title: Limit
+          default: 100
+        name: limit
+        in: query
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CameraGroupList'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      x-public-api-version: v1
+      x-public-api: true
+      security:
+      - X-Auth-Token: []
+    post:
+      tags:
+      - camera-groups
+      summary: Create camera group
+      description: 'Create a new camera group.
+
+
+        Create a new camera group with the specified name. Camera groups are used
+
+        to organize cameras for easier management and access control.'
+      operationId: create_camera_group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCameraGroupPayload'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCameraGroupResponse'
+        '409':
+          description: Camera group name already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Camera group creation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - X-Auth-Token: []
+      x-public-api-version: v1
+      x-public-api: true
+      parameters: []
+components:
+  schemas:
+    CreateCameraGroupPayload:
+      properties:
+        name:
+          type: string
+          maxLength: 30
+          minLength: 1
+          title: Name
+          description: Display name for the new camera group (max 30 characters)
+      type: object
+      required:
+      - name
+      title: CreateCameraGroupPayload
+      description: Request payload for creating a camera group.
+      x-public-api-group: camera-groups
+    CameraGroup:
+      properties:
+        id:
+          type: integer
+          title: Id
+          description: Unique camera group identifier
+        name:
+          type: string
+          title: Name
+          description: Camera group display name
+      type: object
+      required:
+      - id
+      - name
+      title: CameraGroup
+      description: A logical grouping of cameras for organization and access control.
+      x-public-api-group: camera-groups
+    CameraGroupList:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/CameraGroup'
+          type: array
+          title: Results
+          description: List of camera groups
+        has_more:
+          type: boolean
+          title: Has More
+          description: True if additional pages are available
+      type: object
+      required:
+      - results
+      - has_more
+      title: CameraGroupList
+      description: Paginated list of camera groups.
+      x-public-api-group: camera-groups
+    ErrorResponse:
+      properties:
+        status:
+          type: string
+          enum:
+          - error
+          title: Status
+          default: error
+        error:
+          allOf:
+          - $ref: '#/components/schemas/ErrorDetails'
+          title: Error
+          description: Error details
+      type: object
+      required:
+      - error
+      title: ErrorResponse
+      description: Error response model.
+    ErrorDetails:
+      properties:
+        code:
+          allOf:
+          - $ref: '#/components/schemas/ErrorCode'
+          description: Error code
+        message:
+          type: string
+          title: Message
+          description: Error message
+        field:
+          type: string
+          title: Field
+          description: Error field
+        docs:
+          type: string
+          title: Docs
+          description: Error docs
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorDetails
+      description: Error message
+    CreateCameraGroupResponse:
+      properties:
+        data:
+          allOf:
+          - $ref: '#/components/schemas/CameraGroup'
+          title: Data
+          description: The newly created camera group data
+      type: object
+      required:
+      - data
+      title: CreateCameraGroupResponse
+      description: Response after successfully creating a camera group.
+      x-public-api-group: camera-groups
+    ErrorCode:
+      type: string
+      enum:
+      - VALIDATION_ERROR
+      - BATCH_SIZE_EXCEEDED
+      - NO_CAMERAS_PROVIDED
+      - PARTIAL_OPERATIONS_NOT_SUPPORTED
+      - CAMERA_ALREADY_EXISTS
+      - CAMERA_NOT_FOUND
+      - NO_LICENSES_AVAILABLE
+      - INVALID_MAC_ADDRESS
+      - INVALID_IP_ADDRESS
+      - DUPLICATE_MAC_ADDRESSES
+      - NVR_CAPACITY_EXCEEDED
+      - NVR_NOT_FOUND
+      - INVALID_NVR_NAME
+      - LOCATION_NOT_FOUND
+      - NVR_REGISTRATION_FAILED
+      - NVR_ALREADY_REGISTERED
+      - PING_REQUEST_TIMEOUT
+      - PING_REQUEST_FAILED
+      - SPEEDTEST_REQUEST_TIMEOUT
+      - SPEEDTEST_REQUEST_FAILED
+      - NO_NVRS_PROVIDED
+      - DUPLICATE_NVR_NAMES
+      - LOCATION_ACCESS_DENIED
+      - LOCATION_NAME_ALREADY_EXISTS
+      - LOCATION_CREATION_FAILED
+      - NO_LOCATIONS_PROVIDED
+      - DUPLICATE_LOCATION_NAMES
+      - ALERT_EVENT_NOT_FOUND
+      - ALERT_NO_VIDEO_AVAILABLE
+      - ALERT_CAMERA_NOT_FOUND
+      - ALERT_CLIP_GENERATION_FAILED
+      - ALERT_NOT_FIREARM
+      - FIREARM_ALERT_NOT_FOUND
+      - INVALID_RECIPIENT_EMAILS
+      - PREMIUM_ALERT_CAMERA_LIMIT_EXCEEDED
+      - CAMERA_ALREADY_IN_USE
+      - ACCESS_EVENT_NOT_FOUND
+      - ACCESS_EVENT_NO_VIDEO_AVAILABLE
+      - ACCESS_EVENT_CLIP_GENERATION_FAILED
+      - CAMERA_GROUP_NOT_FOUND
+      - CAMERA_GROUP_NAME_ALREADY_EXISTS
+      - CAMERA_GROUP_CREATION_FAILED
+      - NO_GROUPS_PROVIDED
+      - DUPLICATE_GROUP_NAMES
+      - INVALID_GROUP_ID
+      - DUPLICATE_GROUP_IDS
+      title: ErrorCode
+      description: Centralized error codes for Developer API endpoints.
+  securitySchemes:
+    X-Auth-Token:
+      type: apiKey
+      in: header
+      name: X-Auth-Token
+x-tagGroups:
+- name: Surveillance
+  tags:
+  - cameras
+  - camera-groups
+  - locations
+  - nvrs
+  - alerts
+- name: Access Control
+  tags:
+  - doors
+  - events
+- name: Emergency Management System
+  tags:
+  - reunification

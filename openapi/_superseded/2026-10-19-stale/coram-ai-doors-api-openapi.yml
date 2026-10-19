@@ -1,0 +1,213 @@
+openapi: 3.2.0
+info:
+  title: Coram Doors API
+  description: '# Introduction
+
+
+    The Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows.'
+  version: 1.0.0
+servers:
+- url: https://developer.coram.ai
+  description: Production
+security:
+- X-Auth-Token: []
+tags:
+- name: Doors
+  description: List access control doors and trigger momentary remote unlocks. The same per-door permission checks the in-app unlock flow runs apply here — a key whose creator cannot unlock a door in the UI cannot unlock it via the API either.
+paths:
+  /v1/access-control/doors:
+    get:
+      operationId: list_access_control_doors
+      summary: List access control doors
+      description: 'Returns the doors the API key creator can see, with their online
+
+        status. Admins see every door in the tenant; lower roles see only
+
+        doors they have permission to unlock. Use `page` and `limit` to
+
+        paginate; `has_more` on the response signals more pages remain.'
+      tags:
+      - Doors
+      security:
+      - X-Auth-Token: []
+      parameters:
+      - in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+        description: 1-indexed page number.
+      - in: query
+        name: limit
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 100
+        description: Maximum doors per page (capped at 100).
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoorList'
+        '401':
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '403':
+          description: API key lacks the required scope or role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+      x-public-api: true
+      x-public-api-version: v1
+  /v1/access-control/doors/{door_id}/unlock:
+    post:
+      operationId: unlock_access_control_door
+      summary: Unlock an access control door
+      description: 'Sends a momentary-unlock command to the door''s controller board.
+
+        Requires `write:*` scope and an `admin` creator role. The same
+
+        permission checks the in-app unlock flow runs are applied; an API key
+
+        whose creator no longer has access to the door is rejected.'
+      tags:
+      - Doors
+      security:
+      - X-Auth-Token: []
+      parameters:
+      - in: path
+        name: door_id
+        required: true
+        schema:
+          type: integer
+          format: int64
+        description: ID of the door to unlock
+      responses:
+        '200':
+          description: Unlock command issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnlockResponse'
+        '400':
+          description: Invalid door_id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '401':
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+        '403':
+          description: API key lacks the required scope or role, or the creator cannot unlock this door
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthErrorResponse'
+      x-public-api: true
+      x-public-api-version: v1
+components:
+  schemas:
+    AuthErrorResponse:
+      type: object
+      required:
+      - detail
+      properties:
+        detail:
+          type: string
+          description: 'Human-readable error description. Matches the shape FastAPI uses
+
+            for `HTTPException` responses, so existing code that parses the
+
+            Python developer-api''s auth errors works unchanged.
+
+            '
+    DoorList:
+      type: object
+      required:
+      - results
+      - has_more
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Door'
+        has_more:
+          type: boolean
+          description: 'Reserved for future pagination; always false today. The endpoint
+
+            currently returns every door the caller can see.
+
+            '
+      x-public-api-group: doors
+    UnlockResponse:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          description: Always `success` on a 200; non-200 responses use AuthErrorResponse.
+      x-public-api-group: doors
+    Door:
+      type: object
+      required:
+      - id
+      - name
+      - location_id
+      - is_online
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Stable internal identifier of the door.
+        name:
+          type: string
+          description: Human-readable door name as set in the Coram app.
+        location_id:
+          type: integer
+          format: int64
+          description: ID of the location this door belongs to. Zero when the door has no assigned location.
+        is_online:
+          type: boolean
+          description: 'True if the door''s controller board has reported a heartbeat
+
+            within the last 15 seconds.
+
+            '
+      x-public-api-group: doors
+  securitySchemes:
+    X-Auth-Token:
+      type: apiKey
+      in: header
+      name: X-Auth-Token
+x-tagGroups:
+- name: Surveillance
+  tags:
+  - cameras
+  - camera-groups
+  - locations
+  - nvrs
+  - alerts
+- name: Access Control
+  tags:
+  - doors
+  - events
+- name: Emergency Management System
+  tags:
+  - reunification

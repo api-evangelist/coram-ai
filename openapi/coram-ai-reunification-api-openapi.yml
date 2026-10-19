@@ -4,7 +4,225 @@ info:
   description: '# Introduction
 
 
-    The Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows.'
+    The Coram API enables seamless programmatic access to your security camera infrastructure, allowing you to build custom integrations and automate workflows. # Supported Actions
+
+
+    Manage and interact with your Coram platform resources:
+
+
+    | Resource | Description |
+
+    | -------- | ----------- |
+
+    | **Camera Groups** | Organize and configure camera collections |
+
+    | **Cameras** | Access camera settings, streams, and metadata |
+
+    | **Locations** | Manage physical site configurations |
+
+    | **NVRs** | Control and monitor network video recorders |
+
+    | **Access Control** | Manage doors, cards, and permissions |
+
+
+    ## Access Control
+
+
+    Card and permission changes are saved before they reach controllers. If a request fails, check the saved state before retrying. # Required Headers
+
+
+    Every API request must include the following headers:
+
+
+    | Header | Required | Description |
+
+    | ------ | -------- | ----------- |
+
+    | `X-Auth-Token` | Yes | Your API key (from the API key List Page) |
+
+
+    **Example:**
+
+    ```
+
+    curl -X GET "https://api.coram.ai/developer-api/v1/cameras" \
+
+    -H "X-Auth-Token: xxxxxxxxxxxxxxx"
+
+    ```
+
+
+    # Response Format
+
+
+    All API responses follow a consistent structure based on the operation result. ## Success Response
+
+
+    **List Operations** (e.g., `GET /v1/cameras`)
+
+
+    Returns a `results` array with pagination support:
+
+
+    ```json
+
+    {
+
+    "results": [
+
+    { "id": "cam_001", "name": "Front Door", ... },
+
+    { "id": "cam_002", "name": "Lobby", ... }
+
+    ],
+
+    "has_more": true
+
+    }
+
+    ```
+
+
+    When `has_more` is `true`, additional results are available. Use pagination parameters to fetch more. **Bulk/Batch Operations** (e.g., `POST /v1/cameras`, `PATCH /v1/cameras`)
+
+
+    Returns a top-level `status` field indicating whether the API request was processed, and a `results` array where each item reflects the outcome of an individual operation:
+
+
+    ```json
+
+    {
+
+    "status": "success",
+
+    "results": [
+
+    { "status": "success", "data": { "id": "cam_001", "mac_address": "..." } },
+
+    { "status": "error", "error": { "code": "VALIDATION_ERROR", "message": "..." } }
+
+    ]
+
+    }
+
+    ```
+
+
+    | Field | Description |
+
+    | ----- | ----------- |
+
+    | `status` (top-level) | `"success"` if the request was processed |
+
+    | `results[].status` | `"success"` or `"error"` for each operation |
+
+    | `results[].data` | Present when `status` is `"success"` |
+
+    | `results[].error` | Present when `status` is `"error"` |
+
+
+    ## Error Response
+
+
+    When an error occurs, the response includes `status` set to `"error"` along with detailed error information:
+
+
+    ```json
+
+    {
+
+    "status": "error",
+
+    "error": {
+
+    "code": "VALIDATION_ERROR",
+
+    "message": "Invalid MAC address format",
+
+    "field": "mac_address"
+
+    }
+
+    }
+
+    ```
+
+
+    **Error Fields:**
+
+
+    | Field | Type | Description |
+
+    | ----- | ---- | ----------- |
+
+    | `code` | string | Machine-readable error code |
+
+    | `message` | string | Human-readable error description |
+
+    | `field` | string | The field that caused the error (if applicable) |
+
+
+    # HTTP Status Codes
+
+
+    The API uses standard HTTP status codes to indicate the success or failure of requests:
+
+
+    ## Success Codes
+
+
+    | Code | Description |
+
+    | ---- | ----------- |
+
+    | `200 OK` | Request succeeded |
+
+    | `201 Created` | Resource successfully created |
+
+    | `204 No Content` | Request succeeded with no response body |
+
+
+    ## Client Error Codes
+
+
+    | Code | Description |
+
+    | ---- | ----------- |
+
+    | `400 Bad Request` | Invalid request syntax or parameters |
+
+    | `401 Unauthorized` | Missing or invalid API key |
+
+    | `403 Forbidden` | Valid API key but insufficient permissions |
+
+    | `404 Not Found` | Requested resource does not exist |
+
+    | `422 Unprocessable Entity` | Validation error in request body |
+
+    | `429 Too Many Requests` | Rate limit exceeded |
+
+
+    ## Server Error Codes
+
+
+    | Code | Description |
+
+    | ---- | ----------- |
+
+    | `500 Internal Server Error` | Unexpected server error (rare) |
+
+    | `502 Bad Gateway` | Upstream service unavailable |
+
+    | `503 Service Unavailable` | Service temporarily unavailable |
+
+
+    # Error Handling Best Practices
+
+
+    1. **Always check the `status` field** — Verify if the response indicates `"success"` or `"error"`
+
+
+    2.'
   version: 1.0.0
 servers:
 - url: https://developer.coram.ai
@@ -13,80 +231,72 @@ security:
 - X-Auth-Token: []
 tags:
 - name: reunification
-  description: Bulk-import your school reunification roster — schools, students (with guardians), teachers, staff, and class sections — programmatically, the API equivalent of the in-app CSV upload. Each import is a full roster replace; poll the status endpoint for completion and partial-success counts.
+  description: Import your reunification roster of schools, students with their guardians, teachers, staff and class sections. This is the API equivalent of the in-app CSV upload. Every import replaces the roster rows that came from this API or the CSV upload, so anyone you leave out is removed. A roster synced from Clever is not touched. Imports run in the background, so poll the status endpoint for progress.
 paths:
   /v1/reunification/imports:
     post:
       operationId: create_reunification_import
       summary: Import reunification roster data
-      description: 'Bulk-imports reunification roster data — schools, students (with their
+      description: 'Imports a reunification roster as JSON. This is the API
 
-        guardians), teachers, and staff — as JSON. The programmatic equivalent
-
-        of the in-app CSV upload.
+        equivalent of the in-app CSV upload and writes to the same roster.
 
 
-        **This is a full roster replace, not a partial update.** Each call
+        **Every call replaces the whole roster.** Records you send are created
 
-        replaces the organization''s entire reunification roster: every person
+        or updated, and anything you leave out is deleted. Only records that
 
-        and school you send is inserted or updated, and **anything you omit is
-
-        removed**. To keep someone, include them in every import; to remove
-
-        someone, send a roster without them. Always send the complete roster —
-
-        sending only `students`, for example, would delete all schools,
-
-        teachers, and sections. To guard against that, the `schools`,
-
-        `students`, `teachers`, and `sections` keys are **required to be
-
-        present** (they may be empty arrays); `staff` is optional. This mirrors
-
-        the in-app CSV upload, which requires every file.
+        came from this API or the in-app CSV upload are replaced.
 
 
-        List each student, teacher, and staff member **once**. To place a person
+        Deleting someone revokes the Coram access an earlier import gave them.
 
-        in multiple schools, put every school id in `school_ids` on that single
+        Access granted by hand survives. Revocation is also skipped when a previous
 
-        object — a repeated `student_id`/`teacher_id`/`staff_id` is rejected
+        import has not finished creating accounts yet, and when more than half
 
-        (`400`), not merged.
+        of a provisioned roster of 10 or more people would lose access at once,
 
-
-        Cross-references are resolved against the ids in this same payload, so
-
-        list an entity before you reference it. A `school_id`, `student_id`, or
-
-        `teacher_id` that doesn''t resolve to something in the payload is
-
-        silently skipped — the surrounding record is still imported, just
-
-        without that link — so a mistyped id quietly drops a school membership
-
-        or section rather than failing the import.
+        which stops a truncated upload locking out a school.
 
 
-        Processing runs asynchronously and respects the same Auth0 rate limits
+        Send every key on every call. The one you may omit is `staff`, and
 
-        as the in-app flow; only one import per organization runs at a time —
-
-        a request made while one is already running returns `409`. The `202`
-
-        response is the initial in-progress status — poll
-
-        `GET /reunification/imports/status` for completion and partial-success
-
-        counts.
+        omitting it deletes every staff member.
 
 
-        `school_location_mappings` maps each `school_id` in the payload to a
+        The import aborts and leaves the old roster intact if two schools map to
 
-        Coram location ID. Requires `write:*` scope and an `admin` creator role;
+        the same Coram location, if a location id does not exist, or if a
 
-        the feature must be enabled for the organization.'
+        student or teacher repeats a school id in `school_ids` after the first
+
+        one. Repeating a `student_id`, `teacher_id` or `staff_id` returns `400`
+
+        before any work starts.
+
+
+        The order of the top level arrays does not matter.
+
+
+        The import runs in the background and is cancelled after one hour. The
+
+        `202` carries the initial status. Poll
+
+        `GET /v1/reunification/imports/status`. One import runs per organization
+
+        at a time and the in-app CSV upload counts as one, so a second request
+
+        returns `409`.
+
+
+        Requires `write:*` scope and an `admin` creator role. The status
+
+        endpoint needs `read:*`, so a write-only key can start an import but
+
+        never see whether it worked. Requests are limited to an average of 5
+
+        per second with a short burst allowance, and the body to 32 MiB.'
       tags:
       - reunification
       security:
@@ -97,6 +307,43 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ReunificationImportInput'
+            example:
+              schools:
+              - school_id: SCH-01
+                name: Lincoln High School
+              students:
+              - student_id: STU-1001
+                name: Ada Reyes
+                email: ada.reyes@example.edu
+                grade: '9'
+                school_ids:
+                - SCH-01
+                guardians:
+                - name: Marta Reyes
+                  email: marta.reyes@example.com
+                  phone: '+14155550101'
+                  relationship: Mother
+              teachers:
+              - teacher_id: TCH-200
+                name: Sam Okafor
+                email: sam.okafor@example.edu
+                school_ids:
+                - SCH-01
+              staff:
+              - staff_id: STF-300
+                name: Dana Whitfield
+                email: dana.whitfield@example.edu
+                title: Front Office
+                school_ids:
+                - SCH-01
+              sections:
+              - section_id: SEC-9A
+                teacher_ids:
+                - TCH-200
+                student_ids:
+                - STU-1001
+              school_location_mappings:
+                SCH-01: 42
       responses:
         '202':
           description: Import accepted and processing started
@@ -105,7 +352,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ReunificationImportStatus'
         '400':
-          description: Empty payload, missing school_location_mappings, or invalid data
+          description: Body is not a JSON object, omits or nulls any of schools/students/teachers/sections, has an empty school_location_mappings, repeats a student/teacher/staff id, or exceeds 32 MiB
           content:
             application/json:
               schema:
@@ -117,13 +364,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthErrorResponse'
         '403':
-          description: API key lacks the required scope/role, or the feature is not enabled for the organization
+          description: API key lacks the required scope/role
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthErrorResponse'
         '409':
-          description: An import is already running for this organization; poll the existing one instead
+          description: An import is already running for this organization, including one started by the in-app CSV upload. Poll the existing one instead. The lock clears after one hour at the latest
           content:
             application/json:
               schema:
@@ -141,35 +388,39 @@ paths:
     get:
       operationId: get_reunification_import_status
       summary: Get the current reunification import status
-      description: 'Returns the status of the organization''s most recent reunification
+      description: 'Returns the status of your organization''s most recent reunification
 
-        import, including per-entity synced/total counts and the
+        import. Poll this after starting one. Requires `read:*` scope and a
 
-        `succeeded_users` / `failed_users` provisioning figures. Poll this
-
-        after starting an import. Requires `read:*` scope and a `regular`
-
-        creator role.
+        `regular` creator role.
 
 
-        Note: `succeeded_users` and `failed_users` are eventually consistent.
+        Status is kept for one hour after its last update and then this returns
 
-        Guest/staff accounts are provisioned in the background after the roster
-
-        is imported, so these counts keep climbing for a few seconds after
-
-        `status` becomes `completed`. Treat `completed` as "roster imported" and
-
-        keep polling the user counts until they stop changing.
+        `404`. Store anything you need to keep.
 
 
-        `completed` means the roster was imported and account provisioning was
+        `completed` means the roster was written and account provisioning was
 
-        dispatched — it does **not** by itself mean every account succeeded.
+        handed to a background worker, not that every account exists.
 
-        Check `failed_users`: a non-zero value on a `completed` import is a
+        `succeeded_users` and `failed_users` keep rising afterwards, which can
 
-        partial success (e.g. seat limits or Auth0 rejections for some users).'
+        take several minutes on a large roster, so poll until both stop moving.
+
+
+        The `synced_*` and `total_*` pairs are a progress bar rather than a
+
+        success ratio. They end up equal whenever the roster is written, so they
+
+        cannot tell you a record was rejected.
+
+
+        A `failed` status does not mean the roster is untouched. If the failure
+
+        came after the roster was committed the new roster is live, and account
+
+        provisioning may not have started or may already be under way.'
       tags:
       - reunification
       security:
@@ -188,13 +439,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthErrorResponse'
         '403':
-          description: API key lacks the required scope/role, or the feature is not enabled for the organization
+          description: API key lacks the required scope/role
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthErrorResponse'
         '404':
-          description: No import found for this organization
+          description: No import found for this organization, or the status expired. Status is kept for one hour after its last update
           content:
             application/json:
               schema:
@@ -210,35 +461,6 @@ paths:
       parameters: []
 components:
   schemas:
-    ReunificationStaff:
-      type: object
-      required:
-      - staff_id
-      - name
-      - school_ids
-      properties:
-        staff_id:
-          type: string
-        name:
-          type: string
-        sis_id:
-          type: string
-        email:
-          type: string
-        phone_number:
-          type: string
-        title:
-          type: string
-        department:
-          type: string
-        roles:
-          type: array
-          items:
-            type: string
-        school_ids:
-          type: array
-          items:
-            type: string
     AuthErrorResponse:
       type: object
       required:
@@ -253,6 +475,99 @@ components:
             Python developer-api''s auth errors works unchanged.
 
             '
+    ReunificationSection:
+      type: object
+      required:
+      - section_id
+      description: A class that pairs students with teachers. Sections build those pairings and are not stored as records you can look up later.
+      properties:
+        section_id:
+          type: string
+          description: Must not be blank or the section is dropped. Never stored, so nothing can look it up.
+        school_id:
+          type: string
+          description: Accepted and ignored. Sections take their schools from the people in them.
+        teacher_ids:
+          type: array
+          description: A teacher id that does not resolve drops that teacher's pairings in this section without error.
+          items:
+            type: string
+        student_ids:
+          type: array
+          description: A student id that does not resolve drops that student's pairings in this section without error.
+          items:
+            type: string
+    ReunificationSchool:
+      type: object
+      required:
+      - school_id
+      - name
+      properties:
+        school_id:
+          type: string
+          description: Your identifier for the school, referenced by students, teachers, staff and school_location_mappings. A blank value drops the school silently, and with it every reference to it. Do not send the same school_id twice.
+        name:
+          type: string
+          description: Not validated. A blank name is accepted and shows as a nameless school in Coram.
+        sis_id:
+          type: string
+          description: Stored and displayed only. Nothing matches or de-duplicates on it.
+        address:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip:
+          type: string
+    ReunificationGuardian:
+      type: object
+      required:
+      - name
+      description: Guardians are contacts only and never receive a Coram account. Two guardians sharing an email address, or a phone number when there is no email, are merged into one guardian across the whole payload.
+      properties:
+        name:
+          type: string
+          description: A guardian with a blank name is discarded along with their contact details.
+        email:
+          type: string
+        phone:
+          type: string
+        relationship:
+          type: string
+          description: Free text. Stored as "Other" when omitted or blank.
+    ReunificationStudent:
+      type: object
+      required:
+      - student_id
+      - name
+      - school_ids
+      properties:
+        student_id:
+          type: string
+          description: Your identifier for the student. A blank value drops the student silently. Stored as the student's card number and visible in Coram, so do not put anything sensitive here.
+        name:
+          type: string
+          description: Not validated. A blank name is accepted and stored empty.
+        sis_id:
+          type: string
+          description: Stored and displayed only. Nothing matches or de-duplicates on it.
+        email:
+          type: string
+          description: The identity Coram uses for this person. They are still imported and still counted without a valid one, but they get no Coram account, appear in neither user counter, and lose any access an earlier import gave them. Two people sharing an email collapse into one Coram account.
+        phone_number:
+          type: string
+        grade:
+          type: string
+        school_ids:
+          type: array
+          description: Schools the student belongs to, in order. The first one that resolves becomes the primary school, so a typo in the first position silently promotes the next. Repeating that first id is ignored, but repeating any other aborts the whole import. A student whose school_ids all fail to resolve is imported with no location access.
+          items:
+            type: string
+        guardians:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReunificationGuardian'
     ReunificationImportInput:
       type: object
       required:
@@ -261,17 +576,25 @@ components:
       - teachers
       - sections
       - school_location_mappings
-      description: 'Full-replace roster payload. `schools`, `students`, `teachers`, and
+      description: '`schools`, `students`, `teachers` and `sections` must be present, and may
 
-        `sections` must be present (may be empty arrays) so an omitted key can''t
+        be empty arrays. Sending one as `null` is rejected the same way as leaving
 
-        silently delete that entity type; `staff` is optional. Phone numbers are
+        it out, because both would wipe everything that key covers. Only `staff`
 
-        normalized to E.164; a number that can''t be parsed for the region is
+        may be left out entirely.
 
-        dropped (stored as null), not rejected — so a malformed guardian
 
-        contact number is silently lost rather than failing the import.
+        Phone numbers are normalized to E.164 against the deployment''s own
+
+        region, currently the United States. A number that cannot be parsed is
+
+        stored as null rather than rejected, so include a country code.
+
+
+        Unrecognized keys are dropped without error, so a misspelled field name
+
+        fails silently.
 
         '
       properties:
@@ -293,7 +616,7 @@ components:
             $ref: '#/components/schemas/ReunificationStaff'
         sections:
           type: array
-          description: Class/section memberships that establish student↔teacher relationships.
+          description: An empty array removes every student to teacher pairing on the roster.
           items:
             $ref: '#/components/schemas/ReunificationSection'
         school_location_mappings:
@@ -301,17 +624,73 @@ components:
           additionalProperties:
             type: integer
             format: int32
-          description: Maps each school_id in the payload to a Coram location ID.
+          description: Maps your school ids to Coram location IDs. Must be present and non-empty. Give every school an entry, because a school without one is imported with no location and everyone attached only to it loses access. Two schools may not point at the same location, and a location that does not exist in your organization aborts the import after it has already returned 202. The location id in the example is illustrative, so look up your real ones with `GET /v1/locations` before your first call.
+    ReunificationTeacher:
+      type: object
+      required:
+      - teacher_id
+      - name
+      - school_ids
+      properties:
+        teacher_id:
+          type: string
+          description: A blank value drops the teacher silently.
+        name:
+          type: string
+        sis_id:
+          type: string
+        email:
+          type: string
+          description: Without a valid one the teacher is still imported but gets no Coram account and loses any access an earlier import gave them.
+        phone_number:
+          type: string
+        school_ids:
+          type: array
+          description: The first one that resolves becomes the primary school. Repeating that first id is ignored, but repeating any other aborts the whole import.
+          items:
+            type: string
+    ReunificationStaff:
+      type: object
+      required:
+      - staff_id
+      - name
+      - school_ids
+      description: Omitting the whole staff array deletes every staff member on the roster.
+      properties:
+        staff_id:
+          type: string
+          description: A blank value drops the staff member silently.
+        name:
+          type: string
+        sis_id:
+          type: string
+        email:
+          type: string
+          description: Without a valid one the staff member is still imported but gets no Coram account and loses any access an earlier import gave them.
+        phone_number:
+          type: string
+        title:
+          type: string
+          description: Stored and displayed only.
+        department:
+          type: string
+          description: Stored and displayed only.
+        roles:
+          type: array
+          description: Free text, not a fixed set. Displayed in Coram and used for nothing else.
+          items:
+            type: string
+        school_ids:
+          type: array
+          description: Unlike students and teachers, repeated ids here are removed rather than aborting the import. Staff have no primary school.
+          items:
+            type: string
     ReunificationImportStatus:
       type: object
       required:
       - id
       - status
-      description: 'Progress and partial-success report for a reunification import. Counts
-
-        are cumulative for the current/most-recent import.
-
-        '
+      description: Progress report for your most recent import. Counters that are zero are left out of the response, so treat an absent field as zero. Every counter resets when a new import starts.
       properties:
         id:
           type: string
@@ -361,123 +740,27 @@ components:
           type: integer
           format: int32
           default: 0
+          description: Counted after the merge described on the guardian object, so it is usually lower than the number of guardian entries you sent.
         succeeded_users:
           type: integer
           format: int32
           default: 0
+          description: Coram accounts created or updated. Rises in the background after status becomes completed. Guardians are never included, because they get no account.
         failed_users:
           type: integer
           format: int32
           default: 0
+          description: Accounts that could not be created, usually a seat limit or an Auth0 rejection. Zero does not mean everyone succeeded, since anyone without a valid email is absent from both figures.
         error_message:
           type: string
         started_at:
           type: string
           format: date-time
+          description: Carries a real time only while the import is in progress. Once it reaches completed or failed the field is still returned but reset to 0001-01-01T00:00:00Z, so record the start time yourself if you need it.
         completed_at:
           type: string
           format: date-time
-    ReunificationSchool:
-      type: object
-      required:
-      - school_id
-      - name
-      properties:
-        school_id:
-          type: string
-          description: Your identifier for the school; referenced by students/teachers/staff and school_location_mappings.
-        name:
-          type: string
-        sis_id:
-          type: string
-        address:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        zip:
-          type: string
-    ReunificationStudent:
-      type: object
-      required:
-      - student_id
-      - name
-      - school_ids
-      properties:
-        student_id:
-          type: string
-        name:
-          type: string
-        sis_id:
-          type: string
-        email:
-          type: string
-        phone_number:
-          type: string
-        grade:
-          type: string
-        school_ids:
-          type: array
-          description: School IDs the student belongs to. The first is the primary school; the rest are secondary.
-          items:
-            type: string
-        guardians:
-          type: array
-          items:
-            $ref: '#/components/schemas/ReunificationGuardian'
-    ReunificationSection:
-      type: object
-      required:
-      - section_id
-      description: A class/section linking students to teachers (drives student↔teacher relationships).
-      properties:
-        section_id:
-          type: string
-        school_id:
-          type: string
-        teacher_ids:
-          type: array
-          items:
-            type: string
-        student_ids:
-          type: array
-          items:
-            type: string
-    ReunificationGuardian:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-        email:
-          type: string
-        phone:
-          type: string
-        relationship:
-          type: string
-    ReunificationTeacher:
-      type: object
-      required:
-      - teacher_id
-      - name
-      - school_ids
-      properties:
-        teacher_id:
-          type: string
-        name:
-          type: string
-        sis_id:
-          type: string
-        email:
-          type: string
-        phone_number:
-          type: string
-        school_ids:
-          type: array
-          items:
-            type: string
+          description: Returned as 0001-01-01T00:00:00Z until the import finishes.
   securitySchemes:
     X-Auth-Token:
       type: apiKey
@@ -494,7 +777,9 @@ x-tagGroups:
 - name: Access Control
   tags:
   - doors
+  - credentials
   - events
+  - permissions
 - name: Emergency Management System
   tags:
   - reunification

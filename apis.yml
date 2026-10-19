@@ -263,6 +263,26 @@ apis:
     url: conventions/coram-ai-conventions.yml
   - type: Conformance
     url: conformance/coram-ai-conformance.yml
+- aid: coram-ai:coram-ai-credentials-api
+  name: Coram Ai Credentials API
+  description: View user credentials and assign or remove cards.
+  humanURL: https://developer.coram.ai/
+  baseURL: https://api.coram.ai/developer-api
+  tags:
+  - credentials
+  properties:
+  - type: OpenAPI
+    url: openapi/coram-ai-credentials-api-openapi.yml
+- aid: coram-ai:coram-ai-permissions-api
+  name: Coram Ai Permissions API
+  description: Choose which doors users can unlock and when.
+  humanURL: https://developer.coram.ai/
+  baseURL: https://api.coram.ai/developer-api
+  tags:
+  - permissions
+  properties:
+  - type: OpenAPI
+    url: openapi/coram-ai-permissions-api-openapi.yml
 common:
 - type: DeveloperPortal
   url: https://developer.coram.ai/
