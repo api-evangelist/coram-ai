@@ -269,6 +269,8 @@ apis:
   humanURL: https://developer.coram.ai/
   baseURL: https://api.coram.ai/developer-api
   tags:
+  - Credentials
+  tags_raw:
   - credentials
   properties:
   - type: OpenAPI
@@ -279,6 +281,8 @@ apis:
   humanURL: https://developer.coram.ai/
   baseURL: https://api.coram.ai/developer-api
   tags:
+  - Permissions
+  tags_raw:
   - permissions
   properties:
   - type: OpenAPI
